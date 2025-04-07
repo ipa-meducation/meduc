@@ -325,6 +325,41 @@
         #quality-select {
             margin-right: 10px;
         }
+
+        /* Loading styles */
+        .loading-container {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            color: var(--primary-color);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -434,6 +469,11 @@
                 <option value="4">Ultra Quality</option>
             </select>
             <button id="download-map"><i class="fas fa-download"></i> Download Map</button>
+        </div>
+
+        <div class="loading-container" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing map data...</div>
         </div>
     </div>
 
@@ -571,7 +611,22 @@
             // Create marker with the custom icon
             const marker = L.marker([school.lat, school.lng], { icon: icon, school: school });
             
-            // Create popup content
+            // Create popup content with implementation tags
+            let implementationTags = '';
+            
+            if (school.implementationTypes.includes('Pilot - IPA Arm')) {
+                implementationTags += `<span class="implementation-tag tag-pilot-ipa">Pilot - IPA Arm</span>`;
+            }
+            if (school.implementationTypes.includes('Pilot - DepEd Arm')) {
+                implementationTags += `<span class="implementation-tag tag-pilot-deped">Pilot - DepEd Arm</span>`;
+            }
+            if (school.implementationTypes.includes('Scale-Up Round 1')) {
+                implementationTags += `<span class="implementation-tag tag-scaleup1">Scale-Up Round 1</span>`;
+            }
+            if (school.implementationTypes.includes('Scale-Up Round 2')) {
+                implementationTags += `<span class="implementation-tag tag-scaleup2">Scale-Up Round 2</span>`;
+            }
+            
             const popupContent = `
                 <div class="custom-popup">
                     <div class="school-name">${school.name}</div>
@@ -579,3 +634,146 @@
                     <div class="popup-content">
                         <div>Implementation:</div>
                         <div class="implementation-list">
+                            ${implementationTags}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            marker.bindPopup(popupContent);
+            
+            // Add the marker to its appropriate group
+            markerGroup.addLayer(marker);
+            
+            return marker;
+        }
+
+        // Store all markers and schools for filtering
+        let allSchools = [];
+        let schoolMarkers = {};
+        let sdoList = new Set();
+
+        // Function to update statistics
+        function updateStats() {
+            document.getElementById('stat-total').textContent = allSchools.length;
+            document.getElementById('stat-pilot-ipa').textContent = allSchools.filter(s => s.implementationTypes.includes('Pilot - IPA Arm')).length;
+            document.getElementById('stat-pilot-deped').textContent = allSchools.filter(s => s.implementationTypes.includes('Pilot - DepEd Arm')).length;
+            document.getElementById('stat-scaleup1').textContent = allSchools.filter(s => s.implementationTypes.includes('Scale-Up Round 1')).length;
+            document.getElementById('stat-scaleup2').textContent = allSchools.filter(s => s.implementationTypes.includes('Scale-Up Round 2')).length;
+            document.getElementById('stat-multi').textContent = allSchools.filter(s => s.multipleRounds).length;
+        }
+
+        // Function to apply filters
+        function applyFilters() {
+            // Clear all marker groups
+            Object.values(markerGroups).forEach(group => group.clearLayers());
+            
+            // Get filter states
+            const showPilotIPA = document.getElementById('filter-pilot-ipa').checked;
+            const showPilotDepEd = document.getElementById('filter-pilot-deped').checked;
+            const showScaleUp1 = document.getElementById('filter-scaleup1').checked;
+            const showScaleUp2 = document.getElementById('filter-scaleup2').checked;
+            const showMulti = document.getElementById('filter-multi').checked;
+            const selectedSDO = document.getElementById('sdo-filter').value;
+            
+            // Filter schools
+            allSchools.forEach(school => {
+                const marker = schoolMarkers[school.name];
+                
+                // Check implementation type filters
+                let showByImplementation = false;
+                if (school.multipleRounds && showMulti) {
+                    showByImplementation = true;
+                } else if (!school.multipleRounds) {
+                    if (school.implementationTypes.includes('Pilot - IPA Arm') && showPilotIPA) showByImplementation = true;
+                    if (school.implementationTypes.includes('Pilot - DepEd Arm') && showPilotDepEd) showByImplementation = true;
+                    if (school.implementationTypes.includes('Scale-Up Round 1') && showScaleUp1) showByImplementation = true;
+                    if (school.implementationTypes.includes('Scale-Up Round 2') && showScaleUp2) showByImplementation = true;
+                }
+                
+                // Check SDO filter
+                const showBySDO = selectedSDO === 'all' || school.sdo === selectedSDO;
+                
+                // Show the marker if it passes all filters
+                if (showByImplementation && showBySDO) {
+                    // Add to appropriate group
+                    if (school.multipleRounds) {
+                        markerGroups['Multiple Rounds'].addLayer(marker);
+                    } else if (school.implementationTypes.includes('Pilot - IPA Arm')) {
+                        markerGroups['Pilot - IPA Arm'].addLayer(marker);
+                    } else if (school.implementationTypes.includes('Pilot - DepEd Arm')) {
+                        markerGroups['Pilot - DepEd Arm'].addLayer(marker);
+                    } else if (school.implementationTypes.includes('Scale-Up Round 1')) {
+                        markerGroups['Scale-Up Round 1'].addLayer(marker);
+                    } else if (school.implementationTypes.includes('Scale-Up Round 2')) {
+                        markerGroups['Scale-Up Round 2'].addLayer(marker);
+                    }
+                }
+            });
+        }
+
+        // Function to search for schools
+        function searchSchools() {
+            const searchTerm = document.getElementById('school-search').value.toLowerCase().trim();
+            
+            if (!searchTerm) return;
+            
+            // Find matching schools
+            const matches = allSchools.filter(school => 
+                school.name.toLowerCase().includes(searchTerm) || 
+                school.sdo.toLowerCase().includes(searchTerm)
+            );
+            
+            if (matches.length > 0) {
+                // Focus on the first match
+                const school = matches[0];
+                map.setView([school.lat, school.lng], 15);
+                
+                // Open the popup for the first match
+                const marker = schoolMarkers[school.name];
+                marker.openPopup();
+            } else {
+                alert('No schools found matching your search.');
+            }
+        }
+
+        // Function to process raw school data
+        function processSchoolData(data) {
+            const processedData = data.map(row => {
+                // Create a school object from the raw data
+                // This function will depend on the exact format of your JSON
+                return {
+                    name: row.name,
+                    lat: row.lat,
+                    lng: row.lng,
+                    sdo: row.sdo,
+                    implementationTypes: row.implementationTypes || [],
+                    multipleRounds: row.multipleRounds || false
+                };
+            });
+            
+            return processedData.filter(school => school.lat && school.lng);
+        }
+
+        // Show loading indicator
+        document.getElementById('loading').style.display = 'flex';
+
+        // Process the coordinates from Excel format and create a sample JSON structure
+        function convertExcelDataToJSON(excelData) {
+            return excelData.map(row => {
+                // Parse coordinates
+                let lat = null, lng = null;
+                if (row.Coordinates) {
+                    const coordParts = row.Coordinates.split(',');
+                    if (coordParts.length === 2) {
+                        lat = parseFloat(coordParts[0].trim());
+                        lng = parseFloat(coordParts[1].trim());
+                    }
+                }
+                
+                // Determine implementation types
+                const implementationTypes = [];
+                if (row['Pilot - IPA Arm'] === 1) implementationTypes.push('Pilot - IPA Arm');
+                if (row['Pilot - DepEd Arm'] === 1) implementationTypes.push('Pilot - DepEd Arm');
+                if (row['Scale-Up Round 1'] === 1) implementationTypes.push('Scale-Up Round 1');
+                if (row['Scale-Up Round 2'] === 1) implementationTypes.push('Scale-Up Round 2');
