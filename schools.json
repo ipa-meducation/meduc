@@ -1,0 +1,1334 @@
+[
+  {
+    "name": "Jagupit Elementary School",
+    "lat": 9.266148034546173,
+    "lng": 125.55939506079605,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Kauswagan De Oro Elementary School",
+    "lat": 9.26642846741029,
+    "lng": 125.55925192234524,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "La Paz Elementary School",
+    "lat": 9.267331421373015,
+    "lng": 125.55919677446336,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Poblacion Doz Elementary School",
+    "lat": 9.06267852986704,
+    "lng": 125.60520801863943,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Pospero D. Salas Elementary School",
+    "lat": 9.305465861261245,
+    "lng": 125.55168493618675,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Remedios T. Romualdez Central Elementary School",
+    "lat": 9.051897109821365,
+    "lng": 125.5863019456238,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Dona Telesfora Elementary School",
+    "lat": 9.161239608792444,
+    "lng": 125.57337582619628,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Dona Rosario Central Elementary School",
+    "lat": 9.15753925650595,
+    "lng": 125.56121186096918,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Dona Telesfora L. Ong Oh Elemementary School",
+    "lat": 9.232090554496153,
+    "lng": 125.58745501897309,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Luis B. Azura Memorial Elementary School",
+    "lat": 9.066633497213482,
+    "lng": 125.58165282419321,
+    "sdo": "Agusan Del Norte",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Bagumbayan Elem. School",
+    "lat": 14.658256475989694,
+    "lng": 120.9484572822135,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Bangkulasi Elem. School",
+    "lat": 14.651282345370184,
+    "lng": 120.95301089902065,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Dagat-Dagatan Elem. School",
+    "lat": 14.650858025700485,
+    "lng": 120.95660439902058,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Kapitbahayan Elem. School",
+    "lat": 14.645072743921723,
+    "lng": 120.95751048243913,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Navotas Elem. School",
+    "lat": 14.662763102816355,
+    "lng": 120.94227812291575,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Navotas Elem. School I",
+    "lat": 14.662771430451672,
+    "lng": 120.9454035254606,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "North Bay Elem. School",
+    "lat": 14.644365572901114,
+    "lng": 120.95329829765421,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "North Bay North Elem. School",
+    "lat": 14.648080857971935,
+    "lng": 120.95060419104573,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "San Rafael Village Elem. School",
+    "lat": 14.637079530993216,
+    "lng": 120.96523268313119,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "San Roque Elem. School",
+    "lat": 14.669506521824404,
+    "lng": 120.9381285492944,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Tangos Elem. School",
+    "lat": 14.673828517048436,
+    "lng": 120.93496526355625,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Tanza Elem. School",
+    "lat": 14.678591938068642,
+    "lng": 120.93458482546107,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Wawa Elem. School",
+    "lat": 14.679918127106971,
+    "lng": 120.9348392384448,
+    "sdo": "Navotas",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Andres Bonifacio Elementary School",
+    "lat": 14.631972086333489,
+    "lng": 120.9794691685103,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Arsenio C. Herrera Elementary School",
+    "lat": 14.634349555127248,
+    "lng": 120.98061181436279,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Beata Elementary School",
+    "lat": 14.590317731562068,
+    "lng": 121.01272844189413,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Dr. Benigno V Aldana Elementary School",
+    "lat": 14.60598462818537,
+    "lng": 121.00232762415602,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Isabelo Delos Reyes Elementary School",
+    "lat": 14.608457541842808,
+    "lng": 120.96866255854015,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "JC De Jesus ES",
+    "lat": 14.614715192184152,
+    "lng": 120.96945051712035,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "M. Roxas De Ayala Elementary School",
+    "lat": 14.588348800615575,
+    "lng": 121.02302693579901,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Pio Del Pilar Elementary School",
+    "lat": 14.60105715921853,
+    "lng": 121.00409497487037,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "T. Paez Elementary School",
+    "lat": 14.630769138412912,
+    "lng": 120.96786466306999,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Marcela Agoncillo Elementary School",
+    "lat": 14.592880790298766,
+    "lng": 120.95694533665855,
+    "sdo": "Manila",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Fort Aguinaldo Elementary School",
+    "lat": 14.601275899946355,
+    "lng": 121.06202899965776,
+    "sdo": "Quezon City",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Adriatico Memorial School",
+    "lat": 13.410821403821842,
+    "lng": 121.17733516275209,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Bayanan II Elementary School",
+    "lat": 13.357129264115732,
+    "lng": 121.16983099729605,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Bucayao Elementary School",
+    "lat": 13.306462772637028,
+    "lng": 121.19175387809194,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Bulusan Elementary School",
+    "lat": 14.908703691650787,
+    "lng": 120.74248142231536,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Calapan Central School",
+    "lat": 13.415395225975473,
+    "lng": 121.17996514141505,
+    "sdo": "Calapan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Camansihan Elementary School",
+    "lat": 13.33406904595462,
+    "lng": 121.22611311676258,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Camilmil Central School",
+    "lat": 13.404756188301695,
+    "lng": 121.17764016714708,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Canubing I Elementary School",
+    "lat": 13.358117444145359,
+    "lng": 121.1356777417993,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Canubing II Elementary School",
+    "lat": 13.317409796505935,
+    "lng": 121.11747533623289,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Guinobatan Elementary School",
+    "lat": 13.388132292455426,
+    "lng": 121.18373016143356,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Lalud Elementary School",
+    "lat": 13.397888674900601,
+    "lng": 121.17480454245784,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Lazareto Elementary School",
+    "lat": 13.428513289909523,
+    "lng": 121.19975947380952,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Managpi Elementary School",
+    "lat": 13.32743574787435,
+    "lng": 121.19738014486876,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "N. Aboboto Memorial School",
+    "lat": 13.365256875032768,
+    "lng": 121.18983896924627,
+    "sdo": "Calapan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Parang Elementary School",
+    "lat": 13.40190723456325,
+    "lng": 121.21745922018226,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "San Antonio Elementary School",
+    "lat": 13.426211017623615,
+    "lng": 121.19562306798154,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Sta. Isabel Elementary School",
+    "lat": 13.368047832119533,
+    "lng": 121.15932134643333,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Sto. Nino Elementary School",
+    "lat": 13.406290471963418,
+    "lng": 121.18544096876398,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Teresa C. Montellano Memorial School",
+    "lat": 13.409713368302382,
+    "lng": 121.15539840693023,
+    "sdo": "Calapan",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Agumaymayan Elementary School",
+    "lat": 13.439566790077166,
+    "lng": 121.88790403950422,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Ipil Elementary School",
+    "lat": 13.48003468506711,
+    "lng": 122.03301770463173,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Lusok Elementary School",
+    "lat": 13.499268640934114,
+    "lng": 121.9997843644302,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Maniwaya Elementary School",
+    "lat": 13.526876430316719,
+    "lng": 122.11907757792527,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Marlangga Elementary School",
+    "lat": 13.327155626940783,
+    "lng": 122.08976989326155,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Poctoy Elementary School",
+    "lat": 13.332922664636033,
+    "lng": 122.09833099510804,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Tanza Elementary School",
+    "lat": 13.455006277982822,
+    "lng": 121.84227511616044,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Bancoro Elementary School",
+    "lat": 13.248272265256674,
+    "lng": 121.98238530178125,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Caigangan Elementary School",
+    "lat": 13.25867114424322,
+    "lng": 121.93169542209516,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Makapuyat Elementary School",
+    "lat": 13.436610003409156,
+    "lng": 122.07541562208975,
+    "sdo": "Marinduque",
+    "implementationTypes": [
+      "Scale-Up Round 1"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Buenavista Central School",
+    "lat": 13.255404974353597,
+    "lng": 121.94312467513733,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Balanacan Elementary School",
+    "lat": 13.52902307357155,
+    "lng": 121.86850025424802,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Don Luis Hidalgo Memorial",
+    "lat": 13.446509527936332,
+    "lng": 121.84024621076705,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Gasan Central School",
+    "lat": 13.324273547008191,
+    "lng": 121.84790099326146,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Mogpog Central School",
+    "lat": 13.473238921876236,
+    "lng": 121.8606137932647,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Santa Cruz East Central School",
+    "lat": 13.480040443517277,
+    "lng": 122.03299245872027,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Torrijos Central School",
+    "lat": 13.320914849531167,
+    "lng": 122.08884256627256,
+    "sdo": "Marinduque",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Abanico Elementary School",
+    "lat": 9.763491856272243,
+    "lng": 118.7346671533369,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Antonio Bautista Air Base (ABAB) Elementary School",
+    "lat": 9.747769964298799,
+    "lng": 118.75718103552254,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Don Ramon Roces Memorial Elementary School",
+    "lat": 9.730582722040724,
+    "lng": 118.74221721573461,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "East Central School",
+    "lat": 9.738039771285539,
+    "lng": 118.73673295782973,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Francisco Ubay Memorial Elementary School",
+    "lat": 9.795175674661555,
+    "lng": 118.74957378461912,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Loreto-Santos Lanzanas Central School",
+    "lat": 9.760560037415516,
+    "lng": 118.74745229319312,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Mandaragat Elementary School",
+    "lat": 9.747234082463802,
+    "lng": 118.7380439221415,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Mangingisda Elementary School",
+    "lat": 9.684878748099447,
+    "lng": 118.75329311797041,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Manuel Austria Memorial Elementary School",
+    "lat": 9.778935872866251,
+    "lng": 118.76038582449445,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Mateo Jagmis Memorial Elementary School",
+    "lat": 9.745569756461219,
+    "lng": 118.74665007969857,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Mauricio Reynoso Sr. Memorial Elementary School",
+    "lat": 9.734273585322294,
+    "lng": 118.76235825086327,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Puerto Princesa Pilot Elementary School",
+    "lat": 9.738616935753198,
+    "lng": 118.73398483552242,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Sicsican Elementary School",
+    "lat": 9.79557993399964,
+    "lng": 118.71002016389978,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Sta. Lourdes Elementary School",
+    "lat": 9.83264299330369,
+    "lng": 118.72813829756171,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Sta. Monica Elementary School",
+    "lat": 9.795172517880362,
+    "lng": 118.73456733552335,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Tagburos Elementary School",
+    "lat": 9.820576505160286,
+    "lng": 118.74396004901804,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Tiniguiban Elementary School",
+    "lat": 9.775369500533214,
+    "lng": 118.7379361618739,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Valentin Macasaet Sr. Memorial Elementary School",
+    "lat": 9.800515288851884,
+    "lng": 118.69788179276823,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 1",
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": true
+  },
+  {
+    "name": "Wescom Elementary School",
+    "lat": 9.748768632608629,
+    "lng": 118.76986113779603,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "West Central School",
+    "lat": 9.740554380412679,
+    "lng": 118.72908805086324,
+    "sdo": "PPC",
+    "implementationTypes": [
+      "Scale-Up Round 2"
+    ],
+    "multipleRounds": false
+  },
+  {
+    "name": "Mamburao Central School",
+    "lat": 13.223625057613967,
+    "lng": 120.59484032067154,
+    "sdo": "Occidental Mindoro",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Caminawit Central School",
+    "lat": 12.333422362675384,
+    "lng": 121.07954959340934,
+    "sdo": "Occidental Mindoro",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "San Jose Pilot Elementary School",
+    "lat": 12.355991669851502,
+    "lng": 121.06661847991691,
+    "sdo": "Occidental Mindoro",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Sablayan Central School",
+    "lat": 12.842838503476338,
+    "lng": 120.77571692597306,
+    "sdo": "Occidental Mindoro",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Pag-Asa Central School",
+    "lat": 12.344269704539265,
+    "lng": 121.06541388190172,
+    "sdo": "Occidental Mindoro",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Abongan Elementary School",
+    "lat": 10.679211372727137,
+    "lng": 119.4527398193332,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Decalachao Elementary School",
+    "lat": 12.153048383610885,
+    "lng": 120.08335879340484,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Manamoc Elementary School",
+    "lat": 11.3072204189701,
+    "lng": 120.67289169740494,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Palawan ES",
+    "lat": 16.269065474315823,
+    "lng": 120.648100766536,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Narra Pilot School",
+    "lat": 9.271036355080644,
+    "lng": 118.40326689149326,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Cuyo Central School",
+    "lat": 10.855913631305787,
+    "lng": 121.00906670686803,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Narra-Narra Elementary School",
+    "lat": 8.646855884010217,
+    "lng": 117.48526901332772,
+    "sdo": "Palawan",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Alianza Elementary School",
+    "lat": 10.473160831862423,
+    "lng": 122.92987415439626,
+    "sdo": "Bago City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "J.L. Araneta Elementary School",
+    "lat": 10.586286567297687,
+    "lng": 122.90837434998197,
+    "sdo": "Bago City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "M. L. Araneta Elementary School",
+    "lat": 10.536938020872794,
+    "lng": 122.8887309933681,
+    "sdo": "Bago City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Ma-Ao Elementary School",
+    "lat": 10.489613456798354,
+    "lng": 122.98906693262835,
+    "sdo": "Bago City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Sagasa Elementary School",
+    "lat": 10.468768109577358,
+    "lng": 122.893292237479,
+    "sdo": "Bago City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Buenavista Central School",
+    "lat": 10.698612247105974,
+    "lng": 122.6476761222072,
+    "sdo": "Guimaras",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Constancia Elementary School",
+    "lat": 10.65002154993128,
+    "lng": 122.7175000956397,
+    "sdo": "Guimaras",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Do\u00f1a Lucia C.Locsin Memorial School",
+    "lat": 10.590142732990127,
+    "lng": 122.69828122942246,
+    "sdo": "Guimaras",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Jordan Central School School",
+    "lat": 10.655836989864872,
+    "lng": 122.59204280327633,
+    "sdo": "Guimaras",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Old Poblacion Elementary School",
+    "lat": 10.684985632275101,
+    "lng": 122.62404563037798,
+    "sdo": "Guimaras",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Salvacion Central School",
+    "lat": 10.444275518148318,
+    "lng": 122.53285358106658,
+    "sdo": "Guimaras",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Pavia Pilot Elementary School",
+    "lat": 10.778143308066799,
+    "lng": 122.5394234203594,
+    "sdo": "Iloilo",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Cabatuan Central Elementary School",
+    "lat": 10.878805013503877,
+    "lng": 122.48570190501906,
+    "sdo": "Iloilo",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Tigbauan Central Elementary School",
+    "lat": 10.673255092018948,
+    "lng": 122.37486449337099,
+    "sdo": "Iloilo",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Iloilo Elementary School",
+    "lat": 10.700962491384663,
+    "lng": 122.56533308309976,
+    "sdo": "Iloilo",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Barotac Nuevo Central Elementary School",
+    "lat": 10.891075516368293,
+    "lng": 122.70588353570442,
+    "sdo": "Iloilo",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Santa Barbara Central Elementary School",
+    "lat": 10.823283655203264,
+    "lng": 122.53118127803165,
+    "sdo": "Iloilo",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Delegate Angel Salazar Jr. Memorial School",
+    "lat": 10.743589372461985,
+    "lng": 121.94296636638639,
+    "sdo": "Antique",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Atabay Elementary School",
+    "lat": 10.529613168476274,
+    "lng": 121.94861106562198,
+    "sdo": "Antique",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Hamtic Central School",
+    "lat": 10.7014679472026,
+    "lng": 121.97910373570029,
+    "sdo": "Antique",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Tabao Elementary School",
+    "lat": 10.445054790054666,
+    "lng": 122.82625587172703,
+    "sdo": "Negros Occidental",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Smile Village Elem. School",
+    "lat": 10.620419250459028,
+    "lng": 123.0643736889681,
+    "sdo": "Negros Occidental",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Pulupandan Elem. School",
+    "lat": 10.521004853900342,
+    "lng": 122.80035016534444,
+    "sdo": "Negros Occidental",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "San Enrique Elementary School",
+    "lat": 10.626892965379605,
+    "lng": 122.68225181923765,
+    "sdo": "Negros Occidental",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Aurora Rps",
+    "lat": 7.9473315769133785,
+    "lng": 123.58521630057501,
+    "sdo": "Zamboanga Del Sur",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Blancia Central ES",
+    "lat": 8.083333803951088,
+    "lng": 123.48333168927277,
+    "sdo": "Zamboanga Del Sur",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Midsalip Central ES",
+    "lat": 8.03193477992208,
+    "lng": 123.31743440297232,
+    "sdo": "Zamboanga Del Sur",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Ramon Magsaysay Central ES",
+    "lat": 8.009400130650677,
+    "lng": 123.48501001279126,
+    "sdo": "Zamboanga Del Sur",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Tigbao Central ES",
+    "lat": 7.820282611820155,
+    "lng": 123.22619542215341,
+    "sdo": "Zamboanga Del Sur",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Catalina Vda De Jalon Memorial School",
+    "lat": 6.936176815763888,
+    "lng": 122.07947000962456,
+    "sdo": "Zamboanga City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Putik Central School Sped Center",
+    "lat": 6.938121700444297,
+    "lng": 122.09336663115506,
+    "sdo": "Zamboanga City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "San Jose Gusu Elementary School",
+    "lat": 6.920042834272447,
+    "lng": 122.05259852029046,
+    "sdo": "Zamboanga City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Labuan Central School",
+    "lat": 7.089961452077506,
+    "lng": 121.9023230886566,
+    "sdo": "Zamboanga City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Zambowood Elementary School",
+    "lat": 6.941588960154608,
+    "lng": 122.13262567693359,
+    "sdo": "Zamboanga City",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Katipunan Central School",
+    "lat": 8.511406940980555,
+    "lng": 123.28158839332906,
+    "sdo": "Zamboanga Del Norte",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Labason Central School",
+    "lat": 8.066392028083728,
+    "lng": 122.52445796448609,
+    "sdo": "Zamboanga Del Norte",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Pinan Central Elementary School",
+    "lat": 8.48004346080969,
+    "lng": 123.4481361491504,
+    "sdo": "Zamboanga Del Norte",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Salug Central School And Sped Center__",
+    "lat": 8.109801287811491,
+    "lng": 122.75739405101558,
+    "sdo": "Zamboanga Del Norte",
+    "implementationTypes": [],
+    "multipleRounds": false
+  },
+  {
+    "name": "Sindangan Pilot Demonstration School",
+    "lat": 8.234681664674602,
+    "lng": 122.999751277982,
+    "sdo": "Zamboanga Del Norte",
+    "implementationTypes": [],
+    "multipleRounds": false
+  }
+]
