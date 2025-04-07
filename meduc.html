@@ -491,7 +491,6 @@
 
 // This is the JavaScript section that needs to be completed
 // Make sure this replaces the JavaScript section in your original file
-
 // Initialize the map centered on the Philippines
 const map = L.map('map', {
     center: [12.8797, 121.7740], // Center of Philippines
@@ -505,77 +504,97 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+// Custom cluster icon factory function
+function createCustomClusterIcon(color) {
+    return function(cluster) {
+        const count = cluster.getChildCount();
+        
+        // Create circular marker with improved styling
+        return L.divIcon({
+            html: `<div class="custom-cluster-icon" style="background-color: ${color}">
+                    <span>${count}</span>
+                  </div>`,
+            className: 'custom-cluster',
+            iconSize: L.point(40, 40)
+        });
+    };
+}
+
+// Add the custom cluster styling to CSS
+const styleElement = document.createElement('style');
+styleElement.textContent = `
+    .custom-cluster-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 0 0 4px white, 0 0 0 5px rgba(0,0,0,0.2);
+        font-size: 16px;
+    }
+    
+    /* Enhanced marker styling for multi-round schools */
+    .multi-implementation-marker {
+        position: relative;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px white, 0 0 0 3px rgba(0,0,0,0.2);
+    }
+    
+    .implementation-slice {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        clip-path: polygon(50% 50%, 100% 0, 100% 100%);
+        transform-origin: center;
+    }
+    
+    .slice-2 { transform: rotate(90deg); }
+    .slice-3 { transform: rotate(180deg); }
+    .slice-4 { transform: rotate(270deg); }
+    
+    .marker-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 12px;
+    }
+`;
+document.head.appendChild(styleElement);
+
 // Create marker cluster groups for each implementation type
 const markerGroups = {
-    'Pilot - IPA Arm': L.markerClusterGroup({
-        disableClusteringAtZoom: 15,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        iconCreateFunction: function(cluster) {
-            return L.divIcon({
-                html: `<div style="background-color: var(--pilot-ipa-color)" class="marker-cluster-small">
-                        <span>${cluster.getChildCount()}</span>
-                      </div>`,
-                className: 'custom-cluster',
-                iconSize: L.point(40, 40)
-            });
-        }
-    }),
-    'Pilot - DepEd Arm': L.markerClusterGroup({
-        disableClusteringAtZoom: 15,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        iconCreateFunction: function(cluster) {
-            return L.divIcon({
-                html: `<div style="background-color: var(--pilot-deped-color)" class="marker-cluster-small">
-                        <span>${cluster.getChildCount()}</span>
-                      </div>`,
-                className: 'custom-cluster',
-                iconSize: L.point(40, 40)
-            });
-        }
-    }),
     'Scale-Up Round 1': L.markerClusterGroup({
         disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
-        iconCreateFunction: function(cluster) {
-            return L.divIcon({
-                html: `<div style="background-color: var(--scaleup1-color)" class="marker-cluster-small">
-                        <span>${cluster.getChildCount()}</span>
-                      </div>`,
-                className: 'custom-cluster',
-                iconSize: L.point(40, 40)
-            });
-        }
+        iconCreateFunction: createCustomClusterIcon('var(--scaleup1-color)')
     }),
     'Scale-Up Round 2': L.markerClusterGroup({
         disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
-        iconCreateFunction: function(cluster) {
-            return L.divIcon({
-                html: `<div style="background-color: var(--scaleup2-color)" class="marker-cluster-small">
-                        <span>${cluster.getChildCount()}</span>
-                      </div>`,
-                className: 'custom-cluster',
-                iconSize: L.point(40, 40)
-            });
-        }
+        iconCreateFunction: createCustomClusterIcon('var(--scaleup2-color)')
     }),
     'Multiple Rounds': L.markerClusterGroup({
         disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
-        iconCreateFunction: function(cluster) {
-            return L.divIcon({
-                html: `<div style="background-color: var(--multi-round-color)" class="marker-cluster-small">
-                        <span>${cluster.getChildCount()}</span>
-                      </div>`,
-                className: 'custom-cluster',
-                iconSize: L.point(40, 40)
-            });
-        }
+        iconCreateFunction: createCustomClusterIcon('#555') // Neutral color for multi-rounds
     })
 };
 
@@ -586,51 +605,83 @@ Object.values(markerGroups).forEach(group => map.addLayer(group));
 function createMarker(school) {
     let markerColor;
     let markerGroup;
+    let icon;
     
-    if (school.multipleRounds) {
-        markerColor = 'var(--multi-round-color)'; // Red for multiple rounds
-        markerGroup = markerGroups['Multiple Rounds'];
-    } else if (school.implementationTypes.includes('Pilot - IPA Arm')) {
-        markerColor = 'var(--pilot-ipa-color)'; // Blue for Pilot IPA
-        markerGroup = markerGroups['Pilot - IPA Arm'];
-    } else if (school.implementationTypes.includes('Pilot - DepEd Arm')) {
-        markerColor = 'var(--pilot-deped-color)'; // Green for Pilot DepEd
-        markerGroup = markerGroups['Pilot - DepEd Arm'];
-    } else if (school.implementationTypes.includes('Scale-Up Round 1')) {
-        markerColor = 'var(--scaleup1-color)'; // Orange for Scale-Up 1
-        markerGroup = markerGroups['Scale-Up Round 1'];
-    } else if (school.implementationTypes.includes('Scale-Up Round 2')) {
-        markerColor = 'var(--scaleup2-color)'; // Purple for Scale-Up 2
-        markerGroup = markerGroups['Scale-Up Round 2'];
+    // Implementation types for colorization
+    const implementationColors = {
+        'Pilot - IPA Arm': 'var(--pilot-ipa-color)',
+        'Pilot - DepEd Arm': 'var(--pilot-deped-color)',
+        'Scale-Up Round 1': 'var(--scaleup1-color)',
+        'Scale-Up Round 2': 'var(--scaleup2-color)'
+    };
+    
+    // Skip schools with no implementation types
+    if (!school.implementationTypes || school.implementationTypes.length === 0) {
+        return null;
     }
     
-    // Create a custom div icon
-    const icon = L.divIcon({
-        className: 'custom-div-icon',
-        html: `<div style="background: ${markerColor}" class="marker-pin"><div class="marker-text"><i class="fas fa-school"></i></div></div>`,
-        iconSize: [30, 42],
-        iconAnchor: [15, 42],
-        popupAnchor: [0, -35]
-    });
+    if (school.multipleRounds) {
+        // For multiple rounds, create a pie chart style marker
+        markerGroup = markerGroups['Multiple Rounds'];
+        
+        // Create HTML for the pie chart marker
+        let slicesHTML = '';
+        const count = school.implementationTypes.length;
+        
+        school.implementationTypes.forEach((type, index) => {
+            slicesHTML += `<div class="implementation-slice slice-${index+1}" 
+                               style="background-color: ${implementationColors[type]}; 
+                               transform: rotate(${index * (360/count)}deg);"></div>`;
+        });
+        
+        // Create the icon with pie chart slices
+        icon = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div class="multi-implementation-marker">
+                    ${slicesHTML}
+                    <div class="marker-center"><i class="fas fa-school"></i></div>
+                   </div>`,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -18]
+        });
+    } else {
+        // Single implementation type - simpler marker
+        if (school.implementationTypes.includes('Scale-Up Round 1')) {
+            markerColor = implementationColors['Scale-Up Round 1']; 
+            markerGroup = markerGroups['Scale-Up Round 1'];
+        } else if (school.implementationTypes.includes('Scale-Up Round 2')) {
+            markerColor = implementationColors['Scale-Up Round 2'];
+            markerGroup = markerGroups['Scale-Up Round 2'];
+        }
+        
+        // Create a standard marker pin
+        icon = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div style="background: ${markerColor}" class="marker-pin">
+                    <div class="marker-text"><i class="fas fa-school"></i></div>
+                   </div>`,
+            iconSize: [30, 42],
+            iconAnchor: [15, 42],
+            popupAnchor: [0, -35]
+        });
+    }
     
-    // Create marker with the custom icon
+    // Create marker with the appropriate icon
     const marker = L.marker([school.lat, school.lng], { icon: icon, school: school });
     
     // Create popup content with implementation tags
     let implementationTags = '';
     
-    if (school.implementationTypes.includes('Pilot - IPA Arm')) {
-        implementationTags += `<span class="implementation-tag tag-pilot-ipa">Pilot - IPA Arm</span>`;
-    }
-    if (school.implementationTypes.includes('Pilot - DepEd Arm')) {
-        implementationTags += `<span class="implementation-tag tag-pilot-deped">Pilot - DepEd Arm</span>`;
-    }
-    if (school.implementationTypes.includes('Scale-Up Round 1')) {
-        implementationTags += `<span class="implementation-tag tag-scaleup1">Scale-Up Round 1</span>`;
-    }
-    if (school.implementationTypes.includes('Scale-Up Round 2')) {
-        implementationTags += `<span class="implementation-tag tag-scaleup2">Scale-Up Round 2</span>`;
-    }
+    school.implementationTypes.forEach(type => {
+        let tagClass = '';
+        if (type === 'Pilot - IPA Arm') tagClass = 'tag-pilot-ipa';
+        else if (type === 'Pilot - DepEd Arm') tagClass = 'tag-pilot-deped';
+        else if (type === 'Scale-Up Round 1') tagClass = 'tag-scaleup1';
+        else if (type === 'Scale-Up Round 2') tagClass = 'tag-scaleup2';
+        
+        implementationTags += `<span class="implementation-tag ${tagClass}">${type}</span>`;
+    });
     
     const popupContent = `
         <div class="custom-popup">
@@ -661,10 +712,11 @@ let sdoList = new Set();
 // Function to update statistics
 function updateStats() {
     document.getElementById('stat-total').textContent = allSchools.length;
-    document.getElementById('stat-pilot-ipa').textContent = allSchools.filter(s => s.implementationTypes.includes('Pilot - IPA Arm')).length;
-    document.getElementById('stat-pilot-deped').textContent = allSchools.filter(s => s.implementationTypes.includes('Pilot - DepEd Arm')).length;
-    document.getElementById('stat-scaleup1').textContent = allSchools.filter(s => s.implementationTypes.includes('Scale-Up Round 1')).length;
-    document.getElementById('stat-scaleup2').textContent = allSchools.filter(s => s.implementationTypes.includes('Scale-Up Round 2')).length;
+    // Update to match your implementationTypes
+    document.getElementById('stat-pilot-ipa').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Pilot - IPA Arm')).length;
+    document.getElementById('stat-pilot-deped').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Pilot - DepEd Arm')).length;
+    document.getElementById('stat-scaleup1').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Scale-Up Round 1')).length;
+    document.getElementById('stat-scaleup2').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Scale-Up Round 2')).length;
     document.getElementById('stat-multi').textContent = allSchools.filter(s => s.multipleRounds).length;
 }
 
@@ -683,7 +735,13 @@ function applyFilters() {
     
     // Filter schools
     allSchools.forEach(school => {
+        // Skip schools with no implementation types
+        if (!school.implementationTypes || school.implementationTypes.length === 0) {
+            return;
+        }
+        
         const marker = schoolMarkers[school.name];
+        if (!marker) return;
         
         // Check implementation type filters
         let showByImplementation = false;
@@ -704,10 +762,6 @@ function applyFilters() {
             // Add to appropriate group
             if (school.multipleRounds) {
                 markerGroups['Multiple Rounds'].addLayer(marker);
-            } else if (school.implementationTypes.includes('Pilot - IPA Arm')) {
-                markerGroups['Pilot - IPA Arm'].addLayer(marker);
-            } else if (school.implementationTypes.includes('Pilot - DepEd Arm')) {
-                markerGroups['Pilot - DepEd Arm'].addLayer(marker);
             } else if (school.implementationTypes.includes('Scale-Up Round 1')) {
                 markerGroups['Scale-Up Round 1'].addLayer(marker);
             } else if (school.implementationTypes.includes('Scale-Up Round 2')) {
@@ -726,7 +780,7 @@ function searchSchools() {
     // Find matching schools
     const matches = allSchools.filter(school => 
         school.name.toLowerCase().includes(searchTerm) || 
-        school.sdo.toLowerCase().includes(searchTerm)
+        (school.sdo && school.sdo.toLowerCase().includes(searchTerm))
     );
     
     if (matches.length > 0) {
@@ -736,123 +790,56 @@ function searchSchools() {
         
         // Open the popup for the first match
         const marker = schoolMarkers[school.name];
-        marker.openPopup();
+        if (marker) {
+            marker.openPopup();
+        }
     } else {
         alert('No schools found matching your search.');
     }
 }
 
-// Function to process raw school data
-function processSchoolData(data) {
-    return data.map(school => {
-        // Create return value
-        return {
-            name: school.name,
-            lat: school.lat,
-            lng: school.lng,
-            sdo: school.sdo,
-            implementationTypes: school.implementationTypes,
-            multipleRounds: school.multipleRounds
-        };
-    }).filter(school => school.lat && school.lng); // Filter out schools without coordinates
+// Update the sidebar label for multiple rounds
+const multiLabel = document.querySelector('label[for="filter-multi"]');
+if (multiLabel) {
+    multiLabel.innerHTML = `
+        <input type="checkbox" id="filter-multi" checked>
+        <span style="position: relative; width: 20px; height: 20px; display: inline-block; vertical-align: middle;">
+            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--scaleup1-color); clip-path: polygon(50% 50%, 100% 0, 0 0);"></span>
+            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--scaleup2-color); clip-path: polygon(50% 50%, 0 0, 0 100);"></span>
+        </span>
+        Multiple Rounds
+    `;
 }
 
-// Sample data generation (for testing only)
-// This will be replaced by your actual JSON data
-function generateSampleData() {
-    // Generate sample school data for demonstration
-    const sampleData = [
-        {
-            name: "Jagupit Elementary School",
-            lat: 9.266148034546173,
-            lng: 125.55939506079605,
-            sdo: "Agusan Del Norte",
-            implementationTypes: ["Scale-Up Round 1", "Scale-Up Round 2"],
-            multipleRounds: true
-        },
-        {
-            name: "Kauswagan De Oro Elementary School",
-            lat: 9.26642846741029,
-            lng: 125.55925192234524,
-            sdo: "Agusan Del Norte",
-            implementationTypes: ["Scale-Up Round 1", "Scale-Up Round 2"],
-            multipleRounds: true
-        },
-        {
-            name: "La Paz Elementary School",
-            lat: 9.267331421373015,
-            lng: 125.55919677446336,
-            sdo: "Agusan Del Norte",
-            implementationTypes: ["Scale-Up Round 2"],
-            multipleRounds: false
-        },
-        // Add more sample data for better visualization
-        {
-            name: "Marikina Elementary School",
-            lat: 14.6258,
-            lng: 121.0956,
-            sdo: "Marikina",
-            implementationTypes: ["Pilot - IPA Arm"],
-            multipleRounds: false
-        },
-        {
-            name: "Quezon City Elementary School",
-            lat: 14.6342,
-            lng: 121.0959,
-            sdo: "Quezon City",
-            implementationTypes: ["Pilot - DepEd Arm"],
-            multipleRounds: false
-        },
-        {
-            name: "Cebu City Elementary School",
-            lat: 10.2928,
-            lng: 123.9017,
-            sdo: "Cebu",
-            implementationTypes: ["Scale-Up Round 1"],
-            multipleRounds: false
-        },
-        {
-            name: "Davao City Elementary School",
-            lat: 7.1907,
-            lng: 125.4553,
-            sdo: "Davao",
-            implementationTypes: ["Pilot - IPA Arm", "Scale-Up Round 1"],
-            multipleRounds: true
-        }
-    ];
-    
-    return sampleData;
+// Update the legend to explain the pie chart visualization
+const legendInfo = document.querySelector('.tooltiptext');
+if (legendInfo) {
+    legendInfo.innerHTML = `
+        <strong>Map Controls:</strong><br>
+        - Use the checkboxes to filter schools by implementation type<br>
+        - Search for schools by name<br>
+        - Click markers to see details<br>
+        - Clusters will expand when clicked or zoomed<br>
+        - Multi-round schools are shown as pie charts with colors matching each implementation type
+    `;
 }
 
-// Load the school data
-// Comment out one of these approaches depending on whether you're using JSON or hardcoded data
-
-// OPTION 1: Load from external JSON file
-
-fetch('schools.json')
-    .then(response => response.json())
-    .then(data => {
-        initializeMap(data);
-    })
-    .catch(error => {
-        console.error("Error loading schools data:", error);
-        // Fall back to sample data if JSON load fails
-        initializeMap(generateSampleData());
-    });
-
-
-// OPTION 2: Use sample data directly (for testing)
-// initializeMap(generateSampleData());
-
-// Initialize the map with school data
+// Initialize the map with the data
 function initializeMap(schoolsData) {
-    // Process the data
-    allSchools = processSchoolData(schoolsData);
+    // Store all schools
+    allSchools = schoolsData;
     
-    // Create markers for all schools
+    // Create markers for schools with implementation types
     allSchools.forEach(school => {
+        // Skip schools with no implementation types
+        if (!school.implementationTypes || school.implementationTypes.length === 0) {
+            return;
+        }
+        
         const marker = createMarker(school);
-        schoolMarkers[school.name] = marker;
+        if (marker) {
+            schoolMarkers[school.name] = marker;
+        }
         
         // Collect all SDOs for the filter
         if (school.sdo) {
@@ -862,7 +849,8 @@ function initializeMap(schoolsData) {
     
     // Populate SDO filter
     const sdoFilter = document.getElementById('sdo-filter');
-    sdoList.forEach(sdo => {
+    sdoFilter.innerHTML = '<option value="all">All SDOs</option>';
+    Array.from(sdoList).sort().forEach(sdo => {
         const option = document.createElement('option');
         option.value = sdo;
         option.textContent = sdo;
@@ -874,8 +862,8 @@ function initializeMap(schoolsData) {
     
     // Create bounds to fit all markers
     const bounds = L.latLngBounds();
-    allSchools.forEach(school => {
-        bounds.extend([school.lat, school.lng]);
+    Object.values(schoolMarkers).forEach(marker => {
+        bounds.extend(marker.getLatLng());
     });
     
     // Fit map to show all schools
@@ -915,8 +903,8 @@ document.getElementById('reset-filters').addEventListener('click', function() {
 
 document.getElementById('fit-all').addEventListener('click', function() {
     const bounds = L.latLngBounds();
-    allSchools.forEach(school => {
-        bounds.extend([school.lat, school.lng]);
+    Object.values(schoolMarkers).forEach(marker => {
+        bounds.extend(marker.getLatLng());
     });
     
     if (bounds.isValid()) {
@@ -974,5 +962,16 @@ document.getElementById('download-map').addEventListener('click', async function
         document.getElementById('loading').style.display = 'none';
     }
 });
+
+// Load the schools.json file
+fetch('schools.json')
+    .then(response => response.json())
+    .then(data => {
+        initializeMap(data);
+    })
+    .catch(error => {
+        console.error("Error loading schools data:", error);
+        alert("Error loading school data. Please check your JSON file.");
+    });
 
     </script>
