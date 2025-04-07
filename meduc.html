@@ -578,6 +578,18 @@ document.head.appendChild(styleElement);
 
 // Create marker cluster groups for each implementation type
 const markerGroups = {
+    'Pilot - IPA Arm': L.markerClusterGroup({
+        disableClusteringAtZoom: 15,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        iconCreateFunction: createCustomClusterIcon('var(--pilot-ipa-color)')
+    }),
+    'Pilot - DepEd Arm': L.markerClusterGroup({
+        disableClusteringAtZoom: 15,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        iconCreateFunction: createCustomClusterIcon('var(--pilot-deped-color)')
+    }),
     'Scale-Up Round 1': L.markerClusterGroup({
         disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom: true,
@@ -615,11 +627,6 @@ function createMarker(school) {
         'Scale-Up Round 2': 'var(--scaleup2-color)'
     };
     
-    // Skip schools with no implementation types
-    if (!school.implementationTypes || school.implementationTypes.length === 0) {
-        return null;
-    }
-    
     if (school.multipleRounds) {
         // For multiple rounds, create a pie chart style marker
         markerGroup = markerGroups['Multiple Rounds'];
@@ -646,14 +653,10 @@ function createMarker(school) {
             popupAnchor: [0, -18]
         });
     } else {
-        // Single implementation type - simpler marker
-        if (school.implementationTypes.includes('Scale-Up Round 1')) {
-            markerColor = implementationColors['Scale-Up Round 1']; 
-            markerGroup = markerGroups['Scale-Up Round 1'];
-        } else if (school.implementationTypes.includes('Scale-Up Round 2')) {
-            markerColor = implementationColors['Scale-Up Round 2'];
-            markerGroup = markerGroups['Scale-Up Round 2'];
-        }
+        // Single implementation type - determine the correct color and group
+        const implementationType = school.implementationTypes[0];
+        markerColor = implementationColors[implementationType];
+        markerGroup = markerGroups[implementationType];
         
         // Create a standard marker pin
         icon = L.divIcon({
@@ -712,11 +715,10 @@ let sdoList = new Set();
 // Function to update statistics
 function updateStats() {
     document.getElementById('stat-total').textContent = allSchools.length;
-    // Update to match your implementationTypes
-    document.getElementById('stat-pilot-ipa').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Pilot - IPA Arm')).length;
-    document.getElementById('stat-pilot-deped').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Pilot - DepEd Arm')).length;
-    document.getElementById('stat-scaleup1').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Scale-Up Round 1')).length;
-    document.getElementById('stat-scaleup2').textContent = allSchools.filter(s => s.implementationTypes && s.implementationTypes.includes('Scale-Up Round 2')).length;
+    document.getElementById('stat-pilot-ipa').textContent = allSchools.filter(s => s.implementationTypes.includes('Pilot - IPA Arm')).length;
+    document.getElementById('stat-pilot-deped').textContent = allSchools.filter(s => s.implementationTypes.includes('Pilot - DepEd Arm')).length;
+    document.getElementById('stat-scaleup1').textContent = allSchools.filter(s => s.implementationTypes.includes('Scale-Up Round 1')).length;
+    document.getElementById('stat-scaleup2').textContent = allSchools.filter(s => s.implementationTypes.includes('Scale-Up Round 2')).length;
     document.getElementById('stat-multi').textContent = allSchools.filter(s => s.multipleRounds).length;
 }
 
@@ -735,13 +737,7 @@ function applyFilters() {
     
     // Filter schools
     allSchools.forEach(school => {
-        // Skip schools with no implementation types
-        if (!school.implementationTypes || school.implementationTypes.length === 0) {
-            return;
-        }
-        
         const marker = schoolMarkers[school.name];
-        if (!marker) return;
         
         // Check implementation type filters
         let showByImplementation = false;
@@ -762,6 +758,10 @@ function applyFilters() {
             // Add to appropriate group
             if (school.multipleRounds) {
                 markerGroups['Multiple Rounds'].addLayer(marker);
+            } else if (school.implementationTypes.includes('Pilot - IPA Arm')) {
+                markerGroups['Pilot - IPA Arm'].addLayer(marker);
+            } else if (school.implementationTypes.includes('Pilot - DepEd Arm')) {
+                markerGroups['Pilot - DepEd Arm'].addLayer(marker);
             } else if (school.implementationTypes.includes('Scale-Up Round 1')) {
                 markerGroups['Scale-Up Round 1'].addLayer(marker);
             } else if (school.implementationTypes.includes('Scale-Up Round 2')) {
@@ -804,8 +804,10 @@ if (multiLabel) {
     multiLabel.innerHTML = `
         <input type="checkbox" id="filter-multi" checked>
         <span style="position: relative; width: 20px; height: 20px; display: inline-block; vertical-align: middle;">
-            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--scaleup1-color); clip-path: polygon(50% 50%, 100% 0, 0 0);"></span>
-            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--scaleup2-color); clip-path: polygon(50% 50%, 0 0, 0 100);"></span>
+            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--pilot-ipa-color); clip-path: polygon(50% 50%, 100% 0, 0 0);"></span>
+            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--pilot-deped-color); clip-path: polygon(50% 50%, 0 0, 0 100);"></span>
+            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--scaleup1-color); clip-path: polygon(50% 50%, 0 100%, 100% 100%);"></span>
+            <span style="position: absolute; width: 100%; height: 100%; background-color: var(--scaleup2-color); clip-path: polygon(50% 50%, 100% 100%, 100% 0);"></span>
         </span>
         Multiple Rounds
     `;
@@ -829,17 +831,10 @@ function initializeMap(schoolsData) {
     // Store all schools
     allSchools = schoolsData;
     
-    // Create markers for schools with implementation types
+    // Create markers for all schools
     allSchools.forEach(school => {
-        // Skip schools with no implementation types
-        if (!school.implementationTypes || school.implementationTypes.length === 0) {
-            return;
-        }
-        
         const marker = createMarker(school);
-        if (marker) {
-            schoolMarkers[school.name] = marker;
-        }
+        schoolMarkers[school.name] = marker;
         
         // Collect all SDOs for the filter
         if (school.sdo) {
