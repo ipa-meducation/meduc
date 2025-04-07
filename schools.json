@@ -361,9 +361,10 @@
     "lng": 121.17733516275209,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - IPA Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Bayanan II Elementary School",
@@ -403,7 +404,9 @@
     "lat": 13.415395225975473,
     "lng": 121.17996514141505,
     "sdo": "Calapan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -423,9 +426,10 @@
     "lng": 121.17764016714708,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - IPA Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Canubing I Elementary School",
@@ -444,9 +448,10 @@
     "lng": 121.11747533623289,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - DepEd Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Guinobatan Elementary School",
@@ -476,9 +481,10 @@
     "lng": 121.19975947380952,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - DepEd Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Managpi Elementary School",
@@ -496,7 +502,9 @@
     "lat": 13.365256875032768,
     "lng": 121.18983896924627,
     "sdo": "Calapan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -516,9 +524,10 @@
     "lng": 121.19562306798154,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - DepEd Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Sta. Isabel Elementary School",
@@ -526,9 +535,10 @@
     "lng": 121.15932134643333,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - IPA Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Sto. Nino Elementary School",
@@ -547,9 +557,10 @@
     "lng": 121.15539840693023,
     "sdo": "Calapan",
     "implementationTypes": [
+      "Pilot - DepEd Arm",
       "Scale-Up Round 2"
     ],
-    "multipleRounds": false
+    "multipleRounds": true
   },
   {
     "name": "Agumaymayan Elementary School",
@@ -663,7 +674,9 @@
     "lat": 13.255404974353597,
     "lng": 121.94312467513733,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -671,7 +684,9 @@
     "lat": 13.52902307357155,
     "lng": 121.86850025424802,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -679,7 +694,9 @@
     "lat": 13.446509527936332,
     "lng": 121.84024621076705,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -687,7 +704,9 @@
     "lat": 13.324273547008191,
     "lng": 121.84790099326146,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -695,7 +714,9 @@
     "lat": 13.473238921876236,
     "lng": 121.8606137932647,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -703,7 +724,9 @@
     "lat": 13.480040443517277,
     "lng": 122.03299245872027,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -711,7 +734,9 @@
     "lat": 13.320914849531167,
     "lng": 122.08884256627256,
     "sdo": "Marinduque",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -928,7 +953,9 @@
     "lat": 13.223625057613967,
     "lng": 120.59484032067154,
     "sdo": "Occidental Mindoro",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -936,7 +963,9 @@
     "lat": 12.333422362675384,
     "lng": 121.07954959340934,
     "sdo": "Occidental Mindoro",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -944,7 +973,9 @@
     "lat": 12.355991669851502,
     "lng": 121.06661847991691,
     "sdo": "Occidental Mindoro",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -952,7 +983,9 @@
     "lat": 12.842838503476338,
     "lng": 120.77571692597306,
     "sdo": "Occidental Mindoro",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -960,7 +993,9 @@
     "lat": 12.344269704539265,
     "lng": 121.06541388190172,
     "sdo": "Occidental Mindoro",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -968,7 +1003,9 @@
     "lat": 10.679211372727137,
     "lng": 119.4527398193332,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -976,7 +1013,9 @@
     "lat": 12.153048383610885,
     "lng": 120.08335879340484,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -984,7 +1023,9 @@
     "lat": 11.3072204189701,
     "lng": 120.67289169740494,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -992,7 +1033,9 @@
     "lat": 16.269065474315823,
     "lng": 120.648100766536,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1000,7 +1043,9 @@
     "lat": 9.271036355080644,
     "lng": 118.40326689149326,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1008,7 +1053,9 @@
     "lat": 10.855913631305787,
     "lng": 121.00906670686803,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1016,7 +1063,9 @@
     "lat": 8.646855884010217,
     "lng": 117.48526901332772,
     "sdo": "Palawan",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1024,7 +1073,9 @@
     "lat": 10.473160831862423,
     "lng": 122.92987415439626,
     "sdo": "Bago City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1032,7 +1083,9 @@
     "lat": 10.586286567297687,
     "lng": 122.90837434998197,
     "sdo": "Bago City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1040,7 +1093,9 @@
     "lat": 10.536938020872794,
     "lng": 122.8887309933681,
     "sdo": "Bago City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1048,7 +1103,9 @@
     "lat": 10.489613456798354,
     "lng": 122.98906693262835,
     "sdo": "Bago City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1056,7 +1113,9 @@
     "lat": 10.468768109577358,
     "lng": 122.893292237479,
     "sdo": "Bago City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1064,7 +1123,9 @@
     "lat": 10.698612247105974,
     "lng": 122.6476761222072,
     "sdo": "Guimaras",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1072,7 +1133,9 @@
     "lat": 10.65002154993128,
     "lng": 122.7175000956397,
     "sdo": "Guimaras",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1080,7 +1143,9 @@
     "lat": 10.590142732990127,
     "lng": 122.69828122942246,
     "sdo": "Guimaras",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1088,7 +1153,9 @@
     "lat": 10.655836989864872,
     "lng": 122.59204280327633,
     "sdo": "Guimaras",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1096,7 +1163,9 @@
     "lat": 10.684985632275101,
     "lng": 122.62404563037798,
     "sdo": "Guimaras",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1104,7 +1173,9 @@
     "lat": 10.444275518148318,
     "lng": 122.53285358106658,
     "sdo": "Guimaras",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1112,7 +1183,9 @@
     "lat": 10.778143308066799,
     "lng": 122.5394234203594,
     "sdo": "Iloilo",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1120,7 +1193,9 @@
     "lat": 10.878805013503877,
     "lng": 122.48570190501906,
     "sdo": "Iloilo",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1128,7 +1203,9 @@
     "lat": 10.673255092018948,
     "lng": 122.37486449337099,
     "sdo": "Iloilo",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1136,7 +1213,9 @@
     "lat": 10.700962491384663,
     "lng": 122.56533308309976,
     "sdo": "Iloilo",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1144,7 +1223,9 @@
     "lat": 10.891075516368293,
     "lng": 122.70588353570442,
     "sdo": "Iloilo",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1152,7 +1233,9 @@
     "lat": 10.823283655203264,
     "lng": 122.53118127803165,
     "sdo": "Iloilo",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1160,7 +1243,9 @@
     "lat": 10.743589372461985,
     "lng": 121.94296636638639,
     "sdo": "Antique",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1168,7 +1253,9 @@
     "lat": 10.529613168476274,
     "lng": 121.94861106562198,
     "sdo": "Antique",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1176,7 +1263,9 @@
     "lat": 10.7014679472026,
     "lng": 121.97910373570029,
     "sdo": "Antique",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1184,7 +1273,9 @@
     "lat": 10.445054790054666,
     "lng": 122.82625587172703,
     "sdo": "Negros Occidental",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1192,7 +1283,9 @@
     "lat": 10.620419250459028,
     "lng": 123.0643736889681,
     "sdo": "Negros Occidental",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1200,7 +1293,9 @@
     "lat": 10.521004853900342,
     "lng": 122.80035016534444,
     "sdo": "Negros Occidental",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1208,7 +1303,9 @@
     "lat": 10.626892965379605,
     "lng": 122.68225181923765,
     "sdo": "Negros Occidental",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1216,7 +1313,9 @@
     "lat": 7.9473315769133785,
     "lng": 123.58521630057501,
     "sdo": "Zamboanga Del Sur",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1224,7 +1323,9 @@
     "lat": 8.083333803951088,
     "lng": 123.48333168927277,
     "sdo": "Zamboanga Del Sur",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1232,7 +1333,9 @@
     "lat": 8.03193477992208,
     "lng": 123.31743440297232,
     "sdo": "Zamboanga Del Sur",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1240,7 +1343,9 @@
     "lat": 8.009400130650677,
     "lng": 123.48501001279126,
     "sdo": "Zamboanga Del Sur",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1248,7 +1353,9 @@
     "lat": 7.820282611820155,
     "lng": 123.22619542215341,
     "sdo": "Zamboanga Del Sur",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - DepEd Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1256,7 +1363,9 @@
     "lat": 6.936176815763888,
     "lng": 122.07947000962456,
     "sdo": "Zamboanga City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1264,7 +1373,9 @@
     "lat": 6.938121700444297,
     "lng": 122.09336663115506,
     "sdo": "Zamboanga City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1272,7 +1383,9 @@
     "lat": 6.920042834272447,
     "lng": 122.05259852029046,
     "sdo": "Zamboanga City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1280,7 +1393,9 @@
     "lat": 7.089961452077506,
     "lng": 121.9023230886566,
     "sdo": "Zamboanga City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1288,7 +1403,9 @@
     "lat": 6.941588960154608,
     "lng": 122.13262567693359,
     "sdo": "Zamboanga City",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1296,7 +1413,9 @@
     "lat": 8.511406940980555,
     "lng": 123.28158839332906,
     "sdo": "Zamboanga Del Norte",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1304,7 +1423,9 @@
     "lat": 8.066392028083728,
     "lng": 122.52445796448609,
     "sdo": "Zamboanga Del Norte",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1312,7 +1433,9 @@
     "lat": 8.48004346080969,
     "lng": 123.4481361491504,
     "sdo": "Zamboanga Del Norte",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1320,7 +1443,9 @@
     "lat": 8.109801287811491,
     "lng": 122.75739405101558,
     "sdo": "Zamboanga Del Norte",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   },
   {
@@ -1328,7 +1453,9 @@
     "lat": 8.234681664674602,
     "lng": 122.999751277982,
     "sdo": "Zamboanga Del Norte",
-    "implementationTypes": [],
+    "implementationTypes": [
+      "Pilot - IPA Arm"
+    ],
     "multipleRounds": false
   }
 ]
