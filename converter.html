@@ -383,11 +383,18 @@
                 gap: 20px;
             }
 
-            .back-btn {
+            .header-buttons {
                 position: static;
                 transform: none;
+                justify-content: center;
                 margin-top: 15px;
-                align-self: center;
+                flex-wrap: wrap;
+            }
+
+            .back-btn, .docs-btn {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
             }
 
             h1 {
@@ -409,10 +416,16 @@
         <header>
             <h1><i class="fas fa-exchange-alt"></i> Map File Converter</h1>
             <p class="subtitle">Convert Excel files to schools.json format for the Implementation Map</p>
-            <a href="home.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                Back to Hub
-            </a>
+            <div class="header-buttons">
+                <a href="home.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Hub
+                </a>
+                <a href="add-rounds-guide.html" class="docs-btn">
+                    <i class="fas fa-book"></i>
+                    How to Add Rounds
+                </a>
+            </div>
         </header>
 
         <div class="main-content">
@@ -651,6 +664,66 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
             convertBtn.disabled = false;
         }
 
+        // Load configuration first
+        let roundsConfig = null;
+        
+        async function loadRoundsConfig() {
+            try {
+                const response = await fetch('rounds-config.json');
+                if (response.ok) {
+                    roundsConfig = await response.json();
+                    console.log('Loaded rounds configuration:', roundsConfig);
+                    updateInstructionsWithConfig();
+                } else {
+                    console.warn('rounds-config.json not found, using default configuration');
+                }
+            } catch (error) {
+                console.warn('Error loading rounds config:', error);
+            }
+        }
+
+        // Update instructions based on loaded config
+        function updateInstructionsWithConfig() {
+            if (!roundsConfig) return;
+            
+            // Update the format table
+            const tbody = document.querySelector('.format-table tbody');
+            if (tbody && roundsConfig.implementationRounds) {
+                // Keep the first 3 rows (School Name, SDO, Coordinates)
+                const baseRows = Array.from(tbody.children).slice(0, 3);
+                tbody.innerHTML = '';
+                
+                // Add back base rows
+                baseRows.forEach(row => tbody.appendChild(row));
+                
+                // Add dynamic round rows
+                roundsConfig.implementationRounds.forEach(round => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${round.name}</strong></td>
+                        <td>Participation status</td>
+                        <td>Yes / No</td>
+                        <td>No</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            // Update example data
+            const example = document.querySelector('.format-example');
+            if (example && roundsConfig.implementationRounds) {
+                const headers = ['School Name', 'SDO', 'Coordinates', ...roundsConfig.implementationRounds.map(r => r.name)];
+                const exampleData = `${headers.join(' | ')}
+Bagong Barrio ES | Caloocan City | 14.6507,120.9634 | Yes | No | No | No
+Malinta ES | Valenzuela City | 14.6553,120.9467 | No | Yes | Yes | No
+Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
+                example.textContent = exampleData;
+            }
+        }
+
+        // Load configuration on page load
+        loadRoundsConfig();
+
         // Convert button handler
         convertBtn.addEventListener('click', () => {
             if (!currentFile) return;
@@ -753,13 +826,29 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
                 throw new Error('Required columns not found. Please ensure your Excel file has "School Name", "SDO", and "Coordinates" columns.');
             }
 
-            // Find implementation columns
-            const implementationColumns = {
-                'Pilot - IPA Arm': findColumnIndex(headers, ['pilot - ipa arm', 'pilot ipa', 'ipa arm']),
-                'Pilot - DepEd Arm': findColumnIndex(headers, ['pilot - deped arm', 'pilot deped', 'deped arm']),
-                'Scale-Up Round 1': findColumnIndex(headers, ['scale-up round 1', 'scaleup round 1', 'scale up round 1', 'round 1']),
-                'Scale-Up Round 2': findColumnIndex(headers, ['scale-up round 2', 'scaleup round 2', 'scale up round 2', 'round 2'])
-            };
+            // Find implementation columns - use config if available, otherwise fallback
+            const implementationColumns = {};
+            
+            if (roundsConfig && roundsConfig.implementationRounds) {
+                // Use configuration to find columns
+                roundsConfig.implementationRounds.forEach(round => {
+                    const possibleNames = [
+                        round.name.toLowerCase(),
+                        round.name.toLowerCase().replace(/\s+/g, ''),
+                        round.name.toLowerCase().replace(/\s*-\s*/g, ' '),
+                        round.id
+                    ];
+                    implementationColumns[round.name] = findColumnIndex(headers, possibleNames);
+                });
+            } else {
+                // Fallback to default columns
+                implementationColumns = {
+                    'Pilot - IPA Arm': findColumnIndex(headers, ['pilot - ipa arm', 'pilot ipa', 'ipa arm']),
+                    'Pilot - DepEd Arm': findColumnIndex(headers, ['pilot - deped arm', 'pilot deped', 'deped arm']),
+                    'Scale-Up Round 1': findColumnIndex(headers, ['scale-up round 1', 'scaleup round 1', 'scale up round 1', 'round 1']),
+                    'Scale-Up Round 2': findColumnIndex(headers, ['scale-up round 2', 'scaleup round 2', 'scale up round 2', 'round 2'])
+                };
+            }
 
             const schools = [];
 
