@@ -1,0 +1,38 @@
+{
+  "implementationRounds": [
+    {https://github.com/maxinetong/meduc/tree/main
+      "id": "pilot-ipa",
+      "name": "Pilot - IPA Arm",
+      "color": "#84d0d4",
+      "description": "Initial pilot implementation with IPA partnership"
+    },
+    {
+      "id": "pilot-deped",
+      "name": "Pilot - DepEd Arm", 
+      "color": "#49ac57",
+      "description": "Initial pilot implementation with DepEd partnership"
+    },
+    {
+      "id": "scaleup1",
+      "name": "Scale-Up Round 1",
+      "color": "#f26529", 
+      "description": "First scale-up implementation phase"
+    },
+    {
+      "id": "scaleup2",
+      "name": "Scale-Up Round 2",
+      "color": "#2b4085",
+      "description": "Second scale-up implementation phase"
+    }
+  ],
+  "multipleRoundsConfig": {
+    "color": "#155240",
+    "name": "Multiple Rounds",
+    "description": "Schools that participated in multiple implementation rounds"
+  },
+  "mapSettings": {
+    "defaultCenter": [12.8797, 121.7740],
+    "defaultZoom": 6,
+    "clusterZoom": 15
+  }
+}
