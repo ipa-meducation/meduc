@@ -223,12 +223,13 @@
                 <div class="feature-description">AI-powered assistant to help diagnose and resolve technical issues </div>
             </div>
             
-            <div class="feature-card implementation" onclick="navigateToFeature('implementation')">
-                <div class="status-badge coming-soon">Coming Soon</div>
+           <div class="feature-card implementation" onclick="navigateToFeature('implementation')">
                 <div class="feature-icon">🗺️</div>
                 <div class="feature-title">Implementation Map</div>
-                <div class="feature-description"> Implementation map for previous rounds </div>
-            </div>
+                <div class="feature-description">Interactive map showing school implementations across different rounds and programs</div>
+        </div>
+
+            
             
             <div class="feature-card converter" onclick="navigateToFeature('converter')">
                 <div class="status-badge coming-soon">Coming Soon</div>
@@ -262,15 +263,22 @@
                 'cases': 'Cases Maker',
                 'repository': 'Repository'
             };
-            
-            // For now, just show an alert since the pages don't exist yet
-            alert(`${featureNames[feature]} feature coming soon! 
-            
-Once you create the individual pages, this will navigate to: ${feature}.html`);
-            
-            // When you create the actual pages, replace the alert with:
-            // window.location.href = `${feature}.html`;
-        }
+
+                // Handle the ones ready to use
+                if (feature === 'implementation') {
+                window.location.href = 'implementation.html';
+                return;
+                  }
+    
+                // For other features still coming soon
+                alert(`${featureNames[feature]} feature coming soon! 
+    
+                Once you create the individual pages, this will navigate to: ${feature}.html`);
+    
+                // When you create the actual pages, replace the alert with:
+                // window.location.href = `${feature}.html`;
+}
+    
 
         // Add some interactive animations
         document.addEventListener('DOMContentLoaded', function() {
