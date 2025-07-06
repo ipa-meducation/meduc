@@ -232,7 +232,6 @@
             
             
             <div class="feature-card converter" onclick="navigateToFeature('converter')">
-                <div class="status-badge coming-soon">Coming Soon</div>
                 <div class="feature-icon">🔄</div>
                 <div class="feature-title">Map File Converter</div>
                 <div class="feature-description">Convert between different map file formats for the implementation map</div>
@@ -267,6 +266,11 @@
                 // Handle the ones ready to use
                 if (feature === 'implementation') {
                 window.location.href = 'implementation.html';
+                return;
+                  }
+
+                if (feature === 'converter') {
+                window.location.href = 'converter.html';
                 return;
                   }
     
