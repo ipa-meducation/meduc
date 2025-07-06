@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map File Converter - mEducation Hub</title>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- SheetJS for Excel processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --primary-green: #49ac57;
+            --dark-green: #155240;
+            --light-blue: #84d0d4;
+            --dark-blue: #2b4085;
+            --orange: #f26529;
+            --light-gray: #f1f2f2;
+            --dark-gray: #414042;
+            --charcoal: #414042;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            min-height: 100vh;
+            color: var(--charcoal);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--dark-green);
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--charcoal);
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-52px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--dark-green);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--light-blue);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            background: rgba(132, 208, 212, 0.05);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-green);
+            background: rgba(73, 172, 87, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-green);
+            background: rgba(73, 172, 87, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--light-blue);
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary-green);
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--charcoal);
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            opacity: 0.7;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-info {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--dark-green);
+            margin-bottom: 5px;
+        }
+
+        .file-details {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .convert-btn {
+            width: 100%;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .convert-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .convert-btn:disabled {
+            background: var(--dark-gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--light-blue));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .result-area {
+            min-height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: var(--dark-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn:disabled {
+            background: var(--dark-gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease forwards;
+            grid-column: 1 / -1;
+        }
+
+        .format-example {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .format-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .format-table th,
+        .format-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .format-table th {
+            background: var(--primary-green);
+            color: white;
+            font-weight: 600;
+        }
+
+        .format-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+        }
+
+        .alert-info {
+            background: rgba(132, 208, 212, 0.1);
+            border-color: var(--light-blue);
+            color: var(--dark-blue);
+        }
+
+        .alert-warning {
+            background: rgba(242, 101, 41, 0.1);
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        .alert-success {
+            background: rgba(73, 172, 87, 0.1);
+            border-color: var(--primary-green);
+            color: var(--dark-green);
+        }
+
+        .error-message {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .back-btn {
+                position: static;
+                transform: none;
+                margin-top: 15px;
+                align-self: center;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .upload-area {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-exchange-alt"></i> Map File Converter</h1>
+            <p class="subtitle">Convert Excel files to schools.json format for the Implementation Map</p>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </header>
+
+        <div class="main-content">
+            <!-- Upload Section -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-upload"></i>
+                    Upload Excel File
+                </h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="upload-text">Drop your Excel file here</div>
+                    <div class="upload-subtext">or click to browse (.xlsx, .xls)</div>
+                </div>
+                
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
+                
+                <div class="file-info" id="fileInfo">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-details" id="fileDetails"></div>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                
+                <button class="convert-btn" id="convertBtn" disabled>
+                    <i class="fas fa-cogs"></i>
+                    Convert to JSON
+                </button>
+                
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-code"></i>
+                    Generated JSON Output
+                </h2>
+                
+                <div class="result-area" id="resultArea">
+                    Upload and convert an Excel file to see the JSON output here...
+                </div>
+                
+                <button class="download-btn" id="downloadBtn" disabled>
+                    <i class="fas fa-download"></i>
+                    Download schools.json
+                </button>
+            </div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="instructions">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                How to Use & File Format Requirements
+            </h2>
+
+            <div class="alert alert-info">
+                <strong><i class="fas fa-lightbulb"></i> Quick Start:</strong>
+                Upload an Excel file with school data, and this tool will convert it to the schools.json format required by the Implementation Map.
+            </div>
+
+            <h3>Required Excel Format</h3>
+            <p>Your Excel file must have the following columns in order:</p>
+            
+            <table class="format-table">
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                        <th>Required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>School Name</strong></td>
+                        <td>Full name of the school</td>
+                        <td>Bagong Barrio Elementary School</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SDO</strong></td>
+                        <td>School Division Office</td>
+                        <td>Caloocan City</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coordinates</strong></td>
+                        <td>Latitude,Longitude format</td>
+                        <td>14.6507,120.9634</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pilot - IPA Arm</strong></td>
+                        <td>Participation status</td>
+                        <td>Yes / No</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pilot - DepEd Arm</strong></td>
+                        <td>Participation status</td>
+                        <td>Yes / No</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Scale-Up Round 1</strong></td>
+                        <td>Participation status</td>
+                        <td>Yes / No</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Scale-Up Round 2</strong></td>
+                        <td>Participation status</td>
+                        <td>Yes / No</td>
+                        <td>No</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Example Excel Data</h3>
+            <div class="format-example">
+School Name | SDO | Coordinates | Pilot - IPA Arm | Pilot - DepEd Arm | Scale-Up Round 1 | Scale-Up Round 2
+Bagong Barrio ES | Caloocan City | 14.6507,120.9634 | Yes | No | No | No
+Malinta ES | Valenzuela City | 14.6553,120.9467 | No | Yes | Yes | No
+Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
+            </div>
+
+            <div class="alert alert-warning">
+                <strong><i class="fas fa-exclamation-triangle"></i> Important Notes:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>Coordinates must be in decimal format (e.g., 14.6507,120.9634)</li>
+                    <li>Implementation columns should contain exactly "Yes" or "No"</li>
+                    <li>The first row should contain column headers</li>
+                    <li>Empty cells in implementation columns will be treated as "No"</li>
+                </ul>
+            </div>
+
+            <h3>Output Format</h3>
+            <p>The tool generates a schools.json file with this structure:</p>
+            <div class="format-example">[
+  {
+    "name": "Bagong Barrio Elementary School",
+    "sdo": "Caloocan City",
+    "lat": 14.6507,
+    "lng": 120.9634,
+    "implementationTypes": ["Pilot - IPA Arm"],
+    "multipleRounds": false
+  }
+]</div>
+
+            <div class="alert alert-success">
+                <strong><i class="fas fa-check-circle"></i> Ready to Use:</strong>
+                Once generated, save the schools.json file in the same directory as your implementation.html file to display the schools on the map.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileDetails = document.getElementById('fileDetails');
+        const convertBtn = document.getElementById('convertBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const resultArea = document.getElementById('resultArea');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+
+        let currentFile = null;
+        let convertedData = null;
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Handle file selection
+        function handleFile(file) {
+            hideError();
+            
+            // Validate file type
+            const validTypes = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel'
+            ];
+            
+            if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                showError('Please select a valid Excel file (.xlsx or .xls)');
+                return;
+            }
+
+            currentFile = file;
+            
+            // Show file info
+            fileName.textContent = file.name;
+            fileDetails.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB | Type: ${file.type || 'Excel'}`;
+            fileInfo.style.display = 'block';
+            
+            // Enable convert button
+            convertBtn.disabled = false;
+        }
+
+        // Convert button handler
+        convertBtn.addEventListener('click', () => {
+            if (!currentFile) return;
+            
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Converting...';
+            progressBar.style.display = 'block';
+            hideError();
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                
+                if (progress >= 90) {
+                    clearInterval(progressInterval);
+                }
+            }, 100);
+
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get the first worksheet
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    
+                    // Convert to JSON with headers
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+                        header: 1,
+                        defval: '' 
+                    });
+                    
+                    if (jsonData.length < 2) {
+                        throw new Error('Excel file must contain at least a header row and one data row');
+                    }
+                    
+                    // Process the data
+                    const schools = processExcelData(jsonData);
+                    
+                    // Complete progress
+                    progressFill.style.width = '100%';
+                    
+                    setTimeout(() => {
+                        displayResult(schools);
+                        
+                        // Reset UI
+                        convertBtn.disabled = false;
+                        convertBtn.innerHTML = '<i class="fas fa-cogs"></i> Convert to JSON';
+                        progressBar.style.display = 'none';
+                        progressFill.style.width = '0%';
+                        
+                        clearInterval(progressInterval);
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Conversion error:', error);
+                    showError('Error processing Excel file: ' + error.message);
+                    
+                    // Reset UI
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = '<i class="fas fa-cogs"></i> Convert to JSON';
+                    progressBar.style.display = 'none';
+                    progressFill.style.width = '0%';
+                    
+                    clearInterval(progressInterval);
+                }
+            };
+            
+            reader.onerror = function() {
+                showError('Error reading file. Please try again.');
+                
+                // Reset UI
+                convertBtn.disabled = false;
+                convertBtn.innerHTML = '<i class="fas fa-cogs"></i> Convert to JSON';
+                progressBar.style.display = 'none';
+                progressFill.style.width = '0%';
+                
+                clearInterval(progressInterval);
+            };
+            
+            reader.readAsArrayBuffer(currentFile);
+        });
+
+        // Process Excel data to schools format
+        function processExcelData(jsonData) {
+            const headers = jsonData[0];
+            const rows = jsonData.slice(1);
+            
+            // Find column indices
+            const nameIndex = findColumnIndex(headers, ['school name', 'name', 'school']);
+            const sdoIndex = findColumnIndex(headers, ['sdo', 'school division office', 'division']);
+            const coordIndex = findColumnIndex(headers, ['coordinates', 'coord', 'lat,lng', 'latlng']);
+            
+            if (nameIndex === -1 || sdoIndex === -1 || coordIndex === -1) {
+                throw new Error('Required columns not found. Please ensure your Excel file has "School Name", "SDO", and "Coordinates" columns.');
+            }
+
+            // Find implementation columns
+            const implementationColumns = {
+                'Pilot - IPA Arm': findColumnIndex(headers, ['pilot - ipa arm', 'pilot ipa', 'ipa arm']),
+                'Pilot - DepEd Arm': findColumnIndex(headers, ['pilot - deped arm', 'pilot deped', 'deped arm']),
+                'Scale-Up Round 1': findColumnIndex(headers, ['scale-up round 1', 'scaleup round 1', 'scale up round 1', 'round 1']),
+                'Scale-Up Round 2': findColumnIndex(headers, ['scale-up round 2', 'scaleup round 2', 'scale up round 2', 'round 2'])
+            };
+
+            const schools = [];
+
+            rows.forEach((row, index) => {
+                try {
+                    const schoolName = row[nameIndex];
+                    const sdo = row[sdoIndex];
+                    const coordinates = row[coordIndex];
+
+                    // Skip empty rows
+                    if (!schoolName || !sdo || !coordinates) {
+                        return;
+                    }
+
+                    // Parse coordinates
+                    const coordParts = coordinates.toString().split(',');
+                    if (coordParts.length !== 2) {
+                        throw new Error(`Invalid coordinates format in row ${index + 2}: "${coordinates}". Expected format: "lat,lng"`);
+                    }
+
+                    const lat = parseFloat(coordParts[0].trim());
+                    const lng = parseFloat(coordParts[1].trim());
+
+                    if (isNaN(lat) || isNaN(lng)) {
+                        throw new Error(`Invalid coordinates in row ${index + 2}: "${coordinates}". Coordinates must be numbers.`);
+                    }
+
+                    // Check implementation types
+                    const implementationTypes = [];
+                    Object.entries(implementationColumns).forEach(([type, colIndex]) => {
+                        if (colIndex !== -1 && row[colIndex]) {
+                            const value = row[colIndex].toString().toLowerCase().trim();
+                            if (value === 'yes' || value === 'y' || value === '1' || value === 'true') {
+                                implementationTypes.push(type);
+                            }
+                        }
+                    });
+
+                    // Create school object
+                    const school = {
+                        name: schoolName,
+                        sdo: sdo,
+                        lat: lat,
+                        lng: lng,
+                        implementationTypes: implementationTypes,
+                        multipleRounds: implementationTypes.length > 1
+                    };
+
+                    schools.push(school);
+
+                } catch (error) {
+                    throw new Error(`Error processing row ${index + 2}: ${error.message}`);
+                }
+            });
+
+            if (schools.length === 0) {
+                throw new Error('No valid school data found in the Excel file.');
+            }
+
+            return schools;
+        }
+
+        // Helper function to find column index by various possible names
+        function findColumnIndex(headers, possibleNames) {
+            for (let i = 0; i < headers.length; i++) {
+                const header = headers[i].toString().toLowerCase().trim();
+                if (possibleNames.some(name => header.includes(name))) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        // Display conversion result
+        function displayResult(schools) {
+            const jsonString = JSON.stringify(schools, null, 2);
+            resultArea.textContent = jsonString;
+            convertedData = jsonString;
+            downloadBtn.disabled = false;
+        }
+
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!convertedData) return;
+            
+            const blob = new Blob([convertedData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'schools.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+        });
+
+        // Error handling
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
