@@ -30,7 +30,7 @@
             color: var(--charcoal);
         }
 
-        /* Animated background particles */
+        /* Simplified background pattern */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -39,20 +39,10 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-        }
-
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
-            50% { transform: translateY(-15px) rotate(180deg); opacity: 0.6; }
+            opacity: 0.1;
+            background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1px, transparent 1px),
+                              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
         .container {
@@ -90,8 +80,8 @@
         }
 
         @keyframes subtleGlow {
-            from { box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
-            to { box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); }
+            from { box-shadow: 0 0 10px rgba(255, 255, 255, 0.15); }
+            to { box-shadow: 0 0 15px rgba(255, 255, 255, 0.25); }
         }
 
         h1 {
@@ -193,9 +183,10 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.25), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
             transform: rotate(45deg);
-            transition: transform 0.5s ease;
+            transition: transform 0.4s ease;
+            will-change: transform;
         }
 
         .tool-card:hover .tool-icon::before {
@@ -323,21 +314,8 @@
     </div>
 
     <script>
-        // Create animated background particles
-        function createParticles() {
-            const bgAnimation = document.querySelector('.bg-animation');
-            const particleCount = 40;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
-                bgAnimation.appendChild(particle);
-            }
-        }
+        // Simplified background - no particle creation needed
+        // function createParticles() - removed for performance
 
         function navigateToFeature(feature) {
             const featureNames = {
@@ -375,25 +353,30 @@
 This will navigate to: ${feature}.html`);
         }
 
-        // Add subtle parallax effect to hero section
+        // Simplified parallax effect
+        let ticking = false;
         window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const hero = document.querySelector('.hero-section');
-            if (hero) {
-                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const hero = document.querySelector('.hero-section');
+                    if (hero && scrolled < 500) { // Only apply when close to top
+                        hero.style.transform = `translateY(${scrolled * 0.2}px)`;
+                    }
+                    ticking = false;
+                });
+                ticking = true;
             }
         });
 
-        // Initialize particles when page loads
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
-            
             // Add staggered animation to tool cards
             const cards = document.querySelectorAll('.tool-card');
             cards.forEach((card, index) => {
                 setTimeout(() => {
                     card.style.opacity = '1';
-                }, index * 80);
+                }, index * 50); // Faster stagger
             });
         });
     </script>
