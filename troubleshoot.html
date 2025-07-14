@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Troubleshoot Helper - mEducation Hub</title>
+    <title>Troubleshoot Chatbot - mEducation Hub</title>
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -204,10 +204,17 @@
             text-align: left;
         }
 
-        .topic-btn:hover {
-            background: var(--dark-green);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        .topic-btn.pending {
+            background: var(--light-gray);
+            color: var(--dark-gray);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .topic-btn.pending:hover {
+            background: var(--light-gray);
+            transform: none;
+            box-shadow: none;
         }
 
         .option-buttons {
@@ -417,6 +424,7 @@
                 this.typingIndicator = document.getElementById('typingIndicator');
                 this.currentFlow = null;
                 this.conversationHistory = [];
+                this.navigationStack = [];
                 
                 this.init();
             }
@@ -446,49 +454,66 @@
                         id: 'messenger_call', 
                         title: 'Make a Call via Messenger', 
                         icon: 'fas fa-phone',
-                        description: 'Learn how to contact learners through messenger'
+                        description: 'Learn how to contact learners through messenger',
+                        available: true
                     },
                     { 
                         id: 'add_number', 
                         title: 'Add a New Number', 
                         icon: 'fas fa-plus-circle',
-                        description: 'Add new contact numbers to your system'
+                        description: 'Add new contact numbers to your system',
+                        available: true
                     },
                     { 
                         id: 'verify_forms', 
                         title: 'Verify Form Submission', 
                         icon: 'fas fa-check-circle',
-                        description: 'Check if your forms have been submitted successfully'
+                        description: 'Check if your forms have been submitted successfully',
+                        available: true
                     },
                     { 
                         id: 'blank_form', 
                         title: 'Get a Blank Form', 
                         icon: 'fas fa-file-alt',
-                        description: 'Access and download blank forms'
+                        description: 'Access and download blank forms',
+                        available: false
                     },
                     { 
                         id: 'assigned_cases', 
                         title: 'See Assigned Cases', 
                         icon: 'fas fa-tasks',
-                        description: 'View your assigned cases and tasks'
+                        description: 'View your assigned cases and tasks',
+                        available: false
                     }
                 ];
 
-                const topicButtons = topics.map(topic => 
-                    `<button class="topic-btn" onclick="chatbot.startFlow('${topic.id}')">
-                        <i class="${topic.icon}"></i>
-                        <div>
-                            <div style="font-weight: bold;">${topic.title}</div>
-                            <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 2px;">${topic.description}</div>
-                        </div>
-                    </button>`
-                ).join('');
+                const topicButtons = topics.map(topic => {
+                    if (topic.available) {
+                        return `<button class="topic-btn" onclick="chatbot.startFlow('${topic.id}')">
+                            <i class="${topic.icon}"></i>
+                            <div>
+                                <div style="font-weight: bold;">${topic.title}</div>
+                                <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 2px;">${topic.description}</div>
+                            </div>
+                        </button>`;
+                    } else {
+                        return `<button class="topic-btn pending" disabled>
+                            <i class="${topic.icon}"></i>
+                            <div>
+                                <div style="font-weight: bold;">${topic.title}</div>
+                                <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 2px;">Workflow pending - Coming soon!</div>
+                            </div>
+                        </button>`;
+                    }
+                }).join('');
 
                 this.inputContainer.innerHTML = `
                     <div class="topic-selection">
                         ${topicButtons}
                     </div>
                 `;
+                
+                this.navigationStack.push({ type: 'topic_selection' });
             }
 
             startFlow(flowId) {
@@ -498,9 +523,7 @@
                 const topics = {
                     'messenger_call': 'Make a Call via Messenger',
                     'add_number': 'Add a New Number',
-                    'verify_forms': 'Verify Form Submission',
-                    'blank_form': 'Get a Blank Form',
-                    'assigned_cases': 'See Assigned Cases'
+                    'verify_forms': 'Verify Form Submission'
                 };
                 
                 this.addUserMessage(topics[flowId]);
@@ -517,12 +540,6 @@
                         case 'verify_forms':
                             this.verifyFormsFlow();
                             break;
-                        case 'blank_form':
-                            this.blankFormFlow();
-                            break;
-                        case 'assigned_cases':
-                            this.assignedCasesFlow();
-                            break;
                     }
                 }, 500);
             }
@@ -533,6 +550,7 @@
                     { text: "Yes", action: () => this.messengerCallYes() },
                     { text: "No", action: () => this.messengerCallNo() }
                 ]);
+                this.navigationStack.push({ type: 'messenger_call_start' });
             }
 
             messengerCallYes() {
@@ -559,6 +577,7 @@
                             { text: "Yes", action: () => this.messengerAccountYes() },
                             { text: "No", action: () => this.messengerAccountNo() }
                         ]);
+                        this.navigationStack.push({ type: 'messenger_account_check' });
                     }, 1000);
                 });
             }
@@ -616,6 +635,7 @@
                     { text: "Yes", action: () => this.addNumberYes() },
                     { text: "No", action: () => this.addNumberNo() }
                 ]);
+                this.navigationStack.push({ type: 'add_number_start' });
             }
 
             addNumberYes() {
@@ -642,6 +662,7 @@
                             { text: "Yes", action: () => this.answeredBySomeoneYes() },
                             { text: "No", action: () => this.answeredBySomeoneNo() }
                         ]);
+                        this.navigationStack.push({ type: 'answered_by_someone_check' });
                     }, 1000);
                 });
             }
@@ -691,6 +712,7 @@
                     { text: "Yes", action: () => this.recentlySentYes() },
                     { text: "No", action: () => this.recentlySentNo() }
                 ]);
+                this.navigationStack.push({ type: 'verify_forms_start' });
             }
 
             recentlySentYes() {
@@ -715,6 +737,7 @@
                             { text: "Yes", action: () => this.seeFormYes() },
                             { text: "No", action: () => this.seeFormNo() }
                         ]);
+                        this.navigationStack.push({ type: 'see_form_check' });
                     }, 1000);
                 });
             }
@@ -741,6 +764,7 @@
                             { text: "Yes", action: () => this.redTextFormYes() },
                             { text: "No", action: () => this.redTextFormNo() }
                         ]);
+                        this.navigationStack.push({ type: 'red_text_form_check' });
                     }, 1000);
                 });
             }
@@ -804,39 +828,14 @@
             }
 
             blankFormFlow() {
-                this.addBotMessage("I can help you get a blank form.");
-                this.addBotMessage(`
-                    <div class="solution-box">
-                        <div class="solution-title">
-                            <i class="fas fa-file-alt"></i>
-                            Get Blank Form
-                        </div>
-                        <ol class="solution-steps">
-                            <li>Go to "Fill Blank Form"</li>
-                            <li>Select the form you need</li>
-                            <li>The blank form will open for you to fill out</li>
-                        </ol>
-                    </div>
-                `);
+                // This workflow doesn't exist yet
+                this.addBotMessage("This feature is under development. The workflow for getting blank forms is being created.");
                 this.showRestartOption();
             }
 
             assignedCasesFlow() {
-                this.addBotMessage("I can help you view your assigned cases.");
-                this.addBotMessage(`
-                    <div class="solution-box">
-                        <div class="solution-title">
-                            <i class="fas fa-tasks"></i>
-                            View Assigned Cases
-                        </div>
-                        <ol class="solution-steps">
-                            <li>Open "Manage Cases"</li>
-                            <li>You'll see a list of all your assigned cases</li>
-                            <li>Click on any case to view details and progress</li>
-                            <li>Look for status indicators to see which cases need attention</li>
-                        </ol>
-                    </div>
-                `);
+                // This workflow doesn't exist yet  
+                this.addBotMessage("This feature is under development. The workflow for viewing assigned cases is being created.");
                 this.showRestartOption();
             }
 
@@ -845,8 +844,12 @@
                     `<button class="option-btn" onclick="${option.action.toString().replace('() => ', '').replace('this.', 'chatbot.')}">${option.text}</button>`
                 ).join('');
                 
+                const backButton = this.navigationStack.length > 1 ? 
+                    '<button class="back-btn-small" onclick="chatbot.goBack()"><i class="fas fa-arrow-left"></i> Back</button>' : '';
+                
                 this.inputContainer.innerHTML = `
                     <div class="option-buttons">
+                        ${backButton}
                         ${buttons}
                     </div>
                 `;
@@ -855,18 +858,83 @@
             showRestartOption() {
                 setTimeout(() => {
                     this.addBotMessage("Is there anything else I can help you with?");
+                    const backButton = this.navigationStack.length > 1 ? 
+                        '<button class="back-btn-small" onclick="chatbot.goBack()"><i class="fas fa-arrow-left"></i> Back</button>' : '';
+                    
                     this.inputContainer.innerHTML = `
-                        <button class="restart-btn" onclick="chatbot.restart()">
-                            <i class="fas fa-refresh"></i> Start Over
-                        </button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            ${backButton}
+                            <button class="restart-btn" onclick="chatbot.restart()">
+                                <i class="fas fa-refresh"></i> Start Over
+                            </button>
+                        </div>
                     `;
                 }, 1000);
+            }
+
+            goBack() {
+                if (this.navigationStack.length > 1) {
+                    // Remove current step
+                    this.navigationStack.pop();
+                    
+                    // Get previous step
+                    const previousStep = this.navigationStack[this.navigationStack.length - 1];
+                    
+                    // Remove the last bot message and user response
+                    const messages = this.messagesContainer.children;
+                    if (messages.length >= 2) {
+                        messages[messages.length - 1].remove();
+                        messages[messages.length - 1].remove();
+                    }
+                    
+                    // Restore previous state based on step type
+                    switch (previousStep.type) {
+                        case 'topic_selection':
+                            this.showTopicSelection();
+                            break;
+                        case 'messenger_call_start':
+                            this.messengerCallFlow();
+                            break;
+                        case 'add_number_start':
+                            this.addNumberFlow();
+                            break;
+                        case 'verify_forms_start':
+                            this.verifyFormsFlow();
+                            break;
+                        case 'messenger_account_check':
+                            // Go back to the messenger call yes state
+                            this.showOptions([
+                                { text: "Yes", action: () => this.messengerAccountYes() },
+                                { text: "No", action: () => this.messengerAccountNo() }
+                            ]);
+                            break;
+                        case 'answered_by_someone_check':
+                            this.showOptions([
+                                { text: "Yes", action: () => this.answeredBySomeoneYes() },
+                                { text: "No", action: () => this.answeredBySomeoneNo() }
+                            ]);
+                            break;
+                        case 'see_form_check':
+                            this.showOptions([
+                                { text: "Yes", action: () => this.seeFormYes() },
+                                { text: "No", action: () => this.seeFormNo() }
+                            ]);
+                            break;
+                        case 'red_text_form_check':
+                            this.showOptions([
+                                { text: "Yes", action: () => this.redTextFormYes() },
+                                { text: "No", action: () => this.redTextFormNo() }
+                            ]);
+                            break;
+                    }
+                }
             }
 
             restart() {
                 this.messagesContainer.innerHTML = '';
                 this.currentFlow = null;
                 this.conversationHistory = [];
+                this.navigationStack = [];
                 this.showWelcomeMessage();
                 setTimeout(() => this.showTopicSelection(), 1500);
             }
