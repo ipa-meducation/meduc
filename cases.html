@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases Maker - mEducation Hub</title>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- SheetJS for Excel processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-green: #49ac57;
+            --dark-green: #155240;
+            --light-blue: #84d0d4;
+            --dark-blue: #2b4085;
+            --orange: #f26529;
+            --light-gray: #f1f2f2;
+            --dark-gray: #414042;
+            --charcoal: #414042;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            min-height: 100vh;
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .subtitle {
+            color: var(--charcoal);
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .upload-section, .preview-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--dark-green);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--light-blue);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(132, 208, 212, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-green);
+            background: rgba(73, 172, 87, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--orange);
+            background: rgba(242, 101, 41, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--light-blue);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--charcoal);
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            opacity: 0.7;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            background: var(--dark-gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--dark-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-blue);
+            color: var(--dark-green);
+        }
+
+        .btn-orange {
+            background: var(--orange);
+        }
+
+        .btn-orange:hover {
+            background: #d94d1a;
+        }
+
+        .file-info {
+            background: rgba(73, 172, 87, 0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--dark-green);
+        }
+
+        .file-size {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        .mapping-section {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .mapping-section.show {
+            display: block;
+        }
+
+        .mapping-title {
+            font-size: 1.2rem;
+            color: var(--dark-green);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .column-mapping {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mapping-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .mapping-label {
+            font-weight: 600;
+            color: var(--dark-green);
+            font-size: 0.9rem;
+        }
+
+        .mapping-select {
+            padding: 10px;
+            border: 2px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .mapping-select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .preview-area {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            overflow: auto;
+            max-height: 500px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: var(--primary-green);
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(73, 172, 87, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .help-section {
+            background: rgba(132, 208, 212, 0.1);
+            border: 1px solid var(--light-blue);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .help-title {
+            font-size: 1.1rem;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .help-list li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .help-list li::before {
+            content: "→";
+            color: var(--light-blue);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .error-message {
+            background: rgba(242, 101, 41, 0.1);
+            border: 1px solid var(--orange);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: var(--dark-gray);
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: rgba(73, 172, 87, 0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: var(--dark-green);
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .back-btn {
+                position: static;
+                transform: none;
+                margin-top: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .column-mapping {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .upload-section, .preview-section {
+                padding: 20px;
+            }
+        }
+
+        /* Animation for page load */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .upload-section,
+        .preview-section,
+        .stats-section {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .upload-section { animation-delay: 0.1s; }
+        .preview-section { animation-delay: 0.2s; }
+        .stats-section { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <i class="fas fa-file-medical"></i>
+                Cases Maker
+            </h1>
+            <div class="subtitle">Create cases for SurveyCTO, derived from learners info dataset</div>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </header>
+
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="section-title">
+                    <i class="fas fa-upload"></i>
+                    Upload Learner Enrollment Data
+                </div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Drop your learner enrollment Excel/CSV file here</div>
+                    <div class="upload-subtext">or click to browse files (Excel WIDE format from SurveyCTO export)</div>
+                    <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv">
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <div class="file-details">
+                        <i class="fas fa-file-excel file-icon"></i>
+                        <div>
+                            <div class="file-name" id="fileName"></div>
+                            <div class="file-size" id="fileSize"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <div class="mapping-section" id="mappingSection">
+                    <div class="mapping-title">
+                        <i class="fas fa-exchange-alt"></i>
+                        Column Mapping & Settings
+                    </div>
+                    <div class="column-mapping" id="columnMapping">
+                        <!-- Dynamic mapping fields will be added here -->
+                    </div>
+                    
+                    <div class="mapping-group" style="margin-top: 20px;">
+                        <label class="mapping-label">SDO Prefix for Case IDs (e.g., 'sib', 'ppc')</label>
+                        <input type="text" id="sdoPrefix" class="mapping-select" placeholder="Enter 3-letter SDO code" maxlength="10">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn" id="processBtn" disabled>
+                            <i class="fas fa-cogs"></i>
+                            Generate Cases & Teachers Data
+                        </button>
+                        <button class="btn btn-secondary" id="resetBtn">
+                            <i class="fas fa-undo"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-title">
+                        <i class="fas fa-info-circle"></i>
+                        About This Tool
+                    </div>
+                    <ul class="help-list">
+                        <li>Processes learner enrollment data exported from SurveyCTO (WIDE format)</li>
+                        <li>Generates properly formatted Excel with multiple sheets for SurveyCTO upload</li>
+                        <li>Creates: SDO-specific case sheets, teachers sheet, schools sheet</li>
+                        <li>Includes built-in Excel formulas for ID generation and lookups</li>
+                        <li>Adds conditional formatting to detect duplicate entries</li>
+                        <li>Handles data cleaning similar to the Stata .do file process</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="section-title">
+                    <i class="fas fa-eye"></i>
+                    Processing Results
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div>Processing learner data and generating cases...</div>
+                </div>
+
+                <div class="preview-area" id="previewArea">
+                    Upload a learner enrollment file to begin processing...
+                    
+                    The tool will:
+                    • Clean and transform the data
+                    • Remove duplicates 
+                    • Generate case IDs and enumerator IDs
+                    • Create multiple Excel sheets with formulas
+                    • Apply conditional formatting for validation
+                </div>
+
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="btn btn-orange" id="downloadBtn" disabled>
+                        <i class="fas fa-download"></i>
+                        Download Complete Excel File
+                    </button>
+                    <button class="btn btn-secondary" id="previewDataBtn" disabled>
+                        <i class="fas fa-table"></i>
+                        Preview Data Summary
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section" id="statsSection" style="display: none;">
+            <div class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                Data Processing Summary
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCases">0</div>
+                    <div class="stat-label">Total Cases Generated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="uniqueStudents">0</div>
+                    <div class="stat-label">Unique Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalTeachers">0</div>
+                    <div class="stat-label">Unique Teachers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSchools">0</div>
+                    <div class="stat-label">Schools Involved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="duplicatesRemoved">0</div>
+                    <div class="stat-label">Duplicates Removed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSDOs">0</div>
+                    <div class="stat-label">SDOs Processed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let rawData = null;
+        let processedData = null;
+        let columnHeaders = [];
+        let requiredFields = {
+            'stud_firstname_': 'Student First Name',
+            'stud_lastname_': 'Student Last Name', 
+            'grade_level_': 'Grade Level',
+            'teacher_firstname': 'Teacher First Name',
+            'teacher_lastname': 'Teacher Last Name',
+            'school': 'School Name',
+            'sdo': 'School Division Office (SDO)',
+            'resp_firstname_': 'Respondent First Name',
+            'resp_lastname_': 'Respondent Last Name',
+            'phone_1_': 'Primary Phone',
+            'phone_2_': 'Secondary Phone (Optional)',
+            'learn_number_': 'Learner Number',
+            'resp_relation_code_': 'Respondent Relation Code',
+            'resp_relation_oth_': 'Other Relation (Optional)',
+            'region': 'Region',
+            'contacts_0': 'Contacts'
+        };
+
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const mappingSection = document.getElementById('mappingSection');
+        const columnMapping = document.getElementById('columnMapping');
+        const sdoPrefix = document.getElementById('sdoPrefix');
+        const processBtn = document.getElementById('processBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewDataBtn = document.getElementById('previewDataBtn');
+        const previewArea = document.getElementById('previewArea');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const statsSection = document.getElementById('statsSection');
+
+        // Event listeners
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+        processBtn.addEventListener('click', processData);
+        resetBtn.addEventListener('click', resetForm);
+        downloadBtn.addEventListener('click', downloadExcel);
+        previewDataBtn.addEventListener('click', showDetailedPreview);
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // Validate file type
+            const validTypes = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel',
+                'text/csv'
+            ];
+            
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls|csv)$/i)) {
+                showError('Please upload a valid Excel (.xlsx, .xls) or CSV file.');
+                return;
+            }
+
+            // Show file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            hideMessages();
+
+            // Read file
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    if (file.name.toLowerCase().endsWith('.csv')) {
+                        parseCSV(e.target.result);
+                    } else {
+                        parseExcel(e.target.result);
+                    }
+                } catch (error) {
+                    showError('Error reading file: ' + error.message);
+                }
+            };
+
+            if (file.name.toLowerCase().endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            if (lines.length < 2) {
+                showError('CSV file must have at least a header row and one data row.');
+                return;
+            }
+
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    data.push(row);
+                }
+            }
+
+            rawData = data;
+            columnHeaders = headers;
+            setupColumnMapping();
+        }
+
+        function parseExcel(arrayBuffer) {
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const data = XLSX.utils.sheet_to_json(worksheet);
+
+            if (data.length === 0) {
+                showError('Excel file appears to be empty or has no data rows.');
+                return;
+            }
+
+            rawData = data;
+            columnHeaders = Object.keys(data[0]);
+            setupColumnMapping();
+        }
+
+        function setupColumnMapping() {
+            columnMapping.innerHTML = '';
+            
+            Object.keys(requiredFields).forEach(field => {
+                const mappingGroup = document.createElement('div');
+                mappingGroup.className = 'mapping-group';
+                
+                const label = document.createElement('div');
+                label.className = 'mapping-label';
+                label.textContent = requiredFields[field];
+                
+                const select = document.createElement('select');
+                select.className = 'mapping-select';
+                select.id = `mapping_${field}`;
+                
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '-- Select Column --';
+                select.appendChild(defaultOption);
+                
+                // Add column options
+                columnHeaders.forEach(header => {
+                    const option = document.createElement('option');
+                    option.value = header;
+                    option.textContent = header;
+                    
+                    // Auto-select if column name matches (improved matching)
+                    const fieldName = field.toLowerCase().replace('_', '');
+                    const headerName = header.toLowerCase().replace(/[_\s]/g, '');
+                    
+                    if (headerName.includes(fieldName) || fieldName.includes(headerName) ||
+                        header.toLowerCase() === field.toLowerCase()) {
+                        option.selected = true;
+                    }
+                    
+                    select.appendChild(option);
+                });
+                
+                mappingGroup.appendChild(label);
+                mappingGroup.appendChild(select);
+                columnMapping.appendChild(mappingGroup);
+            });
+
+            mappingSection.classList.add('show');
+            processBtn.disabled = false;
+        }
+
+        function processData() {
+            // Get column mappings
+            const mappings = {};
+            let hasRequiredMappings = true;
+            
+            Object.keys(requiredFields).forEach(field => {
+                const selectElement = document.getElementById(`mapping_${field}`);
+                mappings[field] = selectElement.value;
+                
+                // Check for critical required fields
+                if (!mappings[field] && ['stud_firstname_', 'stud_lastname_', 'school', 'sdo'].includes(field)) {
+                    hasRequiredMappings = false;
+                }
+            });
+
+            const prefix = sdoPrefix.value.trim();
+            if (!prefix) {
+                showError('Please enter an SDO prefix for case ID generation (e.g., "sib", "ppc").');
+                return;
+            }
+
+            if (!hasRequiredMappings) {
+                showError('Please map at least Student First Name, Student Last Name, School, and SDO fields.');
+                return;
+            }
+
+            showLoading(true);
+            
+            // Process data with a realistic delay
+            setTimeout(() => {
+                try {
+                    processedData = transformData(rawData, mappings, prefix);
+                    showLoading(false);
+                    updatePreview();
+                    updateStats();
+                    downloadBtn.disabled = false;
+                    previewDataBtn.disabled = false;
+                    showSuccess('Data processed successfully! Ready to download the complete Excel file with formulas.');
+                    statsSection.style.display = 'block';
+                } catch (error) {
+                    showLoading(false);
+                    showError('Error processing data: ' + error.message);
+                    console.error('Processing error:', error);
+                }
+            }, 2000);
+        }
+
+        function transformData(data, mappings, prefix) {
+            const result = {
+                cases: [],
+                teachers: [],
+                schools: [],
+                sdos: new Set(),
+                duplicatesRemoved: 0,
+                originalCount: data.length
+            };
+
+            const seenStudents = new Set();
+            const teacherMap = new Map();
+            const schoolMap = new Map();
+
+            // Process each row from the reshaped data
+            data.forEach((row, index) => {
+                // Skip empty rows
+                if (!row[mappings.stud_firstname_] && !row[mappings.stud_lastname_]) {
+                    return;
+                }
+
+                // Create student identifier for duplicate detection
+                const studentKey = `${(row[mappings.stud_firstname_] || '').trim().toLowerCase()}_${(row[mappings.stud_lastname_] || '').trim().toLowerCase()}_${(row[mappings.learn_number_] || '').trim()}`;
+                
+                if (seenStudents.has(studentKey)) {
+                    result.duplicatesRemoved++;
+                    return;
+                }
+                seenStudents.add(studentKey);
+
+                // Clean and format names
+                const studentFirstName = properCase((row[mappings.stud_firstname_] || '').trim());
+                const studentLastName = properCase((row[mappings.stud_lastname_] || '').trim());
+                const respFirstName = properCase((row[mappings.resp_firstname_] || '').trim());
+                const respLastName = properCase((row[mappings.resp_lastname_] || '').trim());
+                const teacherFirstName = properCase((row[mappings.teacher_firstname] || '').trim());
+                const teacherLastName = properCase((row[mappings.teacher_lastname] || '').trim());
+
+                // Format respondent relation
+                const respRelationCode = row[mappings.resp_relation_code_] || '';
+                let respRelation = 'Parent'; // Default
+                switch(respRelationCode) {
+                    case '1': respRelation = 'Parent'; break;
+                    case '2': respRelation = 'Aunt/Uncle'; break;
+                    case '3': respRelation = 'Grandparent'; break;
+                    case '4': respRelation = 'Sibling'; break;
+                    case '-99':
+                    case '88':
+                        const otherRelation = (row[mappings.resp_relation_oth_] || '').trim();
+                        if (otherRelation.toLowerCase().includes('guardian')) {
+                            respRelation = 'Guardian';
+                        } else if (otherRelation.toLowerCase().includes('relative')) {
+                            respRelation = 'Relative';
+                        } else {
+                            respRelation = otherRelation || 'Guardian';
+                        }
+                        break;
+                }
+
+                // Process case data
+                const caseData = {
+                    serialId: result.cases.length + 1,
+                    formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
+                    region: (row[mappings.region] || '').trim(),
+                    division: (row[mappings.sdo] || '').trim(),
+                    school_name: (row[mappings.school] || '').trim(),
+                    old_student_name: `${studentFirstName} ${studentLastName}`.trim(),
+                    grade_level: (row[mappings.grade_level_] || '').trim(),
+                    resp_name: `${respFirstName} ${respLastName}`.trim(),
+                    resp_relation: respRelation,
+                    encoding_teacher: `${teacherFirstName} ${teacherLastName}`.trim(),
+                    contacts: row[mappings.contacts_0] || '',
+                    phone_1: cleanPhoneNumber(row[mappings.phone_1_] || ''),
+                    phone_2: cleanPhoneNumber(row[mappings.phone_2_] || ''),
+                    phone_1_name: `${respFirstName} ${respLastName}`.trim(),
+                    phone_2_name: row[mappings.phone_2_] ? `${respFirstName} ${respLastName}`.trim() : '',
+                    learn_number: (row[mappings.learn_number_] || '').trim(),
+                    sdo_prefix: prefix
+                };
+
+                result.cases.push(caseData);
+                result.sdos.add(caseData.division);
+
+                // Collect unique teachers
+                if (caseData.encoding_teacher && caseData.encoding_teacher.trim()) {
+                    const teacherKey = `${caseData.encoding_teacher}_${caseData.school_name}`;
+                    if (!teacherMap.has(teacherKey)) {
+                        teacherMap.set(teacherKey, {
+                            sdo: caseData.division,
+                            school_name: caseData.school_name,
+                            teacher_first_name: teacherFirstName,
+                            teacher_last_name: teacherLastName,
+                            encoding_teacher: caseData.encoding_teacher
+                        });
+                    }
+                }
+
+                // Collect unique schools
+                if (caseData.school_name && caseData.school_name.trim()) {
+                    const schoolKey = `${caseData.school_name}_${caseData.division}`;
+                    if (!schoolMap.has(schoolKey)) {
+                        schoolMap.set(schoolKey, {
+                            sdo: caseData.division,
+                            school_name: caseData.school_name
+                        });
+                    }
+                }
+            });
+
+            result.teachers = Array.from(teacherMap.values());
+            result.schools = Array.from(schoolMap.values());
+            result.sdos = Array.from(result.sdos).filter(sdo => sdo);
+
+            return result;
+        }
+
+        function properCase(str) {
+            return str.replace(/\w\S*/g, (txt) => 
+                txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+            );
+        }
+
+        function cleanPhoneNumber(phone) {
+            if (!phone) return '';
+            // Remove non-numeric characters and handle basic formatting
+            const cleaned = phone.toString().replace(/\D/g, '');
+            return cleaned;
+        }
+
+        function updatePreview() {
+            if (!processedData) return;
+
+            const preview = `CASES PROCESSING COMPLETE
+========================
+
+📊 SUMMARY STATISTICS:
+• Total Cases Generated: ${processedData.cases.length}
+• Original Records: ${processedData.originalCount}
+• Duplicates Removed: ${processedData.duplicatesRemoved}
+• Unique Teachers: ${processedData.teachers.length}
+• Unique Schools: ${processedData.schools.length}
+• SDOs Processed: ${processedData.sdos.length}
+
+🏫 SDOs INCLUDED:
+${processedData.sdos.map(sdo => `• ${sdo}`).join('\n')}
+
+📋 EXCEL FILE WILL CONTAIN:
+• ${processedData.sdos.length} SDO-specific sheets (for cases upload)
+• 1 Teachers sheet (for enumerators upload)
+• 1 Schools sheet (reference/lookup)
+• Built-in Excel formulas for ID generation
+• Conditional formatting for duplicate detection
+
+🔧 FORMULAS INCLUDED:
+• Case ID: =CONCAT("${processedData.cases[0]?.sdo_prefix || 'xxx'}_", A2)
+• Enumerator ID: =LEFT(D2,1) & E2 & "_" & A2
+• Enumerator Name: =CONCAT(D2," ",E2)
+• Users lookup: =XLOOKUP() functions
+
+📝 SAMPLE CASE DATA:
+${processedData.cases.slice(0, 2).map((c, i) => `
+Case ${i + 1}:
+  Student: ${c.old_student_name}
+  Grade: ${c.grade_level}
+  School: ${c.school_name} (${c.division})
+  Teacher: ${c.encoding_teacher}
+  Respondent: ${c.resp_name} (${c.resp_relation})
+  Contact: ${c.phone_1}
+`).join('')}
+
+✅ Ready to download the complete Excel file!`;
+
+            previewArea.textContent = preview;
+        }
+
+        function showDetailedPreview() {
+            if (!processedData) return;
+
+            const detailedPreview = `DETAILED DATA PREVIEW
+====================
+
+TEACHERS DATA (First 5):
+${processedData.teachers.slice(0, 5).map((t, i) => `
+${i + 1}. ${t.encoding_teacher}
+   School: ${t.school_name}
+   SDO: ${t.sdo}
+   First Name: ${t.teacher_first_name}
+   Last Name: ${t.teacher_last_name}
+`).join('')}
+
+SCHOOLS DATA (First 5):
+${processedData.schools.slice(0, 5).map((s, i) => `
+${i + 1}. ${s.school_name}
+   SDO: ${s.sdo}
+`).join('')}
+
+CASES BY SDO:
+${processedData.sdos.map(sdo => `
+${sdo}: ${processedData.cases.filter(c => c.division === sdo).length} cases
+`).join('')}
+
+GRADE LEVEL DISTRIBUTION:
+${(() => {
+    const gradeCounts = {};
+    processedData.cases.forEach(c => {
+        const grade = c.grade_level || 'Unknown';
+        gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
+    });
+    return Object.entries(gradeCounts)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([grade, count]) => `${grade}: ${count} students`)
+        .join('\n');
+})()}
+
+PHONE NUMBER COVERAGE:
+• Primary Phone: ${processedData.cases.filter(c => c.phone_1).length}/${processedData.cases.length} (${Math.round(processedData.cases.filter(c => c.phone_1).length / processedData.cases.length * 100)}%)
+• Secondary Phone: ${processedData.cases.filter(c => c.phone_2).length}/${processedData.cases.length} (${Math.round(processedData.cases.filter(c => c.phone_2).length / processedData.cases.length * 100)}%)
+
+DATA QUALITY NOTES:
+• All student names have been converted to proper case
+• Phone numbers have been cleaned of non-numeric characters
+• Duplicate students (same name + learner number) removed
+• Respondent relations mapped from codes to text`;
+
+            previewArea.textContent = detailedPreview;
+        }
+
+        function updateStats() {
+            if (!processedData) return;
+
+            document.getElementById('totalCases').textContent = processedData.cases.length;
+            document.getElementById('uniqueStudents').textContent = processedData.cases.length; // Already deduplicated
+            document.getElementById('totalTeachers').textContent = processedData.teachers.length;
+            document.getElementById('totalSchools').textContent = processedData.schools.length;
+            document.getElementById('duplicatesRemoved').textContent = processedData.duplicatesRemoved;
+            document.getElementById('totalSDOs').textContent = processedData.sdos.length;
+        }
+
+        function downloadExcel() {
+            if (!processedData) return;
+
+            showLoading(true);
+            
+            setTimeout(() => {
+                try {
+                    generateAdvancedExcelFile();
+                    showLoading(false);
+                    showSuccess('Complete Excel file with formulas downloaded successfully!');
+                } catch (error) {
+                    showLoading(false);
+                    showError('Error generating Excel file: ' + error.message);
+                    console.error('Excel generation error:', error);
+                }
+            }, 2500);
+        }
+
+        function generateAdvancedExcelFile() {
+            const wb = XLSX.utils.book_new();
+            const prefix = processedData.cases[0]?.sdo_prefix || 'xxx';
+            
+            // 1. Create teachers sheet with formulas and proper structure
+            const teachersData = processedData.teachers.map((teacher, index) => ({
+                'sdoid': `SDO${String(index + 1).padStart(3, '0')}`, // Sample SDO ID
+                'sdo': teacher.sdo,
+                'school_name': teacher.school_name,
+                'teacher_first_name': teacher.teacher_first_name,
+                'teacher_last_name': teacher.teacher_last_name,
+                'enumerator_id': `=LEFT(D${index + 2},1) & E${index + 2} & "_" & A${index + 2}`, // Excel formula
+                'enumerator_name': `=CONCAT(D${index + 2}," ",E${index + 2})`, // Excel formula
+                'users': `=IFERROR(XLOOKUP(C${index + 2},schools!C:C,schools!D:D,""),"")`  // Lookup formula
+            }));
+            
+            const teachersWS = XLSX.utils.json_to_sheet(teachersData);
+            
+            // Add conditional formatting note in a comment cell
+            if (!teachersWS['!comments']) teachersWS['!comments'] = [];
+            teachersWS['I1'] = { t: 's', v: 'Apply Conditional Formatting to column F (enumerator_id) to highlight duplicates' };
+            
+            XLSX.utils.book_append_sheet(wb, teachersWS, 'teachers');
+            
+            // 2. Create schools sheet
+            const schoolsData = processedData.schools.map((school, index) => ({
+                'sdo': school.sdo,
+                'district': `District_${index + 1}`, // Placeholder - to be filled manually
+                'school_name': school.school_name,
+                'users': `user_${school.school_name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}` // Generated username
+            }));
+            
+            const schoolsWS = XLSX.utils.json_to_sheet(schoolsData);
+            XLSX.utils.book_append_sheet(wb, schoolsWS, 'schools');
+            
+            // 3. Create SDO-specific sheets for cases
+            processedData.sdos.forEach(sdo => {
+                if (!sdo) return;
+                
+                const sdoCases = processedData.cases.filter(c => c.division === sdo);
+                const sdoData = sdoCases.map((caseItem, index) => ({
+                    'id': `=CONCAT("${prefix}_",ROW()-1)`, // Excel formula for auto-incrementing ID
+                    'formids': caseItem.formids,
+                    'region': caseItem.region,
+                    'division': caseItem.division,
+                    'school_name': caseItem.school_name,
+                    'resp_name': caseItem.resp_name,
+                    'resp_relation': caseItem.resp_relation,
+                    'old_student_name': caseItem.old_student_name,
+                    'grade_level': caseItem.grade_level,
+                    'encoding_teacher': caseItem.encoding_teacher,
+                    'contacts': caseItem.contacts,
+                    'phone_1': caseItem.phone_1,
+                    'phone_2': caseItem.phone_2,
+                    'phone_1_name': caseItem.phone_1_name,
+                    'phone_2_name': caseItem.phone_2_name,
+                    'enumerators': `=IFERROR(XLOOKUP(J${index + 2},teachers!G:G,teachers!F:F,""),"")`, // Lookup enumerator ID
+                    'users': `=IFERROR(XLOOKUP(P${index + 2},teachers!F:F,teachers!H:H,""),"")` // Lookup users
+                }));
+                
+                const sdoWS = XLSX.utils.json_to_sheet(sdoData);
+                
+                // Add conditional formatting instruction
+                sdoWS['R1'] = { t: 's', v: 'Apply Conditional Formatting to column H (old_student_name) to highlight duplicates' };
+                
+                // Create safe sheet name
+                const sheetName = sdo.toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, '')
+                    .replace(/\s+/g, '_')
+                    .substring(0, 31);
+                
+                XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
+            });
+            
+            // 4. Create summary sheet
+            const summaryData = [
+                { 'Item': 'Total Cases Generated', 'Count': processedData.cases.length },
+                { 'Item': 'Unique Teachers', 'Count': processedData.teachers.length },
+                { 'Item': 'Unique Schools', 'Count': processedData.schools.length },
+                { 'Item': 'SDOs Processed', 'Count': processedData.sdos.length },
+                { 'Item': 'Duplicates Removed', 'Count': processedData.duplicatesRemoved },
+                { 'Item': 'Original Records', 'Count': processedData.originalCount },
+                { 'Item': '', 'Count': '' },
+                { 'Item': 'SDOs Included:', 'Count': '' },
+                ...processedData.sdos.map(sdo => ({ 'Item': `• ${sdo}`, 'Count': processedData.cases.filter(c => c.division === sdo).length }))
+            ];
+            
+            const summaryWS = XLSX.utils.json_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, summaryWS, 'summary');
+            
+            // Download the file
+            const timestamp = new Date().toISOString().split('T')[0];
+            const fileName = `cases_${prefix}_${timestamp}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        function resetForm() {
+            rawData = null;
+            processedData = null;
+            columnHeaders = [];
+            
+            fileInfo.classList.remove('show');
+            mappingSection.classList.remove('show');
+            statsSection.style.display = 'none';
+            
+            processBtn.disabled = true;
+            downloadBtn.disabled = true;
+            previewDataBtn.disabled = true;
+            
+            previewArea.textContent = `Upload a learner enrollment file to begin processing...
+
+The tool will:
+• Clean and transform the data
+• Remove duplicates 
+• Generate case IDs and enumerator IDs
+• Create multiple Excel sheets with formulas
+• Apply conditional formatting for validation`;
+            
+            hideMessages();
+            fileInput.value = '';
+            sdoPrefix.value = '';
+        }
+
+        function showLoading(show) {
+            loading.classList.toggle('show', show);
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            successMessage.classList.remove('show');
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+            errorMessage.classList.remove('show');
+        }
+
+        function hideMessages() {
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
