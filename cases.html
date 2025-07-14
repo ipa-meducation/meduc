@@ -653,17 +653,22 @@
         let processedData = null;
         let columnHeaders = [];
         let requiredFields = {
-            'stud_firstname_': 'Student First Name',
-            'stud_lastname_': 'Student Last Name', 
-            'grade_level_': 'Grade Level',
+            'stud_firstname_': 'Student First Name (first student)',
+            'stud_lastname_': 'Student Last Name (first student)', 
+            'grade_level_': 'Grade Level (first student)',
             'teacher_firstname': 'Teacher First Name',
             'teacher_lastname': 'Teacher Last Name',
-            'school': 'School Name',
-            'sdo': 'School Division Office',
-            'resp_firstname_': 'Respondent First Name',
-            'resp_lastname_': 'Respondent Last Name',
-            'phone_1_': 'Primary Phone',
-            'learn_number_': 'Learner Number'
+            'school': 'School ID (numerical)',
+            'sdo': 'SDO ID (numerical)',
+            'region': 'Region ID (numerical)',
+            'district': 'District ID (numerical)',
+            'resp_firstname_': 'Respondent First Name (first student)',
+            'resp_lastname_': 'Respondent Last Name (first student)',
+            'phone_1_': 'Primary Phone (first student)',
+            'phone_2_': 'Secondary Phone (first student)',
+            'learn_number_': 'Learner Number (first student)',
+            'resp_relation_code_': 'Respondent Relation Code (first student)',
+            'contacts_': 'Contacts (first student)'
         };
 
         // DOM elements
@@ -884,110 +889,221 @@
             }, 1500);
         }
 
+        // Helper function to safely convert values to strings
+        function safeStringConvert(value) {
+            if (value === null || value === undefined) return '';
+            if (typeof value === 'string') return value;
+            return String(value);
+        }
+
         function transformData(data, mappings) {
             const result = {
                 cases: [],
                 teachers: [],
-                schools: []
+                schools: [],
+                sdos: new Set(),
+                duplicatesRemoved: 0,
+                originalCount: 0
             };
 
+            const seenStudents = new Set();
             const teacherSet = new Set();
             const schoolSet = new Set();
-            const sdoSet = new Set();
 
-            data.forEach((row, index) => {
-                // Skip empty rows
-                if (!row[mappings.stud_firstname_] && !row[mappings.stud_lastname_]) {
-                    return;
+            // Process each row and reshape from WIDE to LONG format
+            data.forEach((row, rowIndex) => {
+                // Determine how many students are in this row by checking for students with suffixes
+                let studentCount = 0;
+                
+                // Check for students with suffixes _0, _1, _2, etc. (but the first student uses just _)
+                for (let i = 0; i < 10; i++) {
+                    const suffix = i === 0 ? '_' : `_${i}`;
+                    const firstNameCol = mappings.stud_firstname_.replace('_', suffix);
+                    const lastNameCol = mappings.stud_lastname_.replace('_', suffix);
+                    
+                    if (row[firstNameCol] || row[lastNameCol]) {
+                        studentCount = i + 1;
+                    }
                 }
 
-                // Process case data
-                const caseData = {
-                    formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
-                    region: row[mappings.region] || '',
-                    division: row[mappings.sdo] || '',
-                    school_name: row[mappings.school] || '',
-                    old_student_name: `${(row[mappings.stud_firstname_] || '').trim()} ${(row[mappings.stud_lastname_] || '').trim()}`.trim(),
-                    grade_level: row[mappings.grade_level_] || '',
-                    resp_name: `${(row[mappings.resp_firstname_] || '').trim()} ${(row[mappings.resp_lastname_] || '').trim()}`.trim(),
-                    resp_relation: 'Parent', // Default, can be enhanced
-                    encoding_teacher: `${(row[mappings.teacher_firstname] || '').trim()} ${(row[mappings.teacher_lastname] || '').trim()}`.trim(),
-                    phone_1: row[mappings.phone_1_] || '',
-                    phone_2: row[mappings.phone_2_] || '',
-                    phone_1_name: `${(row[mappings.resp_firstname_] || '').trim()} ${(row[mappings.resp_lastname_] || '').trim()}`.trim(),
-                    phone_2_name: row[mappings.phone_2_] ? `${(row[mappings.resp_firstname_] || '').trim()} ${(row[mappings.resp_lastname_] || '').trim()}`.trim() : '',
-                    learn_number: row[mappings.learn_number_] || '',
-                    contacts: row[mappings.contacts] || ''
-                };
+                result.originalCount += studentCount;
 
-                result.cases.push(caseData);
+                // Process each student in this row
+                for (let i = 0; i < studentCount; i++) {
+                    const suffix = i === 0 ? '_' : `_${i}`;
+                    
+                    // Map column names with proper suffix
+                    const studentCols = {
+                        firstName: mappings.stud_firstname_.replace('_', suffix),
+                        lastName: mappings.stud_lastname_.replace('_', suffix),
+                        gradeLevel: mappings.grade_level_.replace('_', suffix),
+                        respFirstName: mappings.resp_firstname_.replace('_', suffix),
+                        respLastName: mappings.resp_lastname_.replace('_', suffix),
+                        phone1: mappings.phone_1_.replace('_', suffix),
+                        phone2: mappings.phone_2_.replace('_', suffix),
+                        learnNumber: mappings.learn_number_.replace('_', suffix),
+                        respRelationCode: mappings.resp_relation_code_.replace('_', suffix),
+                        contacts: mappings.contacts_.replace('_', suffix)
+                    };
 
-                // Collect unique teachers
-                if (caseData.encoding_teacher && caseData.encoding_teacher.trim()) {
-                    teacherSet.add(JSON.stringify({
-                        sdo: caseData.division,
-                        school_name: caseData.school_name,
-                        teacher_name: caseData.encoding_teacher,
-                        teacher_firstname: row[mappings.teacher_firstname] || '',
-                        teacher_lastname: row[mappings.teacher_lastname] || ''
-                    }));
+                    // Get student data using safe conversion
+                    const studentFirst = safeStringConvert(row[studentCols.firstName]).trim();
+                    const studentLast = safeStringConvert(row[studentCols.lastName]).trim();
+                    
+                    // Skip if no student name
+                    if (!studentFirst && !studentLast) {
+                        continue;
+                    }
+
+                    // Create student identifier for duplicate detection
+                    const learnerNumber = safeStringConvert(row[studentCols.learnNumber]).trim();
+                    const studentKey = `${studentFirst.toLowerCase()}_${studentLast.toLowerCase()}_${learnerNumber}`;
+                    
+                    if (seenStudents.has(studentKey)) {
+                        result.duplicatesRemoved++;
+                        continue;
+                    }
+                    seenStudents.add(studentKey);
+
+                    // Clean and format names using safe conversion
+                    const studentFirstName = properCase(studentFirst);
+                    const studentLastName = properCase(studentLast);
+                    const respFirstName = properCase(safeStringConvert(row[studentCols.respFirstName]).trim());
+                    const respLastName = properCase(safeStringConvert(row[studentCols.respLastName]).trim());
+                    const teacherFirstName = properCase(safeStringConvert(row[mappings.teacher_firstname]).trim());
+                    const teacherLastName = properCase(safeStringConvert(row[mappings.teacher_lastname]).trim());
+
+                    // Format respondent relation
+                    const respRelationCode = safeStringConvert(row[studentCols.respRelationCode]);
+                    let respRelation = 'Parent'; // Default
+                    switch(respRelationCode) {
+                        case '1': respRelation = 'Parent'; break;
+                        case '2': respRelation = 'Aunt/Uncle'; break;
+                        case '3': respRelation = 'Grandparent'; break;
+                        case '4': respRelation = 'Sibling'; break;
+                        case '5': respRelation = 'Guardian'; break;
+                        case '6': respRelation = 'Other Relative'; break;
+                        default: respRelation = 'Parent'; break;
+                    }
+
+                    // Process case data - keep IDs as numbers for now
+                    const caseData = {
+                        serialId: result.cases.length + 1,
+                        formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
+                        region: safeStringConvert(row[mappings.region]).trim(),
+                        division: safeStringConvert(row[mappings.sdo]).trim(), // SDO ID
+                        school_name: safeStringConvert(row[mappings.school]).trim(), // School ID for now
+                        old_student_name: `${studentFirstName} ${studentLastName}`.trim(),
+                        grade_level: safeStringConvert(row[studentCols.gradeLevel]).trim(),
+                        resp_name: `${respFirstName} ${respLastName}`.trim(),
+                        resp_relation: respRelation,
+                        encoding_teacher: `${teacherFirstName} ${teacherLastName}`.trim(),
+                        contacts: safeStringConvert(row[studentCols.contacts]),
+                        phone_1: cleanPhoneNumber(safeStringConvert(row[studentCols.phone1])),
+                        phone_2: cleanPhoneNumber(safeStringConvert(row[studentCols.phone2])),
+                        phone_1_name: `${respFirstName} ${respLastName}`.trim(),
+                        phone_2_name: row[studentCols.phone2] ? `${respFirstName} ${respLastName}`.trim() : '',
+                        learn_number: learnerNumber,
+                        district: safeStringConvert(row[mappings.district]).trim()
+                    };
+
+                    result.cases.push(caseData);
+                    result.sdos.add(caseData.division);
+
+                    // Collect unique teachers (only once per row, not per student)
+                    if (i === 0 && caseData.encoding_teacher && caseData.encoding_teacher.trim()) {
+                        const teacherKey = `${caseData.encoding_teacher}_${caseData.school_name}`;
+                        teacherSet.add(JSON.stringify({
+                            sdo: caseData.division,
+                            school_name: caseData.school_name,
+                            teacher_first_name: teacherFirstName,
+                            teacher_last_name: teacherLastName,
+                            encoding_teacher: caseData.encoding_teacher
+                        }));
+                    }
+
+                    // Collect unique schools (only once per row)
+                    if (i === 0 && caseData.school_name && caseData.school_name.trim()) {
+                        const schoolKey = `${caseData.school_name}_${caseData.division}`;
+                        schoolSet.add(JSON.stringify({
+                            sdo: caseData.division,
+                            school_name: caseData.school_name,
+                            district: caseData.district
+                        }));
+                    }
                 }
-
-                // Collect unique schools
-                if (caseData.school_name && caseData.school_name.trim()) {
-                    schoolSet.add(JSON.stringify({
-                        sdo: caseData.division,
-                        school_name: caseData.school_name
-                    }));
-                }
-
-                sdoSet.add(caseData.division);
             });
 
             // Convert sets to arrays
             result.teachers = Array.from(teacherSet).map(JSON.parse);
             result.schools = Array.from(schoolSet).map(JSON.parse);
-            result.sdos = Array.from(sdoSet).filter(sdo => sdo);
+            result.sdos = Array.from(result.sdos).filter(sdo => sdo);
 
             return result;
+        }
+
+        function properCase(str) {
+            return str.replace(/\w\S*/g, (txt) => 
+                txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+            );
+        }
+
+        function cleanPhoneNumber(phone) {
+            if (!phone) return '';
+            // Remove non-numeric characters and handle basic formatting
+            const cleaned = phone.toString().replace(/\D/g, '');
+            return cleaned;
         }
 
         function updatePreview() {
             if (!processedData) return;
 
-            const preview = `CASES DATA PREVIEW:
-===================
+            const preview = `CASES DATA PREVIEW (WIDE FORMAT PROCESSED):
+==========================================
 
-Total Cases: ${processedData.cases.length}
-Total Teachers: ${processedData.teachers.length}
-Total Schools: ${processedData.schools.length}
-SDOs: ${processedData.sdos.join(', ')}
+📊 SUMMARY STATISTICS:
+• Total Cases Generated: ${processedData.cases.length}
+• Original Records Processed: ${processedData.originalCount}
+• Duplicates Removed: ${processedData.duplicatesRemoved}
+• Unique Teachers: ${processedData.teachers.length}
+• Unique Schools: ${processedData.schools.length}
+• SDO IDs: ${processedData.sdos.join(', ')}
 
-SAMPLE CASES (First 3):
+🔄 WIDE TO LONG CONVERSION:
+• Detected multiple students per row in WIDE format
+• Reshaped data to one student per case
+• Processed students with suffixes: _, _1, _2, etc.
+
+📝 SAMPLE CASES (First 3):
 ${processedData.cases.slice(0, 3).map((c, i) => `
 Case ${i + 1}:
   Student: ${c.old_student_name}
   Grade: ${c.grade_level}
-  School: ${c.school_name}
+  School ID: ${c.school_name}
+  SDO ID: ${c.division}
+  Region ID: ${c.region}
   Teacher: ${c.encoding_teacher}
-  Respondent: ${c.resp_name}
+  Respondent: ${c.resp_name} (${c.resp_relation})
   Phone: ${c.phone_1}
 `).join('')}
 
-SAMPLE TEACHERS (First 3):
+👥 SAMPLE TEACHERS (First 3):
 ${processedData.teachers.slice(0, 3).map((t, i) => `
 Teacher ${i + 1}:
-  Name: ${t.teacher_name}
-  School: ${t.school_name}
-  SDO: ${t.sdo}
+  Name: ${t.encoding_teacher}
+  School ID: ${t.school_name}
+  SDO ID: ${t.sdo}
 `).join('')}
 
-Ready to download Excel file with:
-- Individual SDO sheets for cases
-- Teachers sheet with enumerator IDs  
-- Schools sheet for reference
-- Built-in formulas for ID generation
-- Conditional formatting for duplicate detection`;
+📋 EXCEL FILE WILL CONTAIN:
+• Individual SDO sheets for cases (by SDO ID)
+• Teachers sheet with enumerator IDs  
+• Schools sheet for reference
+• All numeric IDs preserved as entered
+
+⚠️  NOTE: 
+Region/SDO/School are numeric IDs as in your source data.
+You may want to add a lookup table to convert to names.`;
 
             previewArea.textContent = preview;
         }
