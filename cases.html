@@ -1529,7 +1529,7 @@ You may want to add a lookup table to convert to names.`;
                 const sheetName = sdoName.toLowerCase()
                     .replace(/[^a-z0-9\s]/g, '')
                     .replace(/\s+/g, '_')
-                    .substring(0, 25) + `_${sdoId}`;
+                    .substring(0, 20) + `_${sdoId}`;
                 
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
