@@ -217,9 +217,8 @@
         
         <div class="features-grid">
             <div class="feature-card troubleshoot" onclick="navigateToFeature('troubleshoot')">
-                <div class="status-badge coming-soon">Coming Soon</div>
                 <div class="feature-icon">🤖</div>
-                <div class="feature-title">Troubleshoot Chatbot</div>
+                <div class="feature-title">Troubleshoot Helper</div>
                 <div class="feature-description">Assistant to help diagnose and resolve technical issues </div>
             </div>
             
@@ -271,6 +270,11 @@
 
                 if (feature === 'converter') {
                 window.location.href = 'converter.html';
+                return;
+                  }
+
+                if (feature === 'troubleshoot') {
+                window.location.href = 'troubleshoot.html';
                 return;
                   }
     
