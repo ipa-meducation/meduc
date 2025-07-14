@@ -237,7 +237,6 @@
             </div>
             
             <div class="feature-card cases" onclick="navigateToFeature('cases')">
-                <div class="status-badge coming-soon">Coming Soon</div>
                 <div class="feature-icon">📋</div>
                 <div class="feature-title">Cases Maker</div>
                 <div class="feature-description">Create cases for SurveyCTO, derived from learners info dataset</div>
@@ -275,6 +274,11 @@
 
                 if (feature === 'troubleshoot') {
                 window.location.href = 'troubleshoot.html';
+                return;
+                  }
+
+                if (feature === 'cases') {
+                window.location.href = 'cases.html';
                 return;
                   }
     
