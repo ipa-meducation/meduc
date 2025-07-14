@@ -1463,9 +1463,9 @@ You may want to add a lookup table to convert to names.`;
                 'school_name': teacher.school_name,
                 'teacher_first_name': teacher.teacher_first_name,
                 'teacher_last_name': teacher.teacher_last_name,
-                'enumerator_id': `=LEFT(D${index + 2},1) & E${index + 2} & "_" & A${index + 2}`, // Excel formula
-                'enumerator_name': `=CONCAT(D${index + 2}," ",E${index + 2})`, // Excel formula
-                'users': `=IFERROR(XLOOKUP(C${index + 2},schools!C:C,schools!D:D,""),"")`, // Lookup formula
+                'enumerator_id': `${teacher.teacher_first_name.charAt(0)}${teacher.teacher_last_name}_${teacher.sdo_id}`,
+                'enumerator_name': `${teacher.teacher_first_name} ${teacher.teacher_last_name}`,
+                'users': `user_${teacher.school_id}`,
                 'district': teacher.district
             }));
             
@@ -1493,6 +1493,7 @@ You may want to add a lookup table to convert to names.`;
                 
                 const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId);
                 const sdoName = sdoCases[0]?.division || `SDO_${sdoId}`;
+                const sheetName = sdoName.substring(0, 31); // Just use SDO label, max 31 chars
                 
                 const sdoData = sdoCases.map((caseItem, index) => ({
                     'id': `=CONCAT("${sdoId}_",ROW()-1)`, // Excel formula for auto-incrementing ID with SDO prefix
@@ -1527,7 +1528,6 @@ You may want to add a lookup table to convert to names.`;
                 
                 // Create safe sheet name using SDO name if available
                 const maxLength = 31 - `_${sdoId}`.length - 1; // Reserve space for _ID and safety margin
-                const sheetName = sdoName.substring(0, 31); // Just use SDO label, max 31 chars
                                 
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
