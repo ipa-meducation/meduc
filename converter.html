@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+function hideError() {
+            errorMessage.style.display = 'none';
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -827,7 +829,7 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
             }
 
             // Find implementation columns - use config if available, otherwise fallback
-            const implementationColumns = {};
+            let implementationColumns = {};
             
             if (roundsConfig && roundsConfig.implementationRounds) {
                 // Use configuration to find columns
