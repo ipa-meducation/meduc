@@ -34,387 +34,504 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 50%, var(--dark-blue) 100%);
             min-height: 100vh;
+            overflow-x: hidden;
             color: var(--charcoal);
-            line-height: 1.6;
+        }
+
+        /* Simplified background pattern */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+            background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1px, transparent 1px),
+                              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
+            min-height: 100vh;
         }
 
-        header {
+        .header-section {
             text-align: center;
-            padding: 10px 0;
-            margin-bottom: 10px;
+            margin-bottom: 40px;
             position: relative;
-            background: rgba(255, 255, 255, 0.95);  
-            backdrop-filter: blur(10px);            
-            border-radius: 15px;                    
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
         }
 
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            color: var(--dark-green);
-        }
-
-        .back-btn {
+        .back-button {
             position: absolute;
-            right: 20px;
+            left: 0;
             top: 50%;
             transform: translateY(-50%);
-            background: var(--primary-green);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-50%) translateX(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .page-title {
+            color: white;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .map-section {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .config-panel {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            display: none;
+            border-left: 4px solid var(--dark-blue);
+        }
+
+        .config-panel.show {
+            display: block;
+            animation: slideDown 0.3s ease forwards;
+        }
+
+        .config-title {
+            font-weight: 650;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-alert {
+            padding: 12px 16px;
+            background: rgba(242, 101, 41, 0.1);
+            border-left: 4px solid var(--orange);
+            color: var(--orange);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .config-success {
+            padding: 12px 16px;
+            background: rgba(73, 172, 87, 0.1);
+            border-left: 4px solid var(--primary-green);
+            color: var(--dark-green);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .config-steps {
+            margin-top: 10px;
+        }
+
+        .config-steps ol {
+            margin-left: 20px;
+        }
+
+        .config-steps li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .config-steps code {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .controls-bar {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            min-width: 280px;
+            max-width: 400px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(73, 172, 87, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-green), #4caf50);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 12px 20px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 0.9rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
+            font-family: inherit;
         }
 
-        .back-btn:hover {
-            background: var(--dark-green);
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 25px rgba(73, 172, 87, 0.25);
         }
 
-        .config-info {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: none;
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--dark-blue), #3f51b5);
         }
 
-        .config-info.show {
-            display: block;
+        .btn-secondary:hover {
+            box-shadow: 0 8px 25px rgba(43, 64, 133, 0.25);
         }
 
-        .config-alert {
-            padding: 10px;
-            background: rgba(242, 101, 41, 0.1);
-            border-left: 4px solid var(--orange);
-            color: var(--orange);
-            border-radius: 4px;
-            margin-bottom: 10px;
+        .btn-config {
+            background: linear-gradient(135deg, var(--dark-blue), #3f51b5);
         }
 
-        .config-success {
-            padding: 10px;
-            background: rgba(73, 172, 87, 0.1);
-            border-left: 4px solid var(--primary-green);
-            color: var(--dark-green);
-            border-radius: 4px;
-            margin-bottom: 10px;
+        .btn-config:hover {
+            box-shadow: 0 8px 25px rgba(43, 64, 133, 0.25);
+        }
+
+        .btn-help {
+            background: linear-gradient(135deg, var(--orange), #ff7043);
+        }
+
+        .btn-help:hover {
+            box-shadow: 0 8px 25px rgba(242, 101, 41, 0.25);
+        }
+
+        .help-tooltip {
+            position: relative;
+        }
+
+        .help-tooltip .tooltip-content {
+            visibility: hidden;
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark-green);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            width: 320px;
+            text-align: left;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .help-tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
         }
 
         #map-container {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (min-width: 992px) {
-            #map-container {
-                flex-direction: row;
-            }
+            gap: 25px;
+            min-height: 600px;
         }
 
         #map {
-            height: 700px;
-            border-radius: 8px;
-            flex: 3;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1;
+            flex: 2;
+            height: 600px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         .sidebar {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            min-width: 250px;
-            max-width: 400px;
+            flex: 0 0 320px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.04);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
+            height: fit-content;
         }
 
-        .controls {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .filter-group {
+        .filter-section {
             margin-bottom: 20px;
         }
 
         .filter-title {
-            font-weight: bold;
+            font-weight: 650;
             font-size: 1.1rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--dark-green);
-            border-bottom: 2px solid var(--primary-green);
-            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .filter-options {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
-        .filter-check {
+        .filter-checkbox {
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .color-box {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            display: inline-block;
-        }
-
-        .stats {
-            margin-top: auto;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        .stats-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: var(--dark-green);
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        .stat-value {
-            font-weight: bold;
-            color: var(--primary-green);
-        }
-
-        button {
-            background: var(--primary-green);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        }
+
+        .filter-checkbox:hover {
+            background: rgba(73, 172, 87, 0.05);
+        }
+
+        .filter-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-green);
+        }
+
+        .color-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+
+        .sdo-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
             font-size: 0.9rem;
+            font-family: inherit;
+            background: white;
             transition: all 0.3s ease;
         }
 
-        button:hover {
-            background: var(--dark-green);
+        .sdo-select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(73, 172, 87, 0.1);
         }
 
-        select {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            font-size: 0.9rem;
+        .stats-section {
+            background: linear-gradient(135deg, var(--light-gray) 0%, #e8e9ea 100%);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 4px solid var(--primary-green);
+            margin-top: auto;
         }
 
-        .search-box {
+        .stats-title {
+            font-weight: 650;
+            margin-bottom: 15px;
+            color: var(--dark-green);
+            font-size: 1.05rem;
             display: flex;
-            gap: 5px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .search-input {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
             font-size: 0.9rem;
+            padding: 4px 0;
         }
 
+        .stat-label {
+            color: var(--charcoal);
+            opacity: 0.85;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--primary-green);
+            font-size: 1rem;
+        }
+
+        /* Custom popup styles */
         .custom-popup {
-            max-width: 300px;
+            max-width: 320px;
         }
 
         .school-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
             color: var(--dark-green);
         }
 
         .school-sdo {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            color: var(--charcoal);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .implementation-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
         }
 
         .implementation-tag {
             display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-            margin-bottom: 5px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 0.8rem;
             color: white;
+            font-weight: 600;
         }
 
-        .popup-content {
-            margin-top: 5px;
-        }
-
-        .implementation-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 5px;
-        }
-
-        .loading-container {
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-green);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        .loading-text {
-            font-size: 1rem;
-            color: var(--dark-green);
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .tooltip {
-            position: relative;
-            cursor: help;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 300px;
-            background-color: var(--dark-green);
-            color: white;
-            text-align: left;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -150px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Custom marker styles */
+        /* Enhanced marker styles */
         .custom-div-icon {
             background: transparent;
             border: none;
         }
 
         .marker-pin {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50% 50% 50% 0;
             position: absolute;
             transform: rotate(-45deg);
             left: 50%;
             top: 50%;
-            margin: -15px 0 0 -15px;
-            box-shadow: 0 0 2px rgba(0,0,0,0.5);
+            margin: -16px 0 0 -16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
         
         .marker-text {
             position: relative;
             transform: rotate(45deg);
             font-weight: bold;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             text-align: center;
-            line-height: 30px;
+            line-height: 32px;
             color: white;
+            font-size: 14px;
         }
 
+        /* Custom cluster styling */
         .custom-cluster-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            box-shadow: 0 0 0 4px white, 0 0 0 5px rgba(0,0,0,0.2);
+            box-shadow: 0 0 0 4px white, 0 0 0 5px rgba(0,0,0,0.15);
             font-size: 16px;
         }
         
+        /* Enhanced marker styling for multi-round schools */
         .multi-implementation-marker {
             position: relative;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            box-shadow: 0 0 0 2px white, 0 0 0 3px rgba(0,0,0,0.2);
+            box-shadow: 0 0 0 3px white, 0 0 0 4px rgba(0,0,0,0.15);
         }
         
         .implementation-slice {
@@ -435,8 +552,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             background-color: white;
             display: flex;
@@ -444,42 +561,51 @@
             justify-content: center;
             color: var(--dark-green);
             font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 15px 15px;
-            }
-
-            .back-btn {
-                position: static;
-                transform: none;
-                margin-top: 15px;
-            }
-
-            .controls {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .search-box {
-                min-width: 100%;
-            }
-            
-            .sidebar {
-                min-width: 100%;
-                max-width: 100%;
-            }
-
-            #map {
-                height: 500px;
-            }
+        /* Loading styles */
+        .loading-overlay {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
-        @keyframes fadeInUp {
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(73, 172, 87, 0.2);
+            border-top: 6px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--dark-green);
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
@@ -487,87 +613,205 @@
             }
         }
 
-        .controls,
-        #map-container {
-            animation: fadeInUp 0.6s ease forwards;
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            #map-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: none;
+                max-width: none;
+            }
         }
 
-        .controls { animation-delay: 0.1s; }
-        #map-container { animation-delay: 0.2s; }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .back-button {
+                position: static;
+                transform: none;
+                margin-bottom: 20px;
+                align-self: flex-start;
+            }
+
+            .header-section {
+                text-align: left;
+            }
+
+            .map-section {
+                padding: 25px 20px;
+                border-radius: 20px;
+            }
+
+            .controls-bar, .config-panel {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .search-container {
+                min-width: 100%;
+                max-width: none;
+            }
+
+            #map {
+                height: 400px;
+            }
+
+            .sidebar {
+                padding: 20px;
+            }
+
+            .help-tooltip .tooltip-content {
+                width: 280px;
+                margin-left: -140px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .controls-bar, .config-panel {
+                padding: 15px;
+            }
+
+            .filter-checkbox {
+                padding: 8px 10px;
+            }
+
+            #map {
+                height: 350px;
+            }
+        }
+
+        /* Animation for page load */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .map-section {
+            animation: slideUp 0.6s ease forwards;
+        }
     </style>
 </head>
 <body>
-    <div class="loading-container" id="loading">
-        <div class="spinner"></div>
+    <div class="bg-animation"></div>
+    
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
         <div class="loading-text">Loading configuration and map data...</div>
     </div>
 
     <div class="container">
-        <header>
-            <h1>mEducation Implementation Map</h1>
-            <a href="home.html" class="back-btn">
+        <div class="header-section">
+            <a href="index.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 Back to Hub
             </a>
-        </header>
-
-        <div class="config-info" id="configInfo">
-            <h3><i class="fas fa-info-circle"></i> Configuration Status</h3>
-            <div id="configAlert"></div>
-            <p><strong>To add new implementation rounds:</strong></p>
-            <ol>
-                <li>Edit <code>rounds-config.json</code> to add new rounds</li>
-                <li>Use the Map File Converter to generate updated <code>schools.json</code></li>
-                <li>Refresh this page - new rounds will appear automatically!</li>
-            </ol>
+            <h1 class="page-title">Implementation Map</h1>
+            <p class="page-subtitle">Interactive visualization of school implementations across different rounds and programs</p>
         </div>
 
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="school-search" class="search-input" placeholder="Search for a school...">
-                <button id="search-btn"><i class="fas fa-search"></i> Search</button>
+        <div class="map-section">
+            <div class="config-panel" id="configInfo">
+                <div class="config-title">
+                    <i class="fas fa-cog"></i>
+                    Configuration Status
+                </div>
+                <div id="configAlert"></div>
+                <div class="config-steps">
+                    <p><strong>To add new implementation rounds:</strong></p>
+                    <ol>
+                        <li>Edit <code>rounds-config.json</code> to add new rounds</li>
+                        <li>Use the Map File Converter to generate updated <code>schools.json</code></li>
+                        <li>Refresh this page - new rounds will appear automatically!</li>
+                    </ol>
+                </div>
             </div>
-            <button id="reset-filters"><i class="fas fa-sync-alt"></i> Reset Filters</button>
-            <button id="fit-all"><i class="fas fa-expand"></i> Show All Schools</button>
-            <button id="toggle-config"><i class="fas fa-cog"></i> Config Info</button>
-            <div class="tooltip">
-                <button id="help-btn"><i class="fas fa-question-circle"></i> Help</button>
-                <span class="tooltiptext" id="helpText">
-                    <strong>Map Controls:</strong><br>
-                    - Use the checkboxes to filter schools by implementation type<br>
-                    - Search for schools by name<br>
-                    - Click markers to see details<br>
-                    - Clusters will expand when clicked or zoomed<br>
-                    <br><strong>Adding New Rounds:</strong><br>
-                    - Edit rounds-config.json to add new implementation rounds<br>
-                    - Colors and names are automatically applied<br>
-                    - Use the Map File Converter to update schools.json
-                </span>
-            </div>
-        </div>
 
-        <div id="map-container">
-            <div id="map"></div>
-            
-            <div class="sidebar">
-                <div class="filter-group">
-                    <div class="filter-title">Filter By Implementation Type</div>
-                    <div class="filter-options" id="filterOptions">
-                        <!-- Dynamically populated -->
+            <div class="controls-bar">
+                <div class="search-container">
+                    <input type="text" id="school-search" class="search-input" placeholder="Search for a school or SDO...">
+                    <button id="search-btn" class="btn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </div>
+                
+                <button id="reset-filters" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt"></i>
+                    Reset Filters
+                </button>
+                
+                <button id="fit-all" class="btn btn-secondary">
+                    <i class="fas fa-expand"></i>
+                    Show All
+                </button>
+
+                <button id="toggle-config" class="btn btn-config">
+                    <i class="fas fa-cog"></i>
+                    Config Info
+                </button>
+                
+                <div class="help-tooltip">
+                    <button class="btn btn-help">
+                        <i class="fas fa-question-circle"></i>
+                        Help
+                    </button>
+                    <div class="tooltip-content" id="helpText">
+                        <strong>Map Controls:</strong><br>
+                        • Use checkboxes to filter schools by implementation type<br>
+                        • Search for schools by name or SDO<br>
+                        • Click markers to see detailed information<br>
+                        • Clusters expand when clicked or zoomed<br>
+                        <br><strong>Adding New Rounds:</strong><br>
+                        • Edit rounds-config.json to add new implementation rounds<br>
+                        • Colors and names are automatically applied<br>
+                        • Use the Map File Converter to update schools.json
                     </div>
                 </div>
+            </div>
 
-                <div class="filter-group">
-                    <div class="filter-title">Filter By SDO</div>
-                    <select id="sdo-filter" style="width: 100%;">
-                        <option value="all">All SDOs</option>
-                    </select>
-                </div>
+            <div id="map-container">
+                <div id="map"></div>
+                
+                <div class="sidebar">
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-filter"></i>
+                            Implementation Types
+                        </div>
+                        <div class="filter-options" id="filterOptions">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
 
-                <div class="stats">
-                    <div class="stats-title">Implementation Statistics</div>
-                    <div id="statsContainer">
-                        <!-- Dynamically populated -->
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-building"></i>
+                            School Division Office
+                        </div>
+                        <select id="sdo-filter" class="sdo-select">
+                            <option value="all">All School Division Offices</option>
+                        </select>
+                    </div>
+
+                    <div class="stats-section">
+                        <div class="stats-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Statistics
+                        </div>
+                        <div id="statsContainer">
+                            <!-- Dynamically populated -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -702,9 +946,9 @@
             
             // Add total schools stat
             const totalStat = document.createElement('div');
-            totalStat.className = 'stat-item';
+            totalStat.className = 'stat-row';
             totalStat.innerHTML = `
-                <span>Total Schools:</span>
+                <span class="stat-label">Total Schools:</span>
                 <span class="stat-value" id="stat-total">-</span>
             `;
             statsContainer.appendChild(totalStat);
@@ -713,11 +957,11 @@
             config.implementationRounds.forEach(round => {
                 // Create filter checkbox
                 const filterLabel = document.createElement('label');
-                filterLabel.className = 'filter-check';
+                filterLabel.className = 'filter-checkbox';
                 filterLabel.innerHTML = `
                     <input type="checkbox" id="filter-${round.id}" checked data-round="${round.name}">
-                    <span class="color-box" style="background-color: ${round.color}"></span>
-                    ${round.name}
+                    <div class="color-indicator" style="background-color: ${round.color}"></div>
+                    <span class="filter-label">${round.name}</span>
                 `;
                 filterOptions.appendChild(filterLabel);
 
@@ -732,9 +976,9 @@
 
                 // Create stat item
                 const statItem = document.createElement('div');
-                statItem.className = 'stat-item';
+                statItem.className = 'stat-row';
                 statItem.innerHTML = `
-                    <span>${round.name}:</span>
+                    <span class="stat-label">${round.name}:</span>
                     <span class="stat-value" id="stat-${round.id}">-</span>
                 `;
                 statsContainer.appendChild(statItem);
@@ -745,11 +989,11 @@
                 const multiConfig = config.multipleRoundsConfig;
                 
                 const filterLabel = document.createElement('label');
-                filterLabel.className = 'filter-check';
+                filterLabel.className = 'filter-checkbox';
                 filterLabel.innerHTML = `
                     <input type="checkbox" id="filter-multi" checked data-round="${multiConfig.name}">
-                    <span class="color-box" style="background-color: ${multiConfig.color}"></span>
-                    ${multiConfig.name}
+                    <div class="color-indicator" style="background-color: ${multiConfig.color}"></div>
+                    <span class="filter-label">${multiConfig.name}</span>
                 `;
                 filterOptions.appendChild(filterLabel);
 
@@ -762,9 +1006,9 @@
                 map.addLayer(markerGroups[multiConfig.name]);
 
                 const statItem = document.createElement('div');
-                statItem.className = 'stat-item';
+                statItem.className = 'stat-row';
                 statItem.innerHTML = `
-                    <span>${multiConfig.name}:</span>
+                    <span class="stat-label">${multiConfig.name}:</span>
                     <span class="stat-value" id="stat-multi">-</span>
                 `;
                 statsContainer.appendChild(statItem);
@@ -816,8 +1060,8 @@
                 html: `<div style="background: ${color}" class="marker-pin">
                         <div class="marker-text"><i class="fas fa-school"></i></div>
                        </div>`,
-                iconSize: [30, 42],
-                iconAnchor: [15, 42],
+                iconSize: [32, 45],
+                iconAnchor: [16, 45],
                 popupAnchor: [0, -35]
             });
         }
@@ -841,9 +1085,9 @@
                         ${slicesHTML}
                         <div class="marker-center"><i class="fas fa-school"></i></div>
                        </div>`,
-                iconSize: [36, 36],
-                iconAnchor: [18, 18],
-                popupAnchor: [0, -18]
+                iconSize: [40, 40],
+                iconAnchor: [20, 20],
+                popupAnchor: [0, -20]
             });
         }
 
@@ -863,7 +1107,7 @@
                     <div class="school-sdo">SDO: ${school.sdo}</div>
                     <div class="popup-content">
                         <div>Implementation:</div>
-                        <div class="implementation-list">
+                        <div class="implementation-tags">
                             ${implementationTags}
                         </div>
                     </div>
@@ -880,7 +1124,7 @@
                             <span>${count}</span>
                           </div>`,
                     className: 'custom-cluster',
-                    iconSize: L.point(40, 40)
+                    iconSize: L.point(45, 45)
                 });
             };
         }
@@ -907,7 +1151,7 @@
         // Populate SDO filter
         function populateSDOFilter() {
             const sdoFilter = document.getElementById('sdo-filter');
-            sdoFilter.innerHTML = '<option value="all">All SDOs</option>';
+            sdoFilter.innerHTML = '<option value="all">All School Division Offices</option>';
             Array.from(sdoList).sort().forEach(sdo => {
                 const option = document.createElement('option');
                 option.value = sdo;
