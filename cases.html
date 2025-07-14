@@ -1526,11 +1526,12 @@ You may want to add a lookup table to convert to names.`;
                 const sdoWS = XLSX.utils.json_to_sheet(sdoData);
                 
                 // Create safe sheet name using SDO name if available
+                const maxLength = 31 - `_${sdoId}`.length - 1; // Reserve space for _ID and safety margin
                 const sheetName = sdoName.toLowerCase()
                     .replace(/[^a-z0-9\s]/g, '')
                     .replace(/\s+/g, '_')
-                    .substring(0, 20) + `_${sdoId}`;
-                
+                    .substring(0, Math.max(1, maxLength)) + `_${sdoId}`;
+                                
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
             
