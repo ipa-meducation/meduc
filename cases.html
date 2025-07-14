@@ -1493,7 +1493,7 @@ You may want to add a lookup table to convert to names.`;
                 
                 const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId);
                 const sdoName = sdoCases[0]?.division || `SDO_${sdoId}`;
-                const sheetName = sdoName.substring(0, 31); // Just use SDO label, max 31 chars
+                const sheetName = `SDO_${sdoId}`;//
                 
                 const sdoData = sdoCases.map((caseItem, index) => ({
                     'id': `=CONCAT("${sdoId}_",ROW()-1)`, // Excel formula for auto-incrementing ID with SDO prefix
