@@ -132,6 +132,7 @@
             cursor: pointer;
             background: rgba(132, 208, 212, 0.1);
             margin-bottom: 20px;
+            position: relative;
         }
 
         .upload-area:hover {
@@ -543,11 +544,13 @@
 
                 <!-- Add a visible browse button as backup -->
                 <div style="margin-top: 15px; text-align: center;">
-                    <button type="button" class="btn" id="browseBtn">
+                    <button type="button" class="btn" id="browseBtn" onclick="alert('Button clicked!'); document.getElementById('fileInput').click();">
                         <i class="fas fa-folder-open"></i>
                         Browse Files
                     </button>
                 </div>
+
+                <!-- Emergency test button -->
 
                 <div class="file-info" id="fileInfo">
                     <div class="file-details">
@@ -679,6 +682,19 @@
     </div>
 
     <script>
+        // Test if JavaScript is running at all
+        console.log('JavaScript is running!');
+        
+        // Test function
+        function testJS() {
+            alert('JavaScript is working!');
+            console.log('Test function called');
+        }
+        
+        // Call test function immediately
+        setTimeout(() => {
+            console.log('Timeout test - JavaScript is definitely running');
+        }, 1000);
         // Global variables
         let rawData = null;
         let processedData = null;
@@ -1296,6 +1312,7 @@ Case ${i + 1}:
 ✅ Ready to download the complete Excel file!`;
 
             previewArea.textContent = preview;
+        }
         }2).map((c, i) => `
 Case ${i + 1}:
   Student: ${c.old_student_name}
