@@ -532,7 +532,7 @@
                     Upload Learner Enrollment Data
                 </div>
                 
-                <div class="upload-area" id="uploadArea">
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
@@ -716,7 +716,10 @@
         const statsSection = document.getElementById('statsSection');
 
         // Event listeners
-        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('click', () => {
+            console.log('Upload area clicked');
+            fileInput.click();
+        });
         uploadArea.addEventListener('dragover', handleDragOver);
         uploadArea.addEventListener('dragleave', handleDragLeave);
         uploadArea.addEventListener('drop', handleDrop);
@@ -726,28 +729,52 @@
         downloadBtn.addEventListener('click', downloadExcel);
         previewDataBtn.addEventListener('click', showDetailedPreview);
 
+        // Also add click handler to the entire upload area for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up upload area');
+            
+            // Make sure the upload area is clickable
+            uploadArea.style.cursor = 'pointer';
+            
+            // Add click event to upload icon and text as well
+            const uploadIcon = uploadArea.querySelector('.upload-icon');
+            const uploadText = uploadArea.querySelector('.upload-text');
+            
+            if (uploadIcon) uploadIcon.addEventListener('click', () => fileInput.click());
+            if (uploadText) uploadText.addEventListener('click', () => fileInput.click());
+        });
+
         function handleDragOver(e) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('Drag over');
             uploadArea.classList.add('dragover');
         }
 
         function handleDragLeave(e) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('Drag leave');
             uploadArea.classList.remove('dragover');
         }
 
         function handleDrop(e) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('File dropped');
             uploadArea.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
+                console.log('Processing dropped file:', files[0].name);
                 handleFile(files[0]);
             }
         }
 
         function handleFileSelect(e) {
+            console.log('File selected via input');
             const file = e.target.files[0];
             if (file) {
+                console.log('Processing selected file:', file.name);
                 handleFile(file);
             }
         }
