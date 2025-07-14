@@ -132,7 +132,6 @@
             cursor: pointer;
             background: rgba(132, 208, 212, 0.1);
             margin-bottom: 20px;
-            position: relative;
         }
 
         .upload-area:hover {
@@ -530,27 +529,17 @@
             <div class="upload-section">
                 <div class="section-title">
                     <i class="fas fa-upload"></i>
-                    Upload Learner Enrollment Data
+                    Upload Learner Data
                 </div>
                 
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
-                    <div class="upload-text">Drop your learner enrollment Excel/CSV file here</div>
-                    <div class="upload-subtext">or click to browse files (Excel WIDE format from SurveyCTO export)</div>
+                    <div class="upload-text">Drop your Excel or CSV file here</div>
+                    <div class="upload-subtext">or click to browse files</div>
                     <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv">
                 </div>
-
-                <!-- Add a visible browse button as backup -->
-                <div style="margin-top: 15px; text-align: center;">
-                    <button type="button" class="btn" id="browseBtn" onclick="alert('Button clicked!'); document.getElementById('fileInput').click();">
-                        <i class="fas fa-folder-open"></i>
-                        Browse Files
-                    </button>
-                </div>
-
-                <!-- Emergency test button -->
 
                 <div class="file-info" id="fileInfo">
                     <div class="file-details">
@@ -568,26 +557,15 @@
                 <div class="mapping-section" id="mappingSection">
                     <div class="mapping-title">
                         <i class="fas fa-exchange-alt"></i>
-                        Column Mapping & Settings
+                        Column Mapping
                     </div>
                     <div class="column-mapping" id="columnMapping">
                         <!-- Dynamic mapping fields will be added here -->
                     </div>
-                    
-                    <div id="sdoPrefixSection" style="margin-top: 20px; display: none;">
-                        <div class="mapping-title">
-                            <i class="fas fa-tags"></i>
-                            SDO Prefixes for Case IDs
-                        </div>
-                        <div id="sdoPrefixMapping">
-                            <!-- Dynamic SDO prefix fields will be added here -->
-                        </div>
-                    </div>
-                    
                     <div class="action-buttons">
                         <button class="btn" id="processBtn" disabled>
                             <i class="fas fa-cogs"></i>
-                            Generate Cases & Teachers Data
+                            Process Data
                         </button>
                         <button class="btn btn-secondary" id="resetBtn">
                             <i class="fas fa-undo"></i>
@@ -599,15 +577,14 @@
                 <div class="help-section">
                     <div class="help-title">
                         <i class="fas fa-info-circle"></i>
-                        About This Tool
+                        Expected File Format
                     </div>
                     <ul class="help-list">
-                        <li>Processes learner enrollment data exported from SurveyCTO (WIDE format)</li>
-                        <li>Generates properly formatted Excel with multiple sheets for SurveyCTO upload</li>
-                        <li>Creates: SDO-specific case sheets, teachers sheet, schools sheet</li>
-                        <li>Includes built-in Excel formulas for ID generation and lookups</li>
-                        <li>Adds conditional formatting to detect duplicate entries</li>
-                        <li>Handles data cleaning similar to the Stata .do file process</li>
+                        <li>Excel (.xlsx) or CSV file with learner enrollment data</li>
+                        <li>Should contain student names, grades, teacher info, school details</li>
+                        <li>Contact information (phone numbers, respondent details)</li>
+                        <li>School Division Office (SDO) information</li>
+                        <li>File should be from SurveyCTO learner enrollment form export</li>
                     </ul>
                 </div>
             </div>
@@ -615,33 +592,26 @@
             <div class="preview-section">
                 <div class="section-title">
                     <i class="fas fa-eye"></i>
-                    Processing Results
+                    Preview & Download
                 </div>
                 
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <div>Processing learner data and generating cases...</div>
+                    <div>Processing your data...</div>
                 </div>
 
                 <div class="preview-area" id="previewArea">
-                    Upload a learner enrollment file to begin processing...
-                    
-                    The tool will:
-                    • Clean and transform the data
-                    • Remove duplicates 
-                    • Generate case IDs and enumerator IDs
-                    • Create multiple Excel sheets with formulas
-                    • Apply conditional formatting for validation
+                    Upload a file to see the preview of generated cases...
                 </div>
 
                 <div class="action-buttons" style="margin-top: 20px;">
                     <button class="btn btn-orange" id="downloadBtn" disabled>
                         <i class="fas fa-download"></i>
-                        Download Complete Excel File
+                        Download Cases Excel
                     </button>
-                    <button class="btn btn-secondary" id="previewDataBtn" disabled>
+                    <button class="btn btn-secondary" id="previewDetailsBtn" disabled>
                         <i class="fas fa-table"></i>
-                        Preview Data Summary
+                        View Full Details
                     </button>
                 </div>
             </div>
@@ -650,12 +620,12 @@
         <div class="stats-section" id="statsSection" style="display: none;">
             <div class="section-title">
                 <i class="fas fa-chart-bar"></i>
-                Data Processing Summary
+                Processing Statistics
             </div>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" id="totalCases">0</div>
-                    <div class="stat-label">Total Cases Generated</div>
+                    <div class="stat-number" id="totalRecords">0</div>
+                    <div class="stat-label">Total Records</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="uniqueStudents">0</div>
@@ -663,77 +633,50 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="totalTeachers">0</div>
-                    <div class="stat-label">Unique Teachers</div>
+                    <div class="stat-label">Teachers</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="totalSchools">0</div>
-                    <div class="stat-label">Schools Involved</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="duplicatesRemoved">0</div>
-                    <div class="stat-label">Duplicates Removed</div>
+                    <div class="stat-label">Schools</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="totalSDOs">0</div>
-                    <div class="stat-label">SDOs Processed</div>
+                    <div class="stat-label">SDOs</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Test if JavaScript is running at all
-        console.log('JavaScript is running!');
-        
-        // Test function
-        function testJS() {
-            alert('JavaScript is working!');
-            console.log('Test function called');
-        }
-        
-        // Call test function immediately
-        setTimeout(() => {
-            console.log('Timeout test - JavaScript is definitely running');
-        }, 1000);
         // Global variables
         let rawData = null;
         let processedData = null;
         let columnHeaders = [];
-        let sdoPrefixes = {};
-        let detectedSDOs = [];
         let requiredFields = {
-            'stud_firstname_': 'Student First Name (0)',
-            'stud_lastname_': 'Student Last Name (0)', 
-            'grade_level_': 'Grade Level (0)',
+            'stud_firstname_': 'Student First Name',
+            'stud_lastname_': 'Student Last Name', 
+            'grade_level_': 'Grade Level',
             'teacher_firstname': 'Teacher First Name',
             'teacher_lastname': 'Teacher Last Name',
             'school': 'School Name',
-            'sdo': 'School Division Office (SDO)',
-            'resp_firstname_': 'Respondent First Name (0)',
-            'resp_lastname_': 'Respondent Last Name (0)',
-            'phone_1_': 'Primary Phone (0)',
-            'phone_2_': 'Secondary Phone (0) - Optional',
-            'learn_number_': 'Learner Number (0)',
-            'resp_relation_code_': 'Respondent Relation Code (0)',
-            'region': 'Region',
-            'contacts_': 'Contacts (0)'
+            'sdo': 'School Division Office',
+            'resp_firstname_': 'Respondent First Name',
+            'resp_lastname_': 'Respondent Last Name',
+            'phone_1_': 'Primary Phone',
+            'learn_number_': 'Learner Number'
         };
 
         // DOM elements
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
-        const browseBtn = document.getElementById('browseBtn');
         const fileInfo = document.getElementById('fileInfo');
         const fileName = document.getElementById('fileName');
         const fileSize = document.getElementById('fileSize');
         const mappingSection = document.getElementById('mappingSection');
         const columnMapping = document.getElementById('columnMapping');
-        const sdoPrefixSection = document.getElementById('sdoPrefixSection');
-        const sdoPrefixMapping = document.getElementById('sdoPrefixMapping');
         const processBtn = document.getElementById('processBtn');
         const resetBtn = document.getElementById('resetBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-        const previewDataBtn = document.getElementById('previewDataBtn');
         const previewArea = document.getElementById('previewArea');
         const loading = document.getElementById('loading');
         const errorMessage = document.getElementById('errorMessage');
@@ -741,10 +684,7 @@
         const statsSection = document.getElementById('statsSection');
 
         // Event listeners
-        uploadArea.addEventListener('click', () => {
-            console.log('Upload area clicked');
-            fileInput.click();
-        });
+        uploadArea.addEventListener('click', () => fileInput.click());
         uploadArea.addEventListener('dragover', handleDragOver);
         uploadArea.addEventListener('dragleave', handleDragLeave);
         uploadArea.addEventListener('drop', handleDrop);
@@ -752,38 +692,43 @@
         processBtn.addEventListener('click', processData);
         resetBtn.addEventListener('click', resetForm);
         downloadBtn.addEventListener('click', downloadExcel);
-        previewDataBtn.addEventListener('click', showDetailedPreview);
 
-        // Also add click handler to the entire upload area for better UX
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, setting up upload area');
-            
-            // Make sure the upload area is clickable
-            uploadArea.style.cursor = 'pointer';
-            
-            // Add click event to upload icon and text as well
-            const uploadIcon = uploadArea.querySelector('.upload-icon');
-            const uploadText = uploadArea.querySelector('.upload-text');
-            
-            if (uploadIcon) uploadIcon.addEventListener('click', () => fileInput.click());
-            if (uploadText) uploadText.addEventListener('click', () => fileInput.click());
-        });
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
 
-        // Remove the complex drag/drop handlers - keep it simple
-        function handleFile(file) {
-            console.log('File selected:', file.name, file.type, file.size);
-            
-            // Validate file type
-            const validExtensions = /\.(xlsx|xls|csv)$/i;
-            
-            if (!validExtensions.test(file.name)) {
-                showError(`Invalid file type. Please upload Excel (.xlsx, .xls) or CSV files.`);
-                return;
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
             }
+        }
 
-            // Check file size (100MB limit)
-            if (file.size > 100 * 1024 * 1024) {
-                showError('File is too large. Please upload files smaller than 100MB.');
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // Validate file type
+            const validTypes = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel',
+                'text/csv'
+            ];
+            
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls|csv)$/i)) {
+                showError('Please upload a valid Excel (.xlsx, .xls) or CSV file.');
                 return;
             }
 
@@ -795,24 +740,16 @@
 
             // Read file
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 try {
-                    console.log('File read successfully, processing...');
                     if (file.name.toLowerCase().endsWith('.csv')) {
                         parseCSV(e.target.result);
                     } else {
                         parseExcel(e.target.result);
                     }
                 } catch (error) {
-                    console.error('Error processing file:', error);
                     showError('Error reading file: ' + error.message);
                 }
-            };
-
-            reader.onerror = function(e) {
-                console.error('FileReader error:', e);
-                showError('Error reading the file. Please try again.');
             };
 
             if (file.name.toLowerCase().endsWith('.csv')) {
@@ -823,104 +760,45 @@
         }
 
         function parseCSV(csvText) {
-            try {
-                console.log('Parsing CSV file...');
-                const lines = csvText.split('\n').filter(line => line.trim());
-                
-                if (lines.length < 2) {
-                    showError('CSV file must have at least a header row and one data row.');
-                    return;
-                }
-
-                // Simple CSV parsing (handles basic cases)
-                const parseCSVLine = (line) => {
-                    const result = [];
-                    let current = '';
-                    let inQuotes = false;
-                    
-                    for (let i = 0; i < line.length; i++) {
-                        const char = line[i];
-                        if (char === '"') {
-                            inQuotes = !inQuotes;
-                        } else if (char === ',' && !inQuotes) {
-                            result.push(current.trim());
-                            current = '';
-                        } else {
-                            current += char;
-                        }
-                    }
-                    result.push(current.trim());
-                    return result;
-                };
-
-                const headers = parseCSVLine(lines[0]);
-                const data = [];
-
-                for (let i = 1; i < lines.length; i++) {
-                    if (lines[i].trim()) {
-                        const values = parseCSVLine(lines[i]);
-                        const row = {};
-                        headers.forEach((header, index) => {
-                            row[header] = values[index] || '';
-                        });
-                        data.push(row);
-                    }
-                }
-
-                console.log('CSV parsed:', data.length, 'rows');
-                console.log('Headers:', headers);
-
-                rawData = data;
-                columnHeaders = headers;
-                setupColumnMapping();
-                
-            } catch (error) {
-                console.error('CSV parsing error:', error);
-                showError('Error parsing CSV file: ' + error.message);
+            const lines = csvText.split('\n');
+            if (lines.length < 2) {
+                showError('CSV file must have at least a header row and one data row.');
+                return;
             }
+
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    data.push(row);
+                }
+            }
+
+            rawData = data;
+            columnHeaders = headers;
+            setupColumnMapping();
         }
 
         function parseExcel(arrayBuffer) {
-            try {
-                console.log('Parsing Excel file...');
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                console.log('Workbook sheets:', workbook.SheetNames);
-                
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const data = XLSX.utils.sheet_to_json(worksheet);
 
-                console.log('Raw data rows:', data.length);
-                
-                if (data.length < 2) {
-                    showError('Excel file appears to be empty or has no data rows.');
-                    return;
-                }
-
-                // Convert array of arrays to array of objects
-                const headers = data[0];
-                const processedData = [];
-                
-                for (let i = 1; i < data.length; i++) {
-                    const row = {};
-                    headers.forEach((header, index) => {
-                        row[header] = data[i][index] || '';
-                    });
-                    processedData.push(row);
-                }
-
-                console.log('Processed data:', processedData.length, 'rows');
-                console.log('Headers:', headers);
-                console.log('Sample row:', processedData[0]);
-
-                rawData = processedData;
-                columnHeaders = headers;
-                setupColumnMapping();
-                
-            } catch (error) {
-                console.error('Excel parsing error:', error);
-                showError('Error parsing Excel file: ' + error.message + '. Please make sure it\'s a valid Excel file.');
+            if (data.length === 0) {
+                showError('Excel file appears to be empty or has no data rows.');
+                return;
             }
+
+            rawData = data;
+            columnHeaders = Object.keys(data[0]);
+            setupColumnMapping();
         }
 
         function setupColumnMapping() {
@@ -950,12 +828,9 @@
                     option.value = header;
                     option.textContent = header;
                     
-                    // Auto-select if column name matches (improved matching)
-                    const fieldName = field.toLowerCase().replace('_', '');
-                    const headerName = header.toLowerCase().replace(/[_\s]/g, '');
-                    
-                    if (headerName.includes(fieldName) || fieldName.includes(headerName) ||
-                        header.toLowerCase() === field.toLowerCase()) {
+                    // Auto-select if column name matches
+                    if (header.toLowerCase().includes(field.toLowerCase()) ||
+                        field.toLowerCase().includes(header.toLowerCase())) {
                         option.selected = true;
                     }
                     
@@ -968,86 +843,7 @@
             });
 
             mappingSection.classList.add('show');
-            
-            // Detect SDOs after column mapping is set up
-            detectSDOsAndSetupPrefixes();
-        }
-
-        function detectSDOsAndSetupPrefixes() {
-            // Wait a bit for user to potentially change SDO mapping
-            setTimeout(() => {
-                const sdoMappingSelect = document.getElementById('mapping_sdo');
-                if (sdoMappingSelect && sdoMappingSelect.value && rawData) {
-                    const sdoColumn = sdoMappingSelect.value;
-                    const uniqueSDOs = [...new Set(rawData.map(row => {
-                        const sdoValue = row[sdoColumn];
-                        return safeStringConvert(sdoValue).trim();
-                    }).filter(sdo => sdo && sdo !== ''))];
-                    
-                    detectedSDOs = uniqueSDOs;
-                    setupSDOPrefixMapping();
-                }
-            }, 1000);
-        }
-
-        function setupSDOPrefixMapping() {
-            if (detectedSDOs.length === 0) return;
-            
-            sdoPrefixMapping.innerHTML = '';
-            sdoPrefixes = {};
-            
-            detectedSDOs.forEach(sdo => {
-                const mappingGroup = document.createElement('div');
-                mappingGroup.className = 'mapping-group';
-                mappingGroup.style.marginBottom = '10px';
-                
-                const label = document.createElement('div');
-                label.className = 'mapping-label';
-                label.textContent = `${sdo} prefix:`;
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'mapping-select';
-                input.id = `prefix_${sdo.replace(/[^a-zA-Z0-9]/g, '_')}`;
-                input.placeholder = 'e.g., sib, ppc, cal';
-                input.maxLength = 10;
-                
-                // Generate suggested prefix from SDO name
-                const suggested = sdo.toLowerCase()
-                    .replace(/[^a-z\s]/g, '')
-                    .split(/\s+/)
-                    .map(word => word.substring(0, 3))
-                    .join('')
-                    .substring(0, 6);
-                input.value = suggested;
-                
-                sdoPrefixes[sdo] = suggested;
-                
-                input.addEventListener('input', (e) => {
-                    sdoPrefixes[sdo] = e.target.value.trim();
-                });
-                
-                mappingGroup.appendChild(label);
-                mappingGroup.appendChild(input);
-                sdoPrefixMapping.appendChild(mappingGroup);
-            });
-            
-            sdoPrefixSection.style.display = 'block';
             processBtn.disabled = false;
-        }
-
-        // Add event listener for SDO mapping changes
-        document.addEventListener('change', (e) => {
-            if (e.target.id === 'mapping_sdo') {
-                detectSDOsAndSetupPrefixes();
-            }
-        });
-
-        // Helper function to safely convert values to strings
-        function safeStringConvert(value) {
-            if (value === null || value === undefined) return '';
-            if (typeof value === 'string') return value;
-            return String(value);
         }
 
         function processData() {
@@ -1059,18 +855,10 @@
                 const selectElement = document.getElementById(`mapping_${field}`);
                 mappings[field] = selectElement.value;
                 
-                // Check for critical required fields
                 if (!mappings[field] && ['stud_firstname_', 'stud_lastname_', 'school', 'sdo'].includes(field)) {
                     hasRequiredMappings = false;
                 }
             });
-
-            // Validate SDO prefixes
-            const emptyPrefixes = Object.entries(sdoPrefixes).filter(([sdo, prefix]) => !prefix.trim());
-            if (emptyPrefixes.length > 0) {
-                showError(`Please enter prefixes for all SDOs: ${emptyPrefixes.map(([sdo]) => sdo).join(', ')}`);
-                return;
-            }
 
             if (!hasRequiredMappings) {
                 showError('Please map at least Student First Name, Student Last Name, School, and SDO fields.');
@@ -1079,315 +867,138 @@
 
             showLoading(true);
             
-            // Process data with a realistic delay
+            // Simulate processing delay for better UX
             setTimeout(() => {
                 try {
-                    processedData = transformData(rawData, mappings, sdoPrefixes);
+                    processedData = transformData(rawData, mappings);
                     showLoading(false);
                     updatePreview();
                     updateStats();
                     downloadBtn.disabled = false;
-                    previewDataBtn.disabled = false;
-                    showSuccess('Data processed successfully! Ready to download the complete Excel file with formulas.');
+                    showSuccess('Data processed successfully! You can now download the Excel file.');
                     statsSection.style.display = 'block';
                 } catch (error) {
                     showLoading(false);
                     showError('Error processing data: ' + error.message);
-                    console.error('Processing error:', error);
                 }
-            }, 2000);
+            }, 1500);
         }
 
-        function transformData(data, mappings, prefixes) {
+        function transformData(data, mappings) {
             const result = {
                 cases: [],
                 teachers: [],
-                schools: [],
-                sdos: new Set(),
-                duplicatesRemoved: 0,
-                originalCount: 0
+                schools: []
             };
 
-            const seenStudents = new Set();
-            const teacherMap = new Map();
-            const schoolMap = new Map();
+            const teacherSet = new Set();
+            const schoolSet = new Set();
+            const sdoSet = new Set();
 
-            // Process each row and reshape from WIDE to LONG format
-            data.forEach((row, rowIndex) => {
-                // Determine how many students are in this row
-                let studentCount = 0;
-                
-                // Check for students with suffixes _0, _1, _2, etc.
-                for (let i = 0; i < 10; i++) {
-                    const suffix = i === 0 ? '_' : `_${i}`;
-                    const firstNameCol = mappings.stud_firstname_.replace('_', suffix);
-                    const lastNameCol = mappings.stud_lastname_.replace('_', suffix);
-                    
-                    if (row[firstNameCol] || row[lastNameCol]) {
-                        studentCount = i + 1;
-                    }
+            data.forEach((row, index) => {
+                // Skip empty rows
+                if (!row[mappings.stud_firstname_] && !row[mappings.stud_lastname_]) {
+                    return;
                 }
 
-                result.originalCount += studentCount;
+                // Process case data
+                const caseData = {
+                    formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
+                    region: row[mappings.region] || '',
+                    division: row[mappings.sdo] || '',
+                    school_name: row[mappings.school] || '',
+                    old_student_name: `${(row[mappings.stud_firstname_] || '').trim()} ${(row[mappings.stud_lastname_] || '').trim()}`.trim(),
+                    grade_level: row[mappings.grade_level_] || '',
+                    resp_name: `${(row[mappings.resp_firstname_] || '').trim()} ${(row[mappings.resp_lastname_] || '').trim()}`.trim(),
+                    resp_relation: 'Parent', // Default, can be enhanced
+                    encoding_teacher: `${(row[mappings.teacher_firstname] || '').trim()} ${(row[mappings.teacher_lastname] || '').trim()}`.trim(),
+                    phone_1: row[mappings.phone_1_] || '',
+                    phone_2: row[mappings.phone_2_] || '',
+                    phone_1_name: `${(row[mappings.resp_firstname_] || '').trim()} ${(row[mappings.resp_lastname_] || '').trim()}`.trim(),
+                    phone_2_name: row[mappings.phone_2_] ? `${(row[mappings.resp_firstname_] || '').trim()} ${(row[mappings.resp_lastname_] || '').trim()}`.trim() : '',
+                    learn_number: row[mappings.learn_number_] || '',
+                    contacts: row[mappings.contacts] || ''
+                };
 
-                // Process each student in this row
-                for (let i = 0; i < studentCount; i++) {
-                    const suffix = i === 0 ? '_' : `_${i}`;
-                    
-                    // Map column names with proper suffix
-                    const studentCols = {
-                        firstName: mappings.stud_firstname_.replace('_', suffix),
-                        lastName: mappings.stud_lastname_.replace('_', suffix),
-                        gradeLevel: mappings.grade_level_.replace('_', suffix),
-                        respFirstName: mappings.resp_firstname_.replace('_', suffix),
-                        respLastName: mappings.resp_lastname_.replace('_', suffix),
-                        phone1: mappings.phone_1_.replace('_', suffix),
-                        phone2: mappings.phone_2_.replace('_', suffix),
-                        learnNumber: mappings.learn_number_.replace('_', suffix),
-                        respRelationCode: mappings.resp_relation_code_.replace('_', suffix),
-                        contacts: mappings.contacts_.replace('_', suffix)
-                    };
+                result.cases.push(caseData);
 
-                    // Get student data using safe conversion
-                    const studentFirst = safeStringConvert(row[studentCols.firstName]).trim();
-                    const studentLast = safeStringConvert(row[studentCols.lastName]).trim();
-                    
-                    // Skip if no student name
-                    if (!studentFirst && !studentLast) {
-                        continue;
-                    }
-
-                    // Create student identifier for duplicate detection
-                    const learnerNumber = safeStringConvert(row[studentCols.learnNumber]).trim();
-                    const studentKey = `${studentFirst.toLowerCase()}_${studentLast.toLowerCase()}_${learnerNumber}`;
-                    
-                    if (seenStudents.has(studentKey)) {
-                        result.duplicatesRemoved++;
-                        continue;
-                    }
-                    seenStudents.add(studentKey);
-
-                    // Clean and format names using safe conversion
-                    const studentFirstName = properCase(studentFirst);
-                    const studentLastName = properCase(studentLast);
-                    const respFirstName = properCase(safeStringConvert(row[studentCols.respFirstName]).trim());
-                    const respLastName = properCase(safeStringConvert(row[studentCols.respLastName]).trim());
-                    const teacherFirstName = properCase(safeStringConvert(row[mappings.teacher_firstname]).trim());
-                    const teacherLastName = properCase(safeStringConvert(row[mappings.teacher_lastname]).trim());
-
-                    // Format respondent relation
-                    const respRelationCode = safeStringConvert(row[studentCols.respRelationCode]);
-                    let respRelation = 'Parent'; // Default
-                    switch(respRelationCode) {
-                        case '1': respRelation = 'Parent'; break;
-                        case '2': respRelation = 'Aunt/Uncle'; break;
-                        case '3': respRelation = 'Grandparent'; break;
-                        case '4': respRelation = 'Sibling'; break;
-                        case '5': respRelation = 'Guardian'; break;
-                        case '6': respRelation = 'Other Relative'; break;
-                        default: respRelation = 'Parent'; break;
-                    }
-
-                    // Get SDO and its prefix
-                    const division = safeStringConvert(row[mappings.sdo]).trim();
-                    const sdoPrefix = prefixes[division] || 'unk';
-
-                    // Process case data
-                    const caseData = {
-                        serialId: result.cases.length + 1,
-                        formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
-                        region: safeStringConvert(row[mappings.region]).trim(),
-                        division: division,
-                        school_name: safeStringConvert(row[mappings.school]).trim(),
-                        old_student_name: `${studentFirstName} ${studentLastName}`.trim(),
-                        grade_level: safeStringConvert(row[studentCols.gradeLevel]).trim(),
-                        resp_name: `${respFirstName} ${respLastName}`.trim(),
-                        resp_relation: respRelation,
-                        encoding_teacher: `${teacherFirstName} ${teacherLastName}`.trim(),
-                        contacts: safeStringConvert(row[studentCols.contacts]),
-                        phone_1: cleanPhoneNumber(safeStringConvert(row[studentCols.phone1])),
-                        phone_2: cleanPhoneNumber(safeStringConvert(row[studentCols.phone2])),
-                        phone_1_name: `${respFirstName} ${respLastName}`.trim(),
-                        phone_2_name: row[studentCols.phone2] ? `${respFirstName} ${respLastName}`.trim() : '',
-                        learn_number: learnerNumber,
-                        sdo_prefix: sdoPrefix
-                    };
-
-                    result.cases.push(caseData);
-                    result.sdos.add(caseData.division);
-
-                    // Collect unique teachers (only once per row, not per student)
-                    if (i === 0 && caseData.encoding_teacher && caseData.encoding_teacher.trim()) {
-                        const teacherKey = `${caseData.encoding_teacher}_${caseData.school_name}`;
-                        if (!teacherMap.has(teacherKey)) {
-                            teacherMap.set(teacherKey, {
-                                sdo: caseData.division,
-                                school_name: caseData.school_name,
-                                teacher_first_name: teacherFirstName,
-                                teacher_last_name: teacherLastName,
-                                encoding_teacher: caseData.encoding_teacher
-                            });
-                        }
-                    }
-
-                    // Collect unique schools (only once per row)
-                    if (i === 0 && caseData.school_name && caseData.school_name.trim()) {
-                        const schoolKey = `${caseData.school_name}_${caseData.division}`;
-                        if (!schoolMap.has(schoolKey)) {
-                            schoolMap.set(schoolKey, {
-                                sdo: caseData.division,
-                                school_name: caseData.school_name
-                            });
-                        }
-                    }
+                // Collect unique teachers
+                if (caseData.encoding_teacher && caseData.encoding_teacher.trim()) {
+                    teacherSet.add(JSON.stringify({
+                        sdo: caseData.division,
+                        school_name: caseData.school_name,
+                        teacher_name: caseData.encoding_teacher,
+                        teacher_firstname: row[mappings.teacher_firstname] || '',
+                        teacher_lastname: row[mappings.teacher_lastname] || ''
+                    }));
                 }
+
+                // Collect unique schools
+                if (caseData.school_name && caseData.school_name.trim()) {
+                    schoolSet.add(JSON.stringify({
+                        sdo: caseData.division,
+                        school_name: caseData.school_name
+                    }));
+                }
+
+                sdoSet.add(caseData.division);
             });
 
-            result.teachers = Array.from(teacherMap.values());
-            result.schools = Array.from(schoolMap.values());
-            result.sdos = Array.from(result.sdos).filter(sdo => sdo);
+            // Convert sets to arrays
+            result.teachers = Array.from(teacherSet).map(JSON.parse);
+            result.schools = Array.from(schoolSet).map(JSON.parse);
+            result.sdos = Array.from(sdoSet).filter(sdo => sdo);
 
             return result;
-        }
-
-        function properCase(str) {
-            return str.replace(/\w\S*/g, (txt) => 
-                txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-            );
-        }
-
-        function cleanPhoneNumber(phone) {
-            if (!phone) return '';
-            // Remove non-numeric characters and handle basic formatting
-            const cleaned = phone.toString().replace(/\D/g, '');
-            return cleaned;
         }
 
         function updatePreview() {
             if (!processedData) return;
 
-            const sdoPrefixList = Object.entries(sdoPrefixes)
-                .map(([sdo, prefix]) => `• ${sdo}: "${prefix}"`)
-                .join('\n');
+            const preview = `CASES DATA PREVIEW:
+===================
 
-            const preview = `CASES PROCESSING COMPLETE
-========================
+Total Cases: ${processedData.cases.length}
+Total Teachers: ${processedData.teachers.length}
+Total Schools: ${processedData.schools.length}
+SDOs: ${processedData.sdos.join(', ')}
 
-📊 SUMMARY STATISTICS:
-• Total Cases Generated: ${processedData.cases.length}
-• Original Records: ${processedData.originalCount}
-• Duplicates Removed: ${processedData.duplicatesRemoved}
-• Unique Teachers: ${processedData.teachers.length}
-• Unique Schools: ${processedData.schools.length}
-• SDOs Processed: ${processedData.sdos.length}
-
-🏫 SDOs & PREFIXES:
-${sdoPrefixList}
-
-📋 EXCEL FILE WILL CONTAIN:
-• ${processedData.sdos.length} SDO-specific sheets (for cases upload)
-• 1 Teachers sheet (for enumerators upload)
-• 1 Schools sheet (reference/lookup)
-• Built-in Excel formulas for ID generation
-• Conditional formatting for duplicate detection
-
-🔧 FORMULAS INCLUDED:
-• Case ID: =CONCAT("[prefix]_", ROW()-1) [different per SDO]
-• Enumerator ID: =LEFT(D2,1) & E2 & "_" & A2
-• Enumerator Name: =CONCAT(D2," ",E2)
-• Users lookup: =XLOOKUP() functions
-
-📝 SAMPLE CASE DATA:
-${processedData.cases.slice(0, 2).map((c, i) => `
+SAMPLE CASES (First 3):
+${processedData.cases.slice(0, 3).map((c, i) => `
 Case ${i + 1}:
   Student: ${c.old_student_name}
   Grade: ${c.grade_level}
-  School: ${c.school_name} (${c.division})
+  School: ${c.school_name}
   Teacher: ${c.encoding_teacher}
-  Respondent: ${c.resp_name} (${c.resp_relation})
-  Contact: ${c.phone_1}
-  Case ID prefix: ${c.sdo_prefix}
+  Respondent: ${c.resp_name}
+  Phone: ${c.phone_1}
 `).join('')}
 
-✅ Ready to download the complete Excel file!`;
+SAMPLE TEACHERS (First 3):
+${processedData.teachers.slice(0, 3).map((t, i) => `
+Teacher ${i + 1}:
+  Name: ${t.teacher_name}
+  School: ${t.school_name}
+  SDO: ${t.sdo}
+`).join('')}
+
+Ready to download Excel file with:
+- Individual SDO sheets for cases
+- Teachers sheet with enumerator IDs  
+- Schools sheet for reference
+- Built-in formulas for ID generation
+- Conditional formatting for duplicate detection`;
 
             previewArea.textContent = preview;
-        }
-        }2).map((c, i) => `
-Case ${i + 1}:
-  Student: ${c.old_student_name}
-  Grade: ${c.grade_level}
-  School: ${c.school_name} (${c.division})
-  Teacher: ${c.encoding_teacher}
-  Respondent: ${c.resp_name} (${c.resp_relation})
-  Contact: ${c.phone_1}
-`).join('')}
-
-✅ Ready to download the complete Excel file!`;
-
-            previewArea.textContent = preview;
-        }
-
-        function showDetailedPreview() {
-            if (!processedData) return;
-
-            const detailedPreview = `DETAILED DATA PREVIEW
-====================
-
-TEACHERS DATA (First 5):
-${processedData.teachers.slice(0, 5).map((t, i) => `
-${i + 1}. ${t.encoding_teacher}
-   School: ${t.school_name}
-   SDO: ${t.sdo}
-   First Name: ${t.teacher_first_name}
-   Last Name: ${t.teacher_last_name}
-`).join('')}
-
-SCHOOLS DATA (First 5):
-${processedData.schools.slice(0, 5).map((s, i) => `
-${i + 1}. ${s.school_name}
-   SDO: ${s.sdo}
-`).join('')}
-
-CASES BY SDO:
-${processedData.sdos.map(sdo => `
-${sdo}: ${processedData.cases.filter(c => c.division === sdo).length} cases
-`).join('')}
-
-GRADE LEVEL DISTRIBUTION:
-${(() => {
-    const gradeCounts = {};
-    processedData.cases.forEach(c => {
-        const grade = c.grade_level || 'Unknown';
-        gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
-    });
-    return Object.entries(gradeCounts)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([grade, count]) => `${grade}: ${count} students`)
-        .join('\n');
-})()}
-
-PHONE NUMBER COVERAGE:
-• Primary Phone: ${processedData.cases.filter(c => c.phone_1).length}/${processedData.cases.length} (${Math.round(processedData.cases.filter(c => c.phone_1).length / processedData.cases.length * 100)}%)
-• Secondary Phone: ${processedData.cases.filter(c => c.phone_2).length}/${processedData.cases.length} (${Math.round(processedData.cases.filter(c => c.phone_2).length / processedData.cases.length * 100)}%)
-
-DATA QUALITY NOTES:
-• All student names have been converted to proper case
-• Phone numbers have been cleaned of non-numeric characters
-• Duplicate students (same name + learner number) removed
-• Respondent relations mapped from codes to text`;
-
-            previewArea.textContent = detailedPreview;
         }
 
         function updateStats() {
             if (!processedData) return;
 
-            document.getElementById('totalCases').textContent = processedData.cases.length;
-            document.getElementById('uniqueStudents').textContent = processedData.cases.length; // Already deduplicated
+            document.getElementById('totalRecords').textContent = processedData.cases.length;
+            document.getElementById('uniqueStudents').textContent = new Set(processedData.cases.map(c => c.old_student_name)).size;
             document.getElementById('totalTeachers').textContent = processedData.teachers.length;
             document.getElementById('totalSchools').textContent = processedData.schools.length;
-            document.getElementById('duplicatesRemoved').textContent = processedData.duplicatesRemoved;
             document.getElementById('totalSDOs').textContent = processedData.sdos.length;
         }
 
@@ -1396,62 +1007,55 @@ DATA QUALITY NOTES:
 
             showLoading(true);
             
+            // Simulate Excel generation delay
             setTimeout(() => {
                 try {
-                    generateAdvancedExcelFile();
+                    generateExcelFile();
                     showLoading(false);
-                    showSuccess('Complete Excel file with formulas downloaded successfully!');
+                    showSuccess('Excel file downloaded successfully!');
                 } catch (error) {
                     showLoading(false);
                     showError('Error generating Excel file: ' + error.message);
-                    console.error('Excel generation error:', error);
                 }
-            }, 2500);
+            }, 2000);
         }
 
-        function generateAdvancedExcelFile() {
+        function generateExcelFile() {
             const wb = XLSX.utils.book_new();
             
-            // 1. Create teachers sheet with formulas and proper structure
+            // Create teachers sheet
             const teachersData = processedData.teachers.map((teacher, index) => ({
-                'sdoid': `SDO${String(index + 1).padStart(3, '0')}`, // Sample SDO ID
+                'sdoid': '', // To be filled manually or from lookup
                 'sdo': teacher.sdo,
                 'school_name': teacher.school_name,
-                'teacher_first_name': teacher.teacher_first_name,
-                'teacher_last_name': teacher.teacher_last_name,
-                'enumerator_id': `=LEFT(D${index + 2},1) & E${index + 2} & "_" & A${index + 2}`, // Excel formula
-                'enumerator_name': `=CONCAT(D${index + 2}," ",E${index + 2})`, // Excel formula
-                'users': `=IFERROR(XLOOKUP(C${index + 2},schools!C:C,schools!D:D,""),"")`  // Lookup formula
+                'teacher_first_name': teacher.teacher_firstname,
+                'teacher_last_name': teacher.teacher_lastname,
+                'enumerator_id': '', // Formula will generate this
+                'enumerator_name': '', // Formula will generate this
+                'users': '' // To be looked up from schools sheet
             }));
             
             const teachersWS = XLSX.utils.json_to_sheet(teachersData);
-            
-            // Add conditional formatting note in a comment cell
-            if (!teachersWS['!comments']) teachersWS['!comments'] = [];
-            teachersWS['I1'] = { t: 's', v: 'Apply Conditional Formatting to column F (enumerator_id) to highlight duplicates' };
-            
             XLSX.utils.book_append_sheet(wb, teachersWS, 'teachers');
             
-            // 2. Create schools sheet
-            const schoolsData = processedData.schools.map((school, index) => ({
+            // Create schools sheet
+            const schoolsData = processedData.schools.map(school => ({
                 'sdo': school.sdo,
-                'district': `District_${index + 1}`, // Placeholder - to be filled manually
+                'district': '', // To be filled manually
                 'school_name': school.school_name,
-                'users': `user_${school.school_name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}` // Generated username
+                'users': '' // To be filled from login credentials
             }));
             
             const schoolsWS = XLSX.utils.json_to_sheet(schoolsData);
             XLSX.utils.book_append_sheet(wb, schoolsWS, 'schools');
             
-            // 3. Create SDO-specific sheets for cases
+            // Create SDO-specific sheets for cases
             processedData.sdos.forEach(sdo => {
                 if (!sdo) return;
                 
                 const sdoCases = processedData.cases.filter(c => c.division === sdo);
-                const sdoPrefix = sdoCases[0]?.sdo_prefix || 'unk';
-                
                 const sdoData = sdoCases.map((caseItem, index) => ({
-                    'id': `=CONCAT("${sdoPrefix}_",ROW()-1)`, // Excel formula with SDO-specific prefix
+                    'id': '', // Formula will generate this
                     'formids': caseItem.formids,
                     'region': caseItem.region,
                     'division': caseItem.division,
@@ -1466,46 +1070,17 @@ DATA QUALITY NOTES:
                     'phone_2': caseItem.phone_2,
                     'phone_1_name': caseItem.phone_1_name,
                     'phone_2_name': caseItem.phone_2_name,
-                    'enumerators': `=IFERROR(XLOOKUP(J${index + 2},teachers!G:G,teachers!F:F,""),"")`, // Lookup enumerator ID
-                    'users': `=IFERROR(XLOOKUP(P${index + 2},teachers!F:F,teachers!H:H,""),"")` // Lookup users
+                    'enumerators': '', // Formula will generate this
+                    'users': '' // Formula will generate this
                 }));
                 
                 const sdoWS = XLSX.utils.json_to_sheet(sdoData);
-                
-                // Add conditional formatting instruction
-                sdoWS['R1'] = { t: 's', v: 'Apply Conditional Formatting to column H (old_student_name) to highlight duplicates' };
-                
-                // Create safe sheet name
-                const sheetName = sdo.toLowerCase()
-                    .replace(/[^a-z0-9\s]/g, '')
-                    .replace(/\s+/g, '_')
-                    .substring(0, 31);
-                
+                const sheetName = sdo.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 31);
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
             
-            // 4. Create summary sheet with SDO prefix information
-            const summaryData = [
-                { 'Item': 'Total Cases Generated', 'Count': processedData.cases.length },
-                { 'Item': 'Unique Teachers', 'Count': processedData.teachers.length },
-                { 'Item': 'Unique Schools', 'Count': processedData.schools.length },
-                { 'Item': 'SDOs Processed', 'Count': processedData.sdos.length },
-                { 'Item': 'Duplicates Removed', 'Count': processedData.duplicatesRemoved },
-                { 'Item': 'Original Records', 'Count': processedData.originalCount },
-                { 'Item': '', 'Count': '' },
-                { 'Item': 'SDOs & Prefixes:', 'Count': '' },
-                ...Object.entries(sdoPrefixes).map(([sdo, prefix]) => ({ 
-                    'Item': `• ${sdo}`, 
-                    'Count': `${prefix} (${processedData.cases.filter(c => c.division === sdo).length} cases)` 
-                }))
-            ];
-            
-            const summaryWS = XLSX.utils.json_to_sheet(summaryData);
-            XLSX.utils.book_append_sheet(wb, summaryWS, 'summary');
-            
             // Download the file
-            const timestamp = new Date().toISOString().split('T')[0];
-            const fileName = `cases_multiple_sdo_${timestamp}.xlsx`;
+            const fileName = `cases_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, fileName);
         }
 
@@ -1513,28 +1088,17 @@ DATA QUALITY NOTES:
             rawData = null;
             processedData = null;
             columnHeaders = [];
-            sdoPrefixes = {};
-            detectedSDOs = [];
             
             fileInfo.classList.remove('show');
             mappingSection.classList.remove('show');
-            sdoPrefixSection.style.display = 'none';
             statsSection.style.display = 'none';
             
             processBtn.disabled = true;
             downloadBtn.disabled = true;
-            previewDataBtn.disabled = true;
             
-            previewArea.textContent = `Upload a learner enrollment file to begin processing...
-
-The tool will:
-• Clean and transform the data
-• Remove duplicates 
-• Generate case IDs and enumerator IDs
-• Create multiple Excel sheets with formulas
-• Apply conditional formatting for validation`;
-            
+            previewArea.textContent = 'Upload a file to see the preview of generated cases...';
             hideMessages();
+            
             fileInput.value = '';
         }
 
