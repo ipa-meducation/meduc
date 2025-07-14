@@ -662,21 +662,21 @@
                     <ul class="feature-doc-list">
                         <li>Automatically detects multiple students per row</li>
                         <li>Processes suffixes: <code>_</code>, <code>_1</code>, <code>_2</code>, etc.</li>
-                        <li>Supports up to 10 students per row</li>
+                        <li>Supports up to 30 students per row</li>
                         <li>Reshapes data from WIDE to LONG format for SurveyCTO</li>
                     </ul>
                 </div>
 
                 <div class="feature-doc-card">
                     <div class="feature-doc-title">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Location ID Preservation
+                        <i class="fas fa-tags"></i>
+                        Location Labels & IDs
                     </div>
                     <ul class="feature-doc-list">
-                        <li>Region IDs kept as numerical values</li>
-                        <li>SDO IDs preserved from source data</li>
-                        <li>District IDs maintained as entered</li>
-                        <li>School IDs kept as numerical identifiers</li>
+                        <li>Uses text labels when available (region_label, sdo_label, etc.)</li>
+                        <li>Preserves original IDs for reference</li>
+                        <li>Automatically prefers human-readable names</li>
+                        <li>Maintains both ID and label data integrity</li>
                     </ul>
                 </div>
 
@@ -723,14 +723,27 @@
 
                 <div class="feature-doc-card">
                     <div class="feature-doc-title">
-                        <i class="fas fa-table"></i>
-                        Excel Output Structure
+                        <i class="fas fa-comments"></i>
+                        Communication Platform Data
                     </div>
                     <ul class="feature-doc-list">
-                        <li><strong>Cases sheets:</strong> One per SDO for upload</li>
-                        <li><strong>Teachers sheet:</strong> Unique teachers with IDs</li>
-                        <li><strong>Schools sheet:</strong> Reference lookup table</li>
-                        <li><strong>Summary sheet:</strong> Processing statistics</li>
+                        <li>Platform mapping: <strong>1:</strong> Phone call, <strong>2:</strong> Facebook Messenger audio call</li>
+                        <li>Messenger account names captured</li>
+                        <li>Messenger links included (Facebook profiles/pages)</li>
+                        <li>Enhanced contact information for survey teams</li>
+                    </ul>
+                </div>
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-table"></i>
+                        Enhanced Excel Output
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li><strong>Cases sheets:</strong> One per SDO with messenger & platform data</li>
+                        <li><strong>Teachers sheet:</strong> Unique teachers with location labels</li>
+                        <li><strong>Schools sheet:</strong> Complete location hierarchy</li>
+                        <li><strong>Summary sheet:</strong> Detailed processing statistics</li>
+                        <li>All sheets include both IDs and human-readable labels</li>
                     </ul>
                 </div>
             </div>
@@ -814,13 +827,47 @@
             'sdo': 'SDO ID (numerical)',
             'region': 'Region ID (numerical)',
             'district': 'District ID (numerical)',
+            'school_label': 'School Name (text label)',
+            'sdo_label': 'SDO Name (text label)',
+            'region_label': 'Region Name (text label)',
+            'district_label': 'District Name (text label)',
             'resp_firstname_': 'Respondent First Name (first student)',
             'resp_lastname_': 'Respondent Last Name (first student)',
             'phone_1_': 'Primary Phone (first student)',
             'phone_2_': 'Secondary Phone (first student)',
             'learn_number_': 'Learner Number (first student)',
             'resp_relation_code_': 'Respondent Relation Code (first student)',
-            'contacts_': 'Contacts (first student)'
+            'contacts_': 'Contacts (first student)',
+            'messenger_acct_': 'Messenger Account (first student)',
+            'messenger_link_': 'Messenger Link (first student)',
+            'preferred_platform_': 'Preferred Platform Code (first student)'
+        };
+
+        // Priority mapping for better auto-selection
+        const fieldPriorities = {
+            'stud_firstname_': ['stud_firstname_'],
+            'stud_lastname_': ['stud_lastname_'],
+            'grade_level_': ['grade_level_'],
+            'teacher_firstname': ['teacher_firstname'],
+            'teacher_lastname': ['teacher_lastname'],
+            'school': ['school'],
+            'sdo': ['sdo'],
+            'region': ['region'],
+            'district': ['district'],
+            'school_label': ['school_label'],
+            'sdo_label': ['sdo_label'],
+            'region_label': ['region_label'],
+            'district_label': ['district_label'],
+            'resp_firstname_': ['resp_firstname_'],
+            'resp_lastname_': ['resp_lastname_'],
+            'phone_1_': ['phone_1_'],
+            'phone_2_': ['phone_2_'],
+            'learn_number_': ['learn_number_'],
+            'resp_relation_code_': ['resp_relation_code_'],
+            'contacts_': ['contacts_'],
+            'messenger_acct_': ['messenger_acct_'],
+            'messenger_link_': ['messenger_link_'],
+            'preferred_platform_': ['preferred_platform_']
         };
 
         // DOM elements
@@ -984,15 +1031,42 @@
                     const option = document.createElement('option');
                     option.value = header;
                     option.textContent = header;
-                    
-                    // Auto-select if column name matches
-                    if (header.toLowerCase().includes(field.toLowerCase()) ||
-                        field.toLowerCase().includes(header.toLowerCase())) {
-                        option.selected = true;
-                    }
-                    
                     select.appendChild(option);
                 });
+                
+                // Auto-select using priority-based matching
+                let bestMatch = '';
+                if (fieldPriorities[field]) {
+                    // First, try exact matches from priority list
+                    for (let priority of fieldPriorities[field]) {
+                        if (columnHeaders.includes(priority)) {
+                            bestMatch = priority;
+                            break;
+                        }
+                    }
+                    
+                    // If no exact match, try partial matching with priority order
+                    if (!bestMatch) {
+                        for (let priority of fieldPriorities[field]) {
+                            const matchingHeader = columnHeaders.find(header => 
+                                header.toLowerCase().includes(priority.toLowerCase()) ||
+                                priority.toLowerCase().includes(header.toLowerCase())
+                            );
+                            if (matchingHeader) {
+                                bestMatch = matchingHeader;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Set the best match as selected
+                    if (bestMatch) {
+                        const optionToSelect = select.querySelector(`option[value="${bestMatch}"]`);
+                        if (optionToSelect) {
+                            optionToSelect.selected = true;
+                        }
+                    }
+                }
                 
                 mappingGroup.appendChild(label);
                 mappingGroup.appendChild(select);
@@ -1071,16 +1145,37 @@
                 // Determine how many students are in this row by checking for students with suffixes
                 let studentCount = 0;
                 
-                // Check for students with suffixes _0, _1, _2, etc. (but the first student uses just _)
-                for (let i = 0; i < 10; i++) {
-                    const suffix = i === 0 ? '_' : `_${i}`;
-                    const firstNameCol = mappings.stud_firstname_.replace('_', suffix);
-                    const lastNameCol = mappings.stud_lastname_.replace('_', suffix);
+                // Check for students with suffixes _, _1, _2, etc. up to 30 students
+                // Stop when we find an empty student (no gaps)
+                for (let i = 0; i < 30; i++) {
+                    let firstNameCol, lastNameCol;
                     
-                    if (row[firstNameCol] || row[lastNameCol]) {
+                    if (i === 0) {
+                        // First student uses just underscore (e.g., stud_firstname_)
+                        firstNameCol = mappings.stud_firstname_;
+                        lastNameCol = mappings.stud_lastname_;
+                    } else {
+                        // Subsequent students use _1, _2, etc. (e.g., stud_firstname_1)
+                        // Replace the trailing underscore with _1, _2, etc.
+                        firstNameCol = mappings.stud_firstname_.slice(0, -1) + `_${i}`;
+                        lastNameCol = mappings.stud_lastname_.slice(0, -1) + `_${i}`;
+                    }
+                    
+                    console.log(`Checking student ${i}: ${firstNameCol} = "${row[firstNameCol]}", ${lastNameCol} = "${row[lastNameCol]}"`);
+                    
+                    const hasFirstName = row[firstNameCol] && String(row[firstNameCol]).trim() !== '';
+                    const hasLastName = row[lastNameCol] && String(row[lastNameCol]).trim() !== '';
+                    
+                    if (hasFirstName || hasLastName) {
                         studentCount = i + 1;
+                    } else {
+                        // No more students in this row (they should be sequential)
+                        console.log(`No student found at position ${i}, stopping search`);
+                        break;
                     }
                 }
+
+                console.log(`Total students found in this row: ${studentCount}`);
 
                 result.originalCount += studentCount;
 
@@ -1088,19 +1183,51 @@
                 for (let i = 0; i < studentCount; i++) {
                     const suffix = i === 0 ? '_' : `_${i}`;
                     
-                    // Map column names with proper suffix
-                    const studentCols = {
-                        firstName: mappings.stud_firstname_.replace('_', suffix),
-                        lastName: mappings.stud_lastname_.replace('_', suffix),
-                        gradeLevel: mappings.grade_level_.replace('_', suffix),
-                        respFirstName: mappings.resp_firstname_.replace('_', suffix),
-                        respLastName: mappings.resp_lastname_.replace('_', suffix),
-                        phone1: mappings.phone_1_.replace('_', suffix),
-                        phone2: mappings.phone_2_.replace('_', suffix),
-                        learnNumber: mappings.learn_number_.replace('_', suffix),
-                        respRelationCode: mappings.resp_relation_code_.replace('_', suffix),
-                        contacts: mappings.contacts_.replace('_', suffix)
-                    };
+                    // Map column names with proper suffix - fixed logic
+                    let studentCols = {};
+                    
+                    if (i === 0) {
+                        // First student uses exact field names
+                        studentCols = {
+                            firstName: mappings.stud_firstname_,
+                            lastName: mappings.stud_lastname_,
+                            gradeLevel: mappings.grade_level_,
+                            respFirstName: mappings.resp_firstname_,
+                            respLastName: mappings.resp_lastname_,
+                            phone1: mappings.phone_1_,
+                            phone2: mappings.phone_2_,
+                            learnNumber: mappings.learn_number_,
+                            respRelationCode: mappings.resp_relation_code_,
+                            contacts: mappings.contacts_,
+                            messengerAcct: mappings.messenger_acct_,
+                            messengerLink: mappings.messenger_link_,
+                            preferredPlatform: mappings.preferred_platform_
+                        };
+                    } else {
+                        // Subsequent students: remove trailing underscore and add _1, _2, etc.
+                        studentCols = {
+                            firstName: mappings.stud_firstname_.slice(0, -1) + `_${i}`,
+                            lastName: mappings.stud_lastname_.slice(0, -1) + `_${i}`,
+                            gradeLevel: mappings.grade_level_.slice(0, -1) + `_${i}`,
+                            respFirstName: mappings.resp_firstname_.slice(0, -1) + `_${i}`,
+                            respLastName: mappings.resp_lastname_.slice(0, -1) + `_${i}`,
+                            phone1: mappings.phone_1_.slice(0, -1) + `_${i}`,
+                            phone2: mappings.phone_2_.slice(0, -1) + `_${i}`,
+                            learnNumber: mappings.learn_number_.slice(0, -1) + `_${i}`,
+                            respRelationCode: mappings.resp_relation_code_.slice(0, -1) + `_${i}`,
+                            contacts: mappings.contacts_.slice(0, -1) + `_${i}`,
+                            messengerAcct: mappings.messenger_acct_.slice(0, -1) + `_${i}`,
+                            messengerLink: mappings.messenger_link_.slice(0, -1) + `_${i}`,
+                            preferredPlatform: mappings.preferred_platform_.slice(0, -1) + `_${i}`
+                        };
+                    }
+
+                    console.log(`Processing student ${i + 1} with columns:`, {
+                        firstName: studentCols.firstName,
+                        lastName: studentCols.lastName,
+                        firstNameValue: row[studentCols.firstName],
+                        lastNameValue: row[studentCols.lastName]
+                    });
 
                     // Get student data using safe conversion
                     const studentFirst = safeStringConvert(row[studentCols.firstName]).trim();
@@ -1142,13 +1269,23 @@
                         default: respRelation = 'Parent'; break;
                     }
 
-                    // Process case data - keep IDs as numbers for now
+                    // Format preferred platform - only use values found in actual data
+                    const preferredPlatformCode = safeStringConvert(row[studentCols.preferredPlatform]);
+                    let preferredPlatformText = 'Phone call'; // Default
+                    switch(preferredPlatformCode) {
+                        case '1': preferredPlatformText = 'Phone call'; break;
+                        case '2': preferredPlatformText = 'Facebook Messenger audio call'; break;
+                        // Only add more if found in your dataset
+                        default: preferredPlatformText = 'Phone call'; break;
+                    }
+
+                    // Process case data - use text labels where available
                     const caseData = {
                         serialId: result.cases.length + 1,
                         formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
-                        region: safeStringConvert(row[mappings.region]).trim(),
-                        division: safeStringConvert(row[mappings.sdo]).trim(), // SDO ID
-                        school_name: safeStringConvert(row[mappings.school]).trim(), // School ID for now
+                        region: safeStringConvert(row[mappings.region_label] || row[mappings.region]).trim(),
+                        division: safeStringConvert(row[mappings.sdo_label] || row[mappings.sdo]).trim(),
+                        school_name: safeStringConvert(row[mappings.school_label] || row[mappings.school]).trim(),
                         old_student_name: `${studentFirstName} ${studentLastName}`.trim(),
                         grade_level: safeStringConvert(row[studentCols.gradeLevel]).trim(),
                         resp_name: `${respFirstName} ${respLastName}`.trim(),
@@ -1160,7 +1297,15 @@
                         phone_1_name: `${respFirstName} ${respLastName}`.trim(),
                         phone_2_name: row[studentCols.phone2] ? `${respFirstName} ${respLastName}`.trim() : '',
                         learn_number: learnerNumber,
-                        district: safeStringConvert(row[mappings.district]).trim()
+                        district: safeStringConvert(row[mappings.district_label] || row[mappings.district]).trim(),
+                        messenger_account: safeStringConvert(row[studentCols.messengerAcct]),
+                        messenger_link: safeStringConvert(row[studentCols.messengerLink]),
+                        preferred_platform: preferredPlatformText,
+                        // Keep IDs for reference
+                        region_id: safeStringConvert(row[mappings.region]).trim(),
+                        sdo_id: safeStringConvert(row[mappings.sdo]).trim(),
+                        school_id: safeStringConvert(row[mappings.school]).trim(),
+                        district_id: safeStringConvert(row[mappings.district]).trim()
                     };
 
                     result.cases.push(caseData);
@@ -1314,39 +1459,46 @@ You may want to add a lookup table to convert to names.`;
         function generateExcelFile() {
             const wb = XLSX.utils.book_new();
             
-            // Create teachers sheet
+            // Create teachers sheet with proper data structure
             const teachersData = processedData.teachers.map((teacher, index) => ({
-                'sdoid': '', // To be filled manually or from lookup
+                'sdoid': `SDO${String(index + 1).padStart(3, '0')}`, // Sample SDO ID - to be filled manually
                 'sdo': teacher.sdo,
                 'school_name': teacher.school_name,
-                'teacher_first_name': teacher.teacher_firstname,
-                'teacher_last_name': teacher.teacher_lastname,
-                'enumerator_id': '', // Formula will generate this
-                'enumerator_name': '', // Formula will generate this
-                'users': '' // To be looked up from schools sheet
+                'teacher_first_name': teacher.teacher_first_name,
+                'teacher_last_name': teacher.teacher_last_name,
+                'enumerator_id': `=LEFT(D${index + 2},1) & E${index + 2} & "_" & A${index + 2}`, // Excel formula
+                'enumerator_name': `=CONCAT(D${index + 2}," ",E${index + 2})`, // Excel formula
+                'users': `=IFERROR(XLOOKUP(C${index + 2},schools!C:C,schools!D:D,""),"")`, // Lookup formula
+                'district': teacher.district
             }));
+            
+            console.log('Teachers data for Excel:', teachersData);
             
             const teachersWS = XLSX.utils.json_to_sheet(teachersData);
             XLSX.utils.book_append_sheet(wb, teachersWS, 'teachers');
             
             // Create schools sheet
-            const schoolsData = processedData.schools.map(school => ({
+            const schoolsData = processedData.schools.map((school, index) => ({
                 'sdo': school.sdo,
-                'district': '', // To be filled manually
+                'district': school.district,
                 'school_name': school.school_name,
-                'users': '' // To be filled from login credentials
+                'users': `user_${school.school_name.toString().padStart(6, '0')}` // Generated username based on school ID
             }));
+            
+            console.log('Schools data for Excel:', schoolsData);
             
             const schoolsWS = XLSX.utils.json_to_sheet(schoolsData);
             XLSX.utils.book_append_sheet(wb, schoolsWS, 'schools');
             
             // Create SDO-specific sheets for cases
-            processedData.sdos.forEach(sdo => {
-                if (!sdo) return;
+            processedData.sdos.forEach(sdoId => {
+                if (!sdoId) return;
                 
-                const sdoCases = processedData.cases.filter(c => c.division === sdo);
+                const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId);
+                const sdoName = sdoCases[0]?.division || `SDO_${sdoId}`;
+                
                 const sdoData = sdoCases.map((caseItem, index) => ({
-                    'id': '', // Formula will generate this
+                    'id': `=CONCAT("${sdoId}_",ROW()-1)`, // Excel formula for auto-incrementing ID with SDO prefix
                     'formids': caseItem.formids,
                     'region': caseItem.region,
                     'division': caseItem.division,
@@ -1361,17 +1513,56 @@ You may want to add a lookup table to convert to names.`;
                     'phone_2': caseItem.phone_2,
                     'phone_1_name': caseItem.phone_1_name,
                     'phone_2_name': caseItem.phone_2_name,
-                    'enumerators': '', // Formula will generate this
-                    'users': '' // Formula will generate this
+                    'messenger_account': caseItem.messenger_account,
+                    'messenger_link': caseItem.messenger_link,
+                    'preferred_platform': caseItem.preferred_platform,
+                    'learn_number': caseItem.learn_number,
+                    'district': caseItem.district,
+                    'region_id': caseItem.region_id,
+                    'sdo_id': caseItem.sdo_id,
+                    'school_id': caseItem.school_id,
+                    'district_id': caseItem.district_id,
+                    'enumerators': `=IFERROR(XLOOKUP(J${index + 2},teachers!G:G,teachers!F:F,""),"")`, // Lookup enumerator ID
+                    'users': `=IFERROR(XLOOKUP(P${index + 2},teachers!F:F,teachers!H:H,""),"")` // Lookup users
                 }));
                 
                 const sdoWS = XLSX.utils.json_to_sheet(sdoData);
-                const sheetName = sdo.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 31);
+                
+                // Create safe sheet name using SDO name if available
+                const sheetName = sdoName.toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, '')
+                    .replace(/\s+/g, '_')
+                    .substring(0, 25) + `_${sdoId}`;
+                
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
             
+            // Create summary sheet
+            const summaryData = [
+                { 'Item': 'Processing Summary', 'Value': '' },
+                { 'Item': 'Total Cases Generated', 'Value': processedData.cases.length },
+                { 'Item': 'Original Records Processed', 'Value': processedData.originalCount },
+                { 'Item': 'Duplicates Removed', 'Value': processedData.duplicatesRemoved },
+                { 'Item': 'Unique Teachers', 'Value': processedData.teachers.length },
+                { 'Item': 'Unique Schools', 'Value': processedData.schools.length },
+                { 'Item': 'SDOs Processed', 'Value': processedData.sdos.length },
+                { 'Item': '', 'Value': '' },
+                { 'Item': 'SDO IDs Included:', 'Value': '' },
+                ...processedData.sdos.map(sdoId => {
+                    const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId);
+                    const sdoName = sdoCases[0]?.division || `SDO_${sdoId}`;
+                    return { 
+                        'Item': `• ${sdoName} (ID: ${sdoId})`, 
+                        'Value': sdoCases.length + ' cases'
+                    };
+                })
+            ];
+            
+            const summaryWS = XLSX.utils.json_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, summaryWS, 'summary');
+            
             // Download the file
-            const fileName = `cases_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const fileName = `cases_deped_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, fileName);
         }
 
