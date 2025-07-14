@@ -584,7 +584,7 @@
                         <li>Should contain student names, grades, teacher info, school details</li>
                         <li>Contact information (phone numbers, respondent details)</li>
                         <li>School Division Office (SDO) information</li>
-                        <li>File should be from SurveyCTO learner enrollment form export</li>
+                        <li>File should be from SurveyCTO learner enrollment form export (WIDE format)</li>
                     </ul>
                 </div>
             </div>
@@ -645,7 +645,159 @@
                 </div>
             </div>
         </div>
+
+        <!-- Data Processing Features Documentation -->
+        <div class="stats-section" style="margin-top: 30px;">
+            <div class="section-title">
+                <i class="fas fa-cogs"></i>
+                Data Processing Features
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                        WIDE to LONG Format Conversion
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li>Automatically detects multiple students per row</li>
+                        <li>Processes suffixes: <code>_</code>, <code>_1</code>, <code>_2</code>, etc.</li>
+                        <li>Supports up to 10 students per row</li>
+                        <li>Reshapes data from WIDE to LONG format for SurveyCTO</li>
+                    </ul>
+                </div>
+
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Location ID Preservation
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li>Region IDs kept as numerical values</li>
+                        <li>SDO IDs preserved from source data</li>
+                        <li>District IDs maintained as entered</li>
+                        <li>School IDs kept as numerical identifiers</li>
+                    </ul>
+                </div>
+
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-users"></i>
+                        Relation Code Mapping
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li><strong>1:</strong> Parent</li>
+                        <li><strong>2:</strong> Aunt/Uncle</li>
+                        <li><strong>3:</strong> Grandparent</li>
+                        <li><strong>4:</strong> Sibling</li>
+                        <li><strong>5:</strong> Guardian</li>
+                        <li><strong>6:</strong> Other Relative</li>
+                    </ul>
+                </div>
+
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-user-check"></i>
+                        Duplicate Detection & Prevention
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li>Student duplicates by: Name + Learner Number</li>
+                        <li>Teacher duplicates by: Name + School ID</li>
+                        <li>School duplicates by: School ID + SDO ID</li>
+                        <li>Tracks and reports duplicates removed</li>
+                    </ul>
+                </div>
+
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-font"></i>
+                        Data Formatting & Cleaning
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li>Proper case formatting for all names</li>
+                        <li>Phone number cleaning (removes non-digits)</li>
+                        <li>Safe data type conversion (handles nulls/numbers)</li>
+                        <li>Whitespace trimming and normalization</li>
+                    </ul>
+                </div>
+
+                <div class="feature-doc-card">
+                    <div class="feature-doc-title">
+                        <i class="fas fa-table"></i>
+                        Excel Output Structure
+                    </div>
+                    <ul class="feature-doc-list">
+                        <li><strong>Cases sheets:</strong> One per SDO for upload</li>
+                        <li><strong>Teachers sheet:</strong> Unique teachers with IDs</li>
+                        <li><strong>Schools sheet:</strong> Reference lookup table</li>
+                        <li><strong>Summary sheet:</strong> Processing statistics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <style>
+        .feature-doc-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .feature-doc-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-green);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-doc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-doc-list li {
+            padding: 4px 0;
+            color: var(--charcoal);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .feature-doc-list li::before {
+            content: "✓";
+            color: var(--primary-green);
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-doc-list code {
+            background: rgba(73, 172, 87, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--dark-green);
+        }
+
+        @media (max-width: 768px) {
+            .feature-doc-card {
+                padding: 15px;
+            }
+            
+            .feature-doc-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
 
     <script>
         // Global variables
@@ -910,6 +1062,10 @@
             const teacherSet = new Set();
             const schoolSet = new Set();
 
+            // Initialize arrays directly instead of using sets with JSON.stringify
+            result.teachers = [];
+            result.schools = [];
+
             // Process each row and reshape from WIDE to LONG format
             data.forEach((row, rowIndex) => {
                 // Determine how many students are in this row by checking for students with suffixes
@@ -1012,31 +1168,39 @@
 
                     // Collect unique teachers (only once per row, not per student)
                     if (i === 0 && caseData.encoding_teacher && caseData.encoding_teacher.trim()) {
-                        const teacherKey = `${caseData.encoding_teacher}_${caseData.school_name}`;
-                        teacherSet.add(JSON.stringify({
-                            sdo: caseData.division,
-                            school_name: caseData.school_name,
-                            teacher_first_name: teacherFirstName,
-                            teacher_last_name: teacherLastName,
-                            encoding_teacher: caseData.encoding_teacher
-                        }));
+                        // Create a more robust teacher key using teacher name + school ID
+                        const teacherKey = `${teacherFirstName.toLowerCase()}_${teacherLastName.toLowerCase()}_${caseData.school_name}`;
+                        
+                        if (!teacherSet.has(teacherKey)) {
+                            teacherSet.add(teacherKey);
+                            result.teachers.push({
+                                sdo: caseData.division,
+                                school_name: caseData.school_name,
+                                teacher_first_name: teacherFirstName,
+                                teacher_last_name: teacherLastName,
+                                encoding_teacher: caseData.encoding_teacher,
+                                district: caseData.district
+                            });
+                        }
                     }
 
                     // Collect unique schools (only once per row)
                     if (i === 0 && caseData.school_name && caseData.school_name.trim()) {
                         const schoolKey = `${caseData.school_name}_${caseData.division}`;
-                        schoolSet.add(JSON.stringify({
-                            sdo: caseData.division,
-                            school_name: caseData.school_name,
-                            district: caseData.district
-                        }));
+                        
+                        if (!schoolSet.has(schoolKey)) {
+                            schoolSet.add(schoolKey);
+                            result.schools.push({
+                                sdo: caseData.division,
+                                school_name: caseData.school_name,
+                                district: caseData.district
+                            });
+                        }
                     }
                 }
             });
 
-            // Convert sets to arrays
-            result.teachers = Array.from(teacherSet).map(JSON.parse);
-            result.schools = Array.from(schoolSet).map(JSON.parse);
+            // Remove the conversion step since we're building arrays directly
             result.sdos = Array.from(result.sdos).filter(sdo => sdo);
 
             return result;
@@ -1091,9 +1255,17 @@ Case ${i + 1}:
 ${processedData.teachers.slice(0, 3).map((t, i) => `
 Teacher ${i + 1}:
   Name: ${t.encoding_teacher}
+  First: ${t.teacher_first_name}
+  Last: ${t.teacher_last_name}
   School ID: ${t.school_name}
   SDO ID: ${t.sdo}
+  District ID: ${t.district}
 `).join('')}
+
+🏫 UNIQUE TEACHER IDENTIFICATION:
+• Teachers identified by: Name + School ID
+• Prevents duplicates across multiple student entries
+• Each teacher appears only once in teachers dataset
 
 📋 EXCEL FILE WILL CONTAIN:
 • Individual SDO sheets for cases (by SDO ID)
@@ -1111,8 +1283,11 @@ You may want to add a lookup table to convert to names.`;
         function updateStats() {
             if (!processedData) return;
 
+            // Calculate unique students
+            const uniqueStudentNames = new Set(processedData.cases.map(c => c.old_student_name.toLowerCase()));
+
             document.getElementById('totalRecords').textContent = processedData.cases.length;
-            document.getElementById('uniqueStudents').textContent = new Set(processedData.cases.map(c => c.old_student_name)).size;
+            document.getElementById('uniqueStudents').textContent = uniqueStudentNames.size;
             document.getElementById('totalTeachers').textContent = processedData.teachers.length;
             document.getElementById('totalSchools').textContent = processedData.schools.length;
             document.getElementById('totalSDOs').textContent = processedData.sdos.length;
