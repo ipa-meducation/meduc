@@ -845,10 +845,10 @@
                 ).join('');
                 
                 const backButton = this.navigationStack.length > 1 ? 
-                    '<button class="back-btn-small" onclick="chatbot.goBack()"><i class="fas fa-arrow-left"></i> Back</button>' : '';
+                    '<button class="back-btn-chat" onclick="chatbot.goBack()"><i class="fas fa-arrow-left"></i> Back</button>' : '';
                 
                 this.inputContainer.innerHTML = `
-                    <div class="option-buttons">
+                    <div class="button-group">
                         ${backButton}
                         ${buttons}
                     </div>
@@ -859,10 +859,10 @@
                 setTimeout(() => {
                     this.addBotMessage("Is there anything else I can help you with?");
                     const backButton = this.navigationStack.length > 1 ? 
-                        '<button class="back-btn-small" onclick="chatbot.goBack()"><i class="fas fa-arrow-left"></i> Back</button>' : '';
+                        '<button class="back-btn-chat" onclick="chatbot.goBack()"><i class="fas fa-arrow-left"></i> Back</button>' : '';
                     
                     this.inputContainer.innerHTML = `
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div class="button-group">
                             ${backButton}
                             <button class="restart-btn" onclick="chatbot.restart()">
                                 <i class="fas fa-refresh"></i> Start Over
