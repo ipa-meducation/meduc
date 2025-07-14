@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshoot Chatbot - mEducation Hub</title>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-green: #49ac57;
+            --dark-green: #155240;
+            --light-blue: #84d0d4;
+            --dark-blue: #2b4085;
+            --orange: #f26529;
+            --light-gray: #f1f2f2;
+            --dark-gray: #414042;
+            --charcoal: #414042;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            min-height: 100vh;
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--dark-green);
+        }
+
+        .back-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-52px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--primary-green);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header i {
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 500px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .message.bot {
+            flex-direction: row;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: var(--primary-green);
+        }
+
+        .message.user .message-avatar {
+            background: var(--dark-blue);
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .message.bot .message-content {
+            border-bottom-left-radius: 4px;
+            margin-right: auto;
+        }
+
+        .message.user .message-content {
+            background: var(--light-blue);
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+        }
+
+        .topic-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .topic-btn {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .topic-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            background: var(--light-blue);
+            color: var(--dark-green);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            background: var(--dark-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .solution-box {
+            background: #e8f5e8;
+            border: 2px solid var(--primary-green);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .solution-title {
+            font-weight: bold;
+            color: var(--dark-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .solution-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .solution-steps li {
+            counter-increment: step-counter;
+            margin: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .solution-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary-green);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .restart-btn {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .restart-btn:hover {
+            background: #e55a20;
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .back-btn {
+                position: static;
+                transform: none;
+                margin-top: 10px;
+            }
+
+            .topic-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .option-buttons {
+                flex-direction: column;
+            }
+
+            .option-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>mEducation Troubleshoot Assistant</h1>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <i class="fas fa-robot"></i>
+                <span>Tech Support Assistant</span>
+                <div style="margin-left: auto; font-size: 0.9rem;">
+                    <i class="fas fa-circle" style="color: #4CAF50; font-size: 0.6rem;"></i>
+                    Online
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <i class="fas fa-robot"></i>
+                <span>Assistant is typing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input" id="chatInput">
+                <!-- Input options will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TroubleshootChatbot {
+            constructor() {
+                this.messagesContainer = document.getElementById('chatMessages');
+                this.inputContainer = document.getElementById('chatInput');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                this.currentFlow = null;
+                this.conversationHistory = [];
+                
+                this.init();
+            }
+
+            init() {
+                this.showWelcomeMessage();
+                this.showTopicSelection();
+            }
+
+            showWelcomeMessage() {
+                this.addBotMessage(
+                    "👋 Hi! I'm your mEducation Tech Support Assistant. I'm here to help you resolve common technical issues with SurveyCTO and related tools.",
+                    false
+                );
+                
+                setTimeout(() => {
+                    this.addBotMessage(
+                        "Please select the issue you're experiencing from the options below:",
+                        false
+                    );
+                }, 1000);
+            }
+
+            showTopicSelection() {
+                const topics = [
+                    { 
+                        id: 'messenger_call', 
+                        title: 'Make a Call via Messenger', 
+                        icon: 'fas fa-phone',
+                        description: 'Learn how to contact learners through messenger'
+                    },
+                    { 
+                        id: 'add_number', 
+                        title: 'Add a New Number', 
+                        icon: 'fas fa-plus-circle',
+                        description: 'Add new contact numbers to your system'
+                    },
+                    { 
+                        id: 'verify_forms', 
+                        title: 'Verify Form Submission', 
+                        icon: 'fas fa-check-circle',
+                        description: 'Check if your forms have been submitted successfully'
+                    },
+                    { 
+                        id: 'blank_form', 
+                        title: 'Get a Blank Form', 
+                        icon: 'fas fa-file-alt',
+                        description: 'Access and download blank forms'
+                    },
+                    { 
+                        id: 'assigned_cases', 
+                        title: 'See Assigned Cases', 
+                        icon: 'fas fa-tasks',
+                        description: 'View your assigned cases and tasks'
+                    }
+                ];
+
+                const topicButtons = topics.map(topic => 
+                    `<button class="topic-btn" onclick="chatbot.startFlow('${topic.id}')">
+                        <i class="${topic.icon}"></i>
+                        <div>
+                            <div style="font-weight: bold;">${topic.title}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 2px;">${topic.description}</div>
+                        </div>
+                    </button>`
+                ).join('');
+
+                this.inputContainer.innerHTML = `
+                    <div class="topic-selection">
+                        ${topicButtons}
+                    </div>
+                `;
+            }
+
+            startFlow(flowId) {
+                this.currentFlow = flowId;
+                
+                // Add user selection as a message
+                const topics = {
+                    'messenger_call': 'Make a Call via Messenger',
+                    'add_number': 'Add a New Number',
+                    'verify_forms': 'Verify Form Submission',
+                    'blank_form': 'Get a Blank Form',
+                    'assigned_cases': 'See Assigned Cases'
+                };
+                
+                this.addUserMessage(topics[flowId]);
+                
+                // Start the appropriate flow
+                setTimeout(() => {
+                    switch(flowId) {
+                        case 'messenger_call':
+                            this.messengerCallFlow();
+                            break;
+                        case 'add_number':
+                            this.addNumberFlow();
+                            break;
+                        case 'verify_forms':
+                            this.verifyFormsFlow();
+                            break;
+                        case 'blank_form':
+                            this.blankFormFlow();
+                            break;
+                        case 'assigned_cases':
+                            this.assignedCasesFlow();
+                            break;
+                    }
+                }, 500);
+            }
+
+            messengerCallFlow() {
+                this.addBotMessage("Do you want to make a call via messenger?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.messengerCallYes() },
+                    { text: "No", action: () => this.messengerCallNo() }
+                ]);
+            }
+
+            messengerCallYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Great! Let me guide you through the process:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-list-ol"></i>
+                                Steps to Make a Call via Messenger
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Open "Manage Cases"</li>
+                                <li>Choose the case/learner</li>
+                                <li>Swipe until you reach the section of "Case Information"</li>
+                            </ol>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Can you see the 'Messenger account'?");
+                        this.showOptions([
+                            { text: "Yes", action: () => this.messengerAccountYes() },
+                            { text: "No", action: () => this.messengerAccountNo() }
+                        ]);
+                    }, 1000);
+                });
+            }
+
+            messengerCallNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("No problem! You can use SurveyCTO to make calls directly.");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-phone"></i>
+                                Alternative: Call via SurveyCTO
+                            </div>
+                            <p>You can make calls directly through the SurveyCTO platform using the calling feature.</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            messengerAccountYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Perfect! Here's how to proceed:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-check-circle"></i>
+                                Making the Messenger Call
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Go to your messenger and type the messenger account of the guardian/parent</li>
+                                <li>Call the messenger account</li>
+                                <li>Go back to the SurveyCTO and proceed as is. No need to call via phone call</li>
+                                <li>Mark form as finalized once the call is done and submit the form</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            messengerAccountNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("The learner has no messenger account available. You'll need to use alternative contact methods.");
+                    this.showRestartOption();
+                });
+            }
+
+            addNumberFlow() {
+                this.addBotMessage("Do you want to add a new number?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.addNumberYes() },
+                    { text: "No", action: () => this.addNumberNo() }
+                ]);
+            }
+
+            addNumberYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("I'll help you add a new number. First, let's start:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-list-ol"></i>
+                                Initial Steps
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Open "Manage Cases"</li>
+                                <li>Choose the case/learner</li>
+                                <li>Swipe until you reach the section of "Calling"</li>
+                            </ol>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Can you see the option 'Answered by someone else'?");
+                        this.showOptions([
+                            { text: "Yes", action: () => this.answeredBySomeoneYes() },
+                            { text: "No", action: () => this.answeredBySomeoneNo() }
+                        ]);
+                    }, 1000);
+                });
+            }
+
+            addNumberNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("That's fine! You can call the existing number for your case.");
+                    this.showRestartOption();
+                });
+            }
+
+            answeredBySomeoneYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Great! Here's how to add the new number:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-plus-circle"></i>
+                                Adding New Number Steps
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Choose "Answered by someone else", then swipe</li>
+                                <li>Choose "Yes, there is a better number to reach the respondent - UPDATE Contacts"</li>
+                                <li>Swipe, then add the new number</li>
+                                <li>Swipe and type the name and relationship to the student (e.g., Juan, Father)</li>
+                                <li>Once all steps are completed, mark the form as finalized and send it</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            answeredBySomeoneNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("Let me help you find it. Please repeat Step 3 of the previous process - swipe until you reach the 'Calling' section and look for the 'Answered by someone else' option.");
+                    this.showRestartOption();
+                });
+            }
+
+            verifyFormsFlow() {
+                this.addBotMessage("Did you recently send forms?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.recentlySentYes() },
+                    { text: "No", action: () => this.recentlySentNo() }
+                ]);
+            }
+
+            recentlySentYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Let me help you check your form submissions:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-search"></i>
+                                Check Sent Forms
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Go to "Send Finalized Forms"</li>
+                            </ol>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Do you see any form?");
+                        this.showOptions([
+                            { text: "Yes", action: () => this.seeFormYes() },
+                            { text: "No", action: () => this.seeFormNo() }
+                        ]);
+                    }, 1000);
+                });
+            }
+
+            recentlySentNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("Let's check if there are any pending forms:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-search"></i>
+                                Check for Forms
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Go to "Manage Cases" and click the target case/learner</li>
+                            </ol>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Do you see a form in red texts?");
+                        this.showOptions([
+                            { text: "Yes", action: () => this.redTextFormYes() },
+                            { text: "No", action: () => this.redTextFormNo() }
+                        ]);
+                    }, 1000);
+                });
+            }
+
+            seeFormYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Perfect! Here's how to send your forms:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-paper-plane"></i>
+                                Send Forms
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Toggle all</li>
+                                <li>Click "Send selected"</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            seeFormNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("✅ All forms have been sent! Your submissions are complete.");
+                    this.showRestartOption();
+                });
+            }
+
+            redTextFormYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Red text indicates an incomplete form. Here's what to do:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-edit"></i>
+                                Complete the Form
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Open the form in red texts</li>
+                                <li>Click "Go to end"</li>
+                                <li>Tick "Mark form as finalized"</li>
+                                <li>Save form and exit</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            redTextFormNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("✅ All forms have been sent! Your submissions are complete.");
+                    this.showRestartOption();
+                });
+            }
+
+            blankFormFlow() {
+                this.addBotMessage("I can help you get a blank form.");
+                this.addBotMessage(`
+                    <div class="solution-box">
+                        <div class="solution-title">
+                            <i class="fas fa-file-alt"></i>
+                            Get Blank Form
+                        </div>
+                        <ol class="solution-steps">
+                            <li>Go to "Fill Blank Form"</li>
+                            <li>Select the form you need</li>
+                            <li>The blank form will open for you to fill out</li>
+                        </ol>
+                    </div>
+                `);
+                this.showRestartOption();
+            }
+
+            assignedCasesFlow() {
+                this.addBotMessage("I can help you view your assigned cases.");
+                this.addBotMessage(`
+                    <div class="solution-box">
+                        <div class="solution-title">
+                            <i class="fas fa-tasks"></i>
+                            View Assigned Cases
+                        </div>
+                        <ol class="solution-steps">
+                            <li>Open "Manage Cases"</li>
+                            <li>You'll see a list of all your assigned cases</li>
+                            <li>Click on any case to view details and progress</li>
+                            <li>Look for status indicators to see which cases need attention</li>
+                        </ol>
+                    </div>
+                `);
+                this.showRestartOption();
+            }
+
+            showOptions(options) {
+                const buttons = options.map(option => 
+                    `<button class="option-btn" onclick="${option.action.toString().replace('() => ', '').replace('this.', 'chatbot.')}">${option.text}</button>`
+                ).join('');
+                
+                this.inputContainer.innerHTML = `
+                    <div class="option-buttons">
+                        ${buttons}
+                    </div>
+                `;
+            }
+
+            showRestartOption() {
+                setTimeout(() => {
+                    this.addBotMessage("Is there anything else I can help you with?");
+                    this.inputContainer.innerHTML = `
+                        <button class="restart-btn" onclick="chatbot.restart()">
+                            <i class="fas fa-refresh"></i> Start Over
+                        </button>
+                    `;
+                }, 1000);
+            }
+
+            restart() {
+                this.messagesContainer.innerHTML = '';
+                this.currentFlow = null;
+                this.conversationHistory = [];
+                this.showWelcomeMessage();
+                setTimeout(() => this.showTopicSelection(), 1500);
+            }
+
+            addBotMessage(message, showTyping = true) {
+                if (showTyping) {
+                    this.showTyping(() => this._addMessage('bot', message));
+                } else {
+                    this._addMessage('bot', message);
+                }
+            }
+
+            addUserMessage(message) {
+                this._addMessage('user', message);
+            }
+
+            _addMessage(sender, message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        ${sender === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>'}
+                    </div>
+                    <div class="message-content">
+                        ${message}
+                    </div>
+                `;
+                
+                this.messagesContainer.appendChild(messageDiv);
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+                
+                // Store in conversation history
+                this.conversationHistory.push({ sender, message, timestamp: new Date() });
+            }
+
+            showTyping(callback) {
+                this.typingIndicator.style.display = 'flex';
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+                
+                setTimeout(() => {
+                    this.typingIndicator.style.display = 'none';
+                    callback();
+                }, 1500);
+            }
+        }
+
+        // Initialize the chatbot when page loads
+        let chatbot;
+        document.addEventListener('DOMContentLoaded', function() {
+            chatbot = new TroubleshootChatbot();
+        });
+    </script>
+</body>
+</html>
