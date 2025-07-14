@@ -532,13 +532,21 @@
                     Upload Learner Enrollment Data
                 </div>
                 
-                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <div class="upload-text">Drop your learner enrollment Excel/CSV file here</div>
                     <div class="upload-subtext">or click to browse files (Excel WIDE format from SurveyCTO export)</div>
                     <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv">
+                </div>
+
+                <!-- Add a visible browse button as backup -->
+                <div style="margin-top: 15px; text-align: center;">
+                    <button type="button" class="btn" id="browseBtn">
+                        <i class="fas fa-folder-open"></i>
+                        Browse Files
+                    </button>
                 </div>
 
                 <div class="file-info" id="fileInfo">
@@ -698,6 +706,7 @@
         // DOM elements
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
         const fileInfo = document.getElementById('fileInfo');
         const fileName = document.getElementById('fileName');
         const fileSize = document.getElementById('fileSize');
@@ -744,57 +753,15 @@
             if (uploadText) uploadText.addEventListener('click', () => fileInput.click());
         });
 
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Drag over');
-            uploadArea.classList.add('dragover');
-        }
-
-        function handleDragLeave(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Drag leave');
-            uploadArea.classList.remove('dragover');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('File dropped');
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                console.log('Processing dropped file:', files[0].name);
-                handleFile(files[0]);
-            }
-        }
-
-        function handleFileSelect(e) {
-            console.log('File selected via input');
-            const file = e.target.files[0];
-            if (file) {
-                console.log('Processing selected file:', file.name);
-                handleFile(file);
-            }
-        }
-
+        // Remove the complex drag/drop handlers - keep it simple
         function handleFile(file) {
             console.log('File selected:', file.name, file.type, file.size);
             
             // Validate file type
-            const validTypes = [
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/vnd.ms-excel',
-                'text/csv',
-                'application/vnd.ms-excel.sheet.macroEnabled.12'
-            ];
-            
             const validExtensions = /\.(xlsx|xls|csv)$/i;
             
-            if (!validTypes.includes(file.type) && !validExtensions.test(file.name)) {
-                showError(`Invalid file type. Please upload Excel (.xlsx, .xls) or CSV files. 
-                          File type detected: ${file.type || 'unknown'}`);
+            if (!validExtensions.test(file.name)) {
+                showError(`Invalid file type. Please upload Excel (.xlsx, .xls) or CSV files.`);
                 return;
             }
 
