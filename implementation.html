@@ -856,6 +856,11 @@
                 
                 // Fit map to bounds
                 fitMapToBounds();
+
+                setTimeout(() => {
+                map.invalidateSize();
+                fitMapToBounds();
+                }, 200);
                 
             } catch (error) {
                 console.error('Initialization error:', error);
