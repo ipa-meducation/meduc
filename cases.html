@@ -509,6 +509,66 @@
         .upload-section { animation-delay: 0.1s; }
         .preview-section { animation-delay: 0.2s; }
         .stats-section { animation-delay: 0.3s; }
+
+        .feature-doc-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .feature-doc-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-green);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-doc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-doc-list li {
+            padding: 4px 0;
+            color: var(--charcoal);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .feature-doc-list li::before {
+            content: "✓";
+            color: var(--primary-green);
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-doc-list code {
+            background: rgba(73, 172, 87, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--dark-green);
+        }
+
+        @media (max-width: 768px) {
+            .feature-doc-card {
+                padding: 15px;
+            }
+            
+            .feature-doc-title {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -746,68 +806,6 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .feature-doc-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--primary-green);
-        }
-
-        .feature-doc-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-green);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .feature-doc-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .feature-doc-list li {
-            padding: 4px 0;
-            color: var(--charcoal);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .feature-doc-list li::before {
-            content: "✓";
-            color: var(--primary-green);
-            font-weight: bold;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .feature-doc-list code {
-            background: rgba(73, 172, 87, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            color: var(--dark-green);
-        }
-
-        @media (max-width: 768px) {
-            .feature-doc-card {
-                padding: 15px;
-            }
-            
-            .feature-doc-title {
-                font-size: 1rem;
-            }
-        }
-    </style>
 
     <script>
         // Global variables
@@ -1492,8 +1490,7 @@ You may want to add a lookup table to convert to names.`;
                 if (!sdoId) return;
                 
                 const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId);
-                const sdoName = sdoCases[0]?.division || `SDO_${sdoId}`;
-                const sheetName = `SDO_${sdoId}`;//
+                const sheetName = `SDO_${sdoId}`;
                 
                 const sdoData = sdoCases.map((caseItem, index) => ({
                     'id': `=CONCAT("${sdoId}_",ROW()-1)`, // Excel formula for auto-incrementing ID with SDO prefix
@@ -1525,14 +1522,21 @@ You may want to add a lookup table to convert to names.`;
                 }));
                 
                 const sdoWS = XLSX.utils.json_to_sheet(sdoData);
-                
-                // Create safe sheet name using SDO name if available
-                const maxLength = 31 - `_${sdoId}`.length - 1; // Reserve space for _ID and safety margin
-                                
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
             
-            // Create summary sheet
+            // Create summary sheet - FIX: Define sdoSummaryData properly
+            const sdoSummaryData = processedData.sdos.map(sdoId => {
+                // Filter cases for this specific SDO
+                const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId);
+                const currentSdoName = sdoCases.length > 0 ? sdoCases[0].division : `SDO_${sdoId}`;
+                
+                return { 
+                    'Item': `• ${currentSdoName} (ID: ${sdoId})`, 
+                    'Value': sdoCases.length + ' cases'
+                };
+            });
+            
             const summaryData = [
                 { 'Item': 'Processing Summary', 'Value': '' },
                 { 'Item': 'Total Cases Generated', 'Value': processedData.cases.length },
@@ -1543,14 +1547,7 @@ You may want to add a lookup table to convert to names.`;
                 { 'Item': 'SDOs Processed', 'Value': processedData.sdos.length },
                 { 'Item': '', 'Value': '' },
                 { 'Item': 'SDO IDs Included:', 'Value': '' },
-                ...processedData.sdos.map(sdoId => {
-                    const sdoCases = processedData.cases.filter(c => c.sdo_id === sdoId || c.division === sdoName);
-                    const sdoName = sdoCases[0]?.division || `SDO_${sdoId}`;
-                    return { 
-                        'Item': `• ${sdoName} (ID: ${sdoId})`, 
-                        'Value': sdoCases.length + ' cases'
-                    };
-                })
+                ...sdoSummaryData
             ];
             
             const summaryWS = XLSX.utils.json_to_sheet(summaryData);
