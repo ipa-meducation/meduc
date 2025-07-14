@@ -563,9 +563,14 @@
                         <!-- Dynamic mapping fields will be added here -->
                     </div>
                     
-                    <div class="mapping-group" style="margin-top: 20px;">
-                        <label class="mapping-label">SDO Prefix for Case IDs (e.g., 'sib', 'ppc')</label>
-                        <input type="text" id="sdoPrefix" class="mapping-select" placeholder="Enter 3-letter SDO code" maxlength="10">
+                    <div id="sdoPrefixSection" style="margin-top: 20px; display: none;">
+                        <div class="mapping-title">
+                            <i class="fas fa-tags"></i>
+                            SDO Prefixes for Case IDs
+                        </div>
+                        <div id="sdoPrefixMapping">
+                            <!-- Dynamic SDO prefix fields will be added here -->
+                        </div>
                     </div>
                     
                     <div class="action-buttons">
@@ -670,6 +675,8 @@
         let rawData = null;
         let processedData = null;
         let columnHeaders = [];
+        let sdoPrefixes = {};
+        let detectedSDOs = [];
         let requiredFields = {
             'stud_firstname_': 'Student First Name',
             'stud_lastname_': 'Student Last Name', 
@@ -697,7 +704,8 @@
         const fileSize = document.getElementById('fileSize');
         const mappingSection = document.getElementById('mappingSection');
         const columnMapping = document.getElementById('columnMapping');
-        const sdoPrefix = document.getElementById('sdoPrefix');
+        const sdoPrefixSection = document.getElementById('sdoPrefixSection');
+        const sdoPrefixMapping = document.getElementById('sdoPrefixMapping');
         const processBtn = document.getElementById('processBtn');
         const resetBtn = document.getElementById('resetBtn');
         const downloadBtn = document.getElementById('downloadBtn');
@@ -872,7 +880,86 @@
             });
 
             mappingSection.classList.add('show');
+            
+            // Detect SDOs after column mapping is set up
+            detectSDOsAndSetupPrefixes();
+        }
+
+        function detectSDOsAndSetupPrefixes() {
+            // Wait a bit for user to potentially change SDO mapping
+            setTimeout(() => {
+                const sdoMappingSelect = document.getElementById('mapping_sdo');
+                if (sdoMappingSelect && sdoMappingSelect.value && rawData) {
+                    const sdoColumn = sdoMappingSelect.value;
+                    const uniqueSDOs = [...new Set(rawData.map(row => {
+                        const sdoValue = row[sdoColumn];
+                        return safeStringConvert(sdoValue).trim();
+                    }).filter(sdo => sdo && sdo !== ''))];
+                    
+                    detectedSDOs = uniqueSDOs;
+                    setupSDOPrefixMapping();
+                }
+            }, 1000);
+        }
+
+        function setupSDOPrefixMapping() {
+            if (detectedSDOs.length === 0) return;
+            
+            sdoPrefixMapping.innerHTML = '';
+            sdoPrefixes = {};
+            
+            detectedSDOs.forEach(sdo => {
+                const mappingGroup = document.createElement('div');
+                mappingGroup.className = 'mapping-group';
+                mappingGroup.style.marginBottom = '10px';
+                
+                const label = document.createElement('div');
+                label.className = 'mapping-label';
+                label.textContent = `${sdo} prefix:`;
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'mapping-select';
+                input.id = `prefix_${sdo.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                input.placeholder = 'e.g., sib, ppc, cal';
+                input.maxLength = 10;
+                
+                // Generate suggested prefix from SDO name
+                const suggested = sdo.toLowerCase()
+                    .replace(/[^a-z\s]/g, '')
+                    .split(/\s+/)
+                    .map(word => word.substring(0, 3))
+                    .join('')
+                    .substring(0, 6);
+                input.value = suggested;
+                
+                sdoPrefixes[sdo] = suggested;
+                
+                input.addEventListener('input', (e) => {
+                    sdoPrefixes[sdo] = e.target.value.trim();
+                });
+                
+                mappingGroup.appendChild(label);
+                mappingGroup.appendChild(input);
+                sdoPrefixMapping.appendChild(mappingGroup);
+            });
+            
+            sdoPrefixSection.style.display = 'block';
             processBtn.disabled = false;
+        }
+
+        // Add event listener for SDO mapping changes
+        document.addEventListener('change', (e) => {
+            if (e.target.id === 'mapping_sdo') {
+                detectSDOsAndSetupPrefixes();
+            }
+        });
+
+        // Helper function to safely convert values to strings
+        function safeStringConvert(value) {
+            if (value === null || value === undefined) return '';
+            if (typeof value === 'string') return value;
+            return String(value);
         }
 
         function processData() {
@@ -890,9 +977,10 @@
                 }
             });
 
-            const prefix = sdoPrefix.value.trim();
-            if (!prefix) {
-                showError('Please enter an SDO prefix for case ID generation (e.g., "sib", "ppc").');
+            // Validate SDO prefixes
+            const emptyPrefixes = Object.entries(sdoPrefixes).filter(([sdo, prefix]) => !prefix.trim());
+            if (emptyPrefixes.length > 0) {
+                showError(`Please enter prefixes for all SDOs: ${emptyPrefixes.map(([sdo]) => sdo).join(', ')}`);
                 return;
             }
 
@@ -906,7 +994,7 @@
             // Process data with a realistic delay
             setTimeout(() => {
                 try {
-                    processedData = transformData(rawData, mappings, prefix);
+                    processedData = transformData(rawData, mappings, sdoPrefixes);
                     showLoading(false);
                     updatePreview();
                     updateStats();
@@ -922,7 +1010,7 @@
             }, 2000);
         }
 
-        function transformData(data, mappings, prefix) {
+        function transformData(data, mappings, prefixes) {
             const result = {
                 cases: [],
                 teachers: [],
@@ -938,13 +1026,17 @@
 
             // Process each row from the reshaped data
             data.forEach((row, index) => {
-                // Skip empty rows
-                if (!row[mappings.stud_firstname_] && !row[mappings.stud_lastname_]) {
+                // Skip empty rows - use safe string conversion
+                const studentFirst = safeStringConvert(row[mappings.stud_firstname_]).trim();
+                const studentLast = safeStringConvert(row[mappings.stud_lastname_]).trim();
+                
+                if (!studentFirst && !studentLast) {
                     return;
                 }
 
                 // Create student identifier for duplicate detection
-                const studentKey = `${(row[mappings.stud_firstname_] || '').trim().toLowerCase()}_${(row[mappings.stud_lastname_] || '').trim().toLowerCase()}_${(row[mappings.learn_number_] || '').trim()}`;
+                const learnerNumber = safeStringConvert(row[mappings.learn_number_]).trim();
+                const studentKey = `${studentFirst.toLowerCase()}_${studentLast.toLowerCase()}_${learnerNumber}`;
                 
                 if (seenStudents.has(studentKey)) {
                     result.duplicatesRemoved++;
@@ -952,16 +1044,16 @@
                 }
                 seenStudents.add(studentKey);
 
-                // Clean and format names
-                const studentFirstName = properCase((row[mappings.stud_firstname_] || '').trim());
-                const studentLastName = properCase((row[mappings.stud_lastname_] || '').trim());
-                const respFirstName = properCase((row[mappings.resp_firstname_] || '').trim());
-                const respLastName = properCase((row[mappings.resp_lastname_] || '').trim());
-                const teacherFirstName = properCase((row[mappings.teacher_firstname] || '').trim());
-                const teacherLastName = properCase((row[mappings.teacher_lastname] || '').trim());
+                // Clean and format names using safe conversion
+                const studentFirstName = properCase(studentFirst);
+                const studentLastName = properCase(studentLast);
+                const respFirstName = properCase(safeStringConvert(row[mappings.resp_firstname_]).trim());
+                const respLastName = properCase(safeStringConvert(row[mappings.resp_lastname_]).trim());
+                const teacherFirstName = properCase(safeStringConvert(row[mappings.teacher_firstname]).trim());
+                const teacherLastName = properCase(safeStringConvert(row[mappings.teacher_lastname]).trim());
 
                 // Format respondent relation
-                const respRelationCode = row[mappings.resp_relation_code_] || '';
+                const respRelationCode = safeStringConvert(row[mappings.resp_relation_code_]);
                 let respRelation = 'Parent'; // Default
                 switch(respRelationCode) {
                     case '1': respRelation = 'Parent'; break;
@@ -970,7 +1062,7 @@
                     case '4': respRelation = 'Sibling'; break;
                     case '-99':
                     case '88':
-                        const otherRelation = (row[mappings.resp_relation_oth_] || '').trim();
+                        const otherRelation = safeStringConvert(row[mappings.resp_relation_oth_]).trim();
                         if (otherRelation.toLowerCase().includes('guardian')) {
                             respRelation = 'Guardian';
                         } else if (otherRelation.toLowerCase().includes('relative')) {
@@ -981,25 +1073,29 @@
                         break;
                 }
 
+                // Get SDO and its prefix
+                const division = safeStringConvert(row[mappings.sdo]).trim();
+                const sdoPrefix = prefixes[division] || 'unk';
+
                 // Process case data
                 const caseData = {
                     serialId: result.cases.length + 1,
                     formids: 'deped_nlc_baseline_form, deped_nlc_phone_change',
-                    region: (row[mappings.region] || '').trim(),
-                    division: (row[mappings.sdo] || '').trim(),
-                    school_name: (row[mappings.school] || '').trim(),
+                    region: safeStringConvert(row[mappings.region]).trim(),
+                    division: division,
+                    school_name: safeStringConvert(row[mappings.school]).trim(),
                     old_student_name: `${studentFirstName} ${studentLastName}`.trim(),
-                    grade_level: (row[mappings.grade_level_] || '').trim(),
+                    grade_level: safeStringConvert(row[mappings.grade_level_]).trim(),
                     resp_name: `${respFirstName} ${respLastName}`.trim(),
                     resp_relation: respRelation,
                     encoding_teacher: `${teacherFirstName} ${teacherLastName}`.trim(),
-                    contacts: row[mappings.contacts_0] || '',
-                    phone_1: cleanPhoneNumber(row[mappings.phone_1_] || ''),
-                    phone_2: cleanPhoneNumber(row[mappings.phone_2_] || ''),
+                    contacts: safeStringConvert(row[mappings.contacts_0]),
+                    phone_1: cleanPhoneNumber(safeStringConvert(row[mappings.phone_1_])),
+                    phone_2: cleanPhoneNumber(safeStringConvert(row[mappings.phone_2_])),
                     phone_1_name: `${respFirstName} ${respLastName}`.trim(),
                     phone_2_name: row[mappings.phone_2_] ? `${respFirstName} ${respLastName}`.trim() : '',
-                    learn_number: (row[mappings.learn_number_] || '').trim(),
-                    sdo_prefix: prefix
+                    learn_number: learnerNumber,
+                    sdo_prefix: sdoPrefix
                 };
 
                 result.cases.push(caseData);
@@ -1054,6 +1150,10 @@
         function updatePreview() {
             if (!processedData) return;
 
+            const sdoPrefixList = Object.entries(sdoPrefixes)
+                .map(([sdo, prefix]) => `• ${sdo}: "${prefix}"`)
+                .join('\n');
+
             const preview = `CASES PROCESSING COMPLETE
 ========================
 
@@ -1065,8 +1165,8 @@
 • Unique Schools: ${processedData.schools.length}
 • SDOs Processed: ${processedData.sdos.length}
 
-🏫 SDOs INCLUDED:
-${processedData.sdos.map(sdo => `• ${sdo}`).join('\n')}
+🏫 SDOs & PREFIXES:
+${sdoPrefixList}
 
 📋 EXCEL FILE WILL CONTAIN:
 • ${processedData.sdos.length} SDO-specific sheets (for cases upload)
@@ -1076,13 +1176,27 @@ ${processedData.sdos.map(sdo => `• ${sdo}`).join('\n')}
 • Conditional formatting for duplicate detection
 
 🔧 FORMULAS INCLUDED:
-• Case ID: =CONCAT("${processedData.cases[0]?.sdo_prefix || 'xxx'}_", A2)
+• Case ID: =CONCAT("[prefix]_", ROW()-1) [different per SDO]
 • Enumerator ID: =LEFT(D2,1) & E2 & "_" & A2
 • Enumerator Name: =CONCAT(D2," ",E2)
 • Users lookup: =XLOOKUP() functions
 
 📝 SAMPLE CASE DATA:
 ${processedData.cases.slice(0, 2).map((c, i) => `
+Case ${i + 1}:
+  Student: ${c.old_student_name}
+  Grade: ${c.grade_level}
+  School: ${c.school_name} (${c.division})
+  Teacher: ${c.encoding_teacher}
+  Respondent: ${c.resp_name} (${c.resp_relation})
+  Contact: ${c.phone_1}
+  Case ID prefix: ${c.sdo_prefix}
+`).join('')}
+
+✅ Ready to download the complete Excel file!`;
+
+            previewArea.textContent = preview;
+        }2).map((c, i) => `
 Case ${i + 1}:
   Student: ${c.old_student_name}
   Grade: ${c.grade_level}
@@ -1180,7 +1294,6 @@ DATA QUALITY NOTES:
 
         function generateAdvancedExcelFile() {
             const wb = XLSX.utils.book_new();
-            const prefix = processedData.cases[0]?.sdo_prefix || 'xxx';
             
             // 1. Create teachers sheet with formulas and proper structure
             const teachersData = processedData.teachers.map((teacher, index) => ({
@@ -1218,8 +1331,10 @@ DATA QUALITY NOTES:
                 if (!sdo) return;
                 
                 const sdoCases = processedData.cases.filter(c => c.division === sdo);
+                const sdoPrefix = sdoCases[0]?.sdo_prefix || 'unk';
+                
                 const sdoData = sdoCases.map((caseItem, index) => ({
-                    'id': `=CONCAT("${prefix}_",ROW()-1)`, // Excel formula for auto-incrementing ID
+                    'id': `=CONCAT("${sdoPrefix}_",ROW()-1)`, // Excel formula with SDO-specific prefix
                     'formids': caseItem.formids,
                     'region': caseItem.region,
                     'division': caseItem.division,
@@ -1252,7 +1367,7 @@ DATA QUALITY NOTES:
                 XLSX.utils.book_append_sheet(wb, sdoWS, sheetName);
             });
             
-            // 4. Create summary sheet
+            // 4. Create summary sheet with SDO prefix information
             const summaryData = [
                 { 'Item': 'Total Cases Generated', 'Count': processedData.cases.length },
                 { 'Item': 'Unique Teachers', 'Count': processedData.teachers.length },
@@ -1261,8 +1376,11 @@ DATA QUALITY NOTES:
                 { 'Item': 'Duplicates Removed', 'Count': processedData.duplicatesRemoved },
                 { 'Item': 'Original Records', 'Count': processedData.originalCount },
                 { 'Item': '', 'Count': '' },
-                { 'Item': 'SDOs Included:', 'Count': '' },
-                ...processedData.sdos.map(sdo => ({ 'Item': `• ${sdo}`, 'Count': processedData.cases.filter(c => c.division === sdo).length }))
+                { 'Item': 'SDOs & Prefixes:', 'Count': '' },
+                ...Object.entries(sdoPrefixes).map(([sdo, prefix]) => ({ 
+                    'Item': `• ${sdo}`, 
+                    'Count': `${prefix} (${processedData.cases.filter(c => c.division === sdo).length} cases)` 
+                }))
             ];
             
             const summaryWS = XLSX.utils.json_to_sheet(summaryData);
@@ -1270,7 +1388,7 @@ DATA QUALITY NOTES:
             
             // Download the file
             const timestamp = new Date().toISOString().split('T')[0];
-            const fileName = `cases_${prefix}_${timestamp}.xlsx`;
+            const fileName = `cases_multiple_sdo_${timestamp}.xlsx`;
             XLSX.writeFile(wb, fileName);
         }
 
@@ -1278,9 +1396,12 @@ DATA QUALITY NOTES:
             rawData = null;
             processedData = null;
             columnHeaders = [];
+            sdoPrefixes = {};
+            detectedSDOs = [];
             
             fileInfo.classList.remove('show');
             mappingSection.classList.remove('show');
+            sdoPrefixSection.style.display = 'none';
             statsSection.style.display = 'none';
             
             processBtn.disabled = true;
@@ -1298,7 +1419,6 @@ The tool will:
             
             hideMessages();
             fileInput.value = '';
-            sdoPrefix.value = '';
         }
 
         function showLoading(show) {
