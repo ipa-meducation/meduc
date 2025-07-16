@@ -358,25 +358,6 @@
             line-height: 1.4;
         }
 
-        .topic-btn.pending {
-            background: linear-gradient(145deg, var(--light-gray), #e6e7e7);
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .topic-btn.pending::before {
-            background: var(--dark-gray);
-        }
-
-        .topic-btn.pending:hover {
-            transform: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        }
-
-        .topic-btn.pending .topic-btn-icon {
-            background: linear-gradient(135deg, var(--dark-gray), #757575);
-        }
-
         .button-group {
             display: flex;
             gap: 15px;
@@ -472,6 +453,11 @@
 
         .back-btn-chat:hover i {
             transform: translateX(-3px);
+        }
+
+        .back-btn-chat:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(73, 172, 87, 0.3);
         }
 
         .restart-btn {
@@ -761,44 +747,53 @@
                         available: true
                     },
                     { 
-                        id: 'blank_form', 
-                        title: 'Get a Blank Form', 
-                        icon: 'fas fa-file-alt',
-                        description: 'Access and download blank forms',
-                        available: false
+                        id: 'enlist_learners', 
+                        title: 'Enlist Learners', 
+                        icon: 'fas fa-user-plus',
+                        description: 'Learn how to add new learners to the system',
+                        available: true
                     },
                     { 
-                        id: 'assigned_cases', 
-                        title: 'See Assigned Cases', 
-                        icon: 'fas fa-tasks',
-                        description: 'View your assigned cases and tasks',
-                        available: false
+                        id: 'install_form', 
+                        title: 'Install a New Form', 
+                        icon: 'fas fa-download',
+                        description: 'Get and install new forms on your device',
+                        available: true
+                    },
+                    { 
+                        id: 'tracker_issue', 
+                        title: 'Completed Case Not in Tracker', 
+                        icon: 'fas fa-clock',
+                        description: 'Interview completed but showing as rescheduled',
+                        available: true
+                    },
+                    { 
+                        id: 'form_not_sending', 
+                        title: 'Form Not Sending', 
+                        icon: 'fas fa-paper-plane',
+                        description: 'Finalized form won\'t send to server',
+                        available: true
+                    },
+                    { 
+                        id: 'login_error', 
+                        title: 'Login Error', 
+                        icon: 'fas fa-key',
+                        description: 'Server requires authentication issues',
+                        available: true
                     }
                 ];
 
-                const topicButtons = topics.map(topic => {
-                    if (topic.available) {
-                        return `<button class="topic-btn" onclick="chatbot.startFlow('${topic.id}')">
-                            <div class="topic-btn-icon">
-                                <i class="${topic.icon}"></i>
-                            </div>
-                            <div class="topic-btn-content">
-                                <h3>${topic.title}</h3>
-                                <p>${topic.description}</p>
-                            </div>
-                        </button>`;
-                    } else {
-                        return `<button class="topic-btn pending" disabled>
-                            <div class="topic-btn-icon">
-                                <i class="${topic.icon}"></i>
-                            </div>
-                            <div class="topic-btn-content">
-                                <h3>${topic.title}</h3>
-                                <p>Workflow pending - Coming soon!</p>
-                            </div>
-                        </button>`;
-                    }
-                }).join('');
+                const topicButtons = topics.map(topic => 
+                    `<button class="topic-btn" onclick="chatbot.startFlow('${topic.id}')">
+                        <div class="topic-btn-icon">
+                            <i class="${topic.icon}"></i>
+                        </div>
+                        <div class="topic-btn-content">
+                            <h3>${topic.title}</h3>
+                            <p>${topic.description}</p>
+                        </div>
+                    </button>`
+                ).join('');
 
                 this.inputContainer.innerHTML = `
                     <div class="topic-selection">
@@ -812,16 +807,19 @@
             startFlow(flowId) {
                 this.currentFlow = flowId;
                 
-                // Add user selection as a message
                 const topics = {
                     'messenger_call': 'Make a Call via Messenger',
                     'add_number': 'Add a New Number',
-                    'verify_forms': 'Verify Form Submission'
+                    'verify_forms': 'Verify Form Submission',
+                    'enlist_learners': 'Enlist Learners',
+                    'install_form': 'Install a New Form',
+                    'tracker_issue': 'Completed Case Not in Tracker',
+                    'form_not_sending': 'Form Not Sending',
+                    'login_error': 'Login Error'
                 };
                 
                 this.addUserMessage(topics[flowId]);
                 
-                // Start the appropriate flow
                 setTimeout(() => {
                     switch(flowId) {
                         case 'messenger_call':
@@ -832,6 +830,21 @@
                             break;
                         case 'verify_forms':
                             this.verifyFormsFlow();
+                            break;
+                        case 'enlist_learners':
+                            this.enlistLearnersFlow();
+                            break;
+                        case 'install_form':
+                            this.installFormFlow();
+                            break;
+                        case 'tracker_issue':
+                            this.trackerIssueFlow();
+                            break;
+                        case 'form_not_sending':
+                            this.formNotSendingFlow();
+                            break;
+                        case 'login_error':
+                            this.loginErrorFlow();
                             break;
                     }
                 }, 500);
@@ -883,7 +896,6 @@
                         <div class="solution-box">
                             <div class="solution-title">
                                 <i class="fas fa-phone"></i>
-                                Alternative: Call via SurveyCTO
                             </div>
                             <p>You can make calls directly through the SurveyCTO platform using the calling feature.</p>
                         </div>
@@ -1120,14 +1132,414 @@
                 });
             }
 
-            blankFormFlow() {
-                this.addBotMessage("This feature is under development. The workflow for getting blank forms is being created.");
-                this.showRestartOption();
+            enlistLearnersFlow() {
+                this.addBotMessage("Are you going to encode learners?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.enlistLearnersYes() },
+                    { text: "No", action: () => this.enlistLearnersNo() }
+                ]);
+                this.navigationStack.push({ type: 'enlist_learners_start' });
             }
 
-            assignedCasesFlow() {
-                this.addBotMessage("This feature is under development. The workflow for viewing assigned cases is being created.");
-                this.showRestartOption();
+            enlistLearnersYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Great! Let me confirm something first:");
+                    this.addBotMessage("Confirm that you are encoding learners or student Learner Information for the mEducation Program implementation of School Year 2025-2026.");
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Are you a teacher of the learners you are encoding?");
+                        this.showOptions([
+                            { text: "Yes", action: () => this.teacherYes() },
+                            { text: "No", action: () => this.teacherNo() }
+                        ]);
+                        this.navigationStack.push({ type: 'teacher_check' });
+                    }, 1000);
+                });
+            }
+
+            enlistLearnersNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("That's fine! If you need to encode learners later, you can return to this workflow.");
+                    this.showRestartOption();
+                });
+            }
+
+            teacherYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Perfect! Here's how to proceed:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-user-plus"></i>
+                                Steps to Enlist Learners
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Input your first name, last name and the subject you are teaching</li>
+                                <li>Select your region, then select your school</li>
+                                <li>Are you the teacher of the learners you are encoding?</li>
+                            </ol>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Input the details of the learner. Then click 'Next'.");
+                        this.showOptions([
+                            { text: "Continue", action: () => this.learnerDetailsNext() }
+                        ]);
+                        this.navigationStack.push({ type: 'learner_details' });
+                    }, 1500);
+                });
+            }
+
+            teacherNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("I understand. Here's what you need to do:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-info-circle"></i>
+                                For Non-Teachers
+                            </div>
+                            <p>Input the first name, last name of the teachers of the learners, and the subject they are teaching. NOT your details.</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            learnerDetailsNext() {
+                this.addUserMessage("Continue");
+                this.showTyping(() => {
+                    this.addBotMessage("Do you want to add another learner?");
+                    this.showOptions([
+                        { text: "Yes", action: () => this.addAnotherLearnerYes() },
+                        { text: "No", action: () => this.addAnotherLearnerNo() }
+                    ]);
+                    this.navigationStack.push({ type: 'add_another_learner' });
+                });
+            }
+
+            addAnotherLearnerYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-plus"></i>
+                                Adding Additional Learners
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Select "Yes, I will ADD a student > Click Next > Add group!" then "Next"</li>
+                                <li>A pop-up all items to confirm you will be listing new learner, select "Add"</li>
+                                <li>Input the details of the next learner. Please make sure not to encode duplicate entries. Once done, click "Next"</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            addAnotherLearnerNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage("Perfect! Here's how to finalize:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-check"></i>
+                                Finalizing Your Submission
+                            </div>
+                            <p>Select "No, I am done enlisting my students" Then click "Next"</p>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("You will see 'Please click Next to Submit Form.' Then: Submit Form!");
+                        this.showRestartOption();
+                    }, 1000);
+                });
+            }
+
+            installFormFlow() {
+                this.addBotMessage("Are your device connected to internet?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.deviceConnectedYes() },
+                    { text: "No", action: () => this.deviceConnectedNo() }
+                ]);
+                this.navigationStack.push({ type: 'install_form_start' });
+            }
+
+            deviceConnectedYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Perfect! Here's how to install a new form:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-download"></i>
+                                Installing New Form
+                            </div>
+                            <ol class="solution-steps">
+                                <li>On the main menu of SurveyCTO (SCTO), click "Get Blank Form"</li>
+                                <li>Click "Refresh" and then select the form you will be using as advised by the IPA team</li>
+                            </ol>
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        this.addBotMessage("Does the download succeed?");
+                        this.showOptions([
+                            { text: "Yes", action: () => this.downloadSuccessYes() },
+                            { text: "No", action: () => this.downloadSuccessNo() }
+                        ]);
+                        this.navigationStack.push({ type: 'download_success_check' });
+                    }, 1000);
+                });
+            }
+
+            deviceConnectedNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-wifi"></i>
+                                Connect to Internet
+                            </div>
+                            <p>Connect your device to mobile data or Wi-Fi</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            downloadSuccessYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Excellent! Here's the final step:");
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-sync"></i>
+                                Final Setup
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Go back to Main Menu</li>
+                                <li>Select Manage Cases</li>
+                                <li>Click "Refresh"</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            downloadSuccessNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Connection Issues
+                            </div>
+                            <p>Check your internet connection again</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            trackerIssueFlow() {
+                this.addBotMessage("Have you already sent the finalized form?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.trackerReflectedYes() },
+                    { text: "No", action: () => this.trackerReflectedNo() }
+                ]);
+                this.navigationStack.push({ type: 'tracker_issue_start' });
+            }
+
+            trackerReflectedYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-info-circle"></i>
+                                Important Information
+                            </div>
+                            <p>There is a possibility that the Rescheduled form was submitted after the Completed Form. Make sure to send ALL rescheduled forms first before finalizing the completed form, or send all forms every after it was finalized so it won't pile up.</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            trackerReflectedNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-paper-plane"></i>
+                                Send Forms First
+                            </div>
+                            <ol class="solution-steps">
+                                <li>On the main Menu select "Send Finalized Forms"</li>
+                                <li>Click "Toggle All" on the lower left to select all saved forms</li>
+                                <li>Click "Send finalized" on the lower right. Wait until sending is successful</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            formNotSendingFlow() {
+                this.addBotMessage("Are your device connected to internet?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.formSendingConnectedYes() },
+                    { text: "No", action: () => this.formSendingConnectedNo() }
+                ]);
+                this.navigationStack.push({ type: 'form_not_sending_start' });
+            }
+
+            formSendingConnectedYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Have you input an emoji or emoticon on the comment section?");
+                    this.showOptions([
+                        { text: "Yes", action: () => this.emojiInputYes() },
+                        { text: "No", action: () => this.emojiInputNo() }
+                    ]);
+                    this.navigationStack.push({ type: 'emoji_input_check' });
+                });
+            }
+
+            formSendingConnectedNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-wifi"></i>
+                                Connect to Internet
+                            </div>
+                            <p>Connect your device to mobile data or Wi-Fi</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            emojiInputYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-edit"></i>
+                                Remove Emojis and Retry
+                            </div>
+                            <ol class="solution-steps">
+                                <li>Fill out another form</li>
+                                <li>Make sure to NOT include emoticon or emoji in any part of the form</li>
+                                <li>Finalized the form, save and exit</li>
+                                <li>Try to send the new form</li>
+                            </ol>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            emojiInputNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-wifi"></i>
+                                Check Connection Again
+                            </div>
+                            <p>Check your internet connection again</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            loginErrorFlow() {
+                this.addBotMessage("Are your device connected to internet?");
+                this.showOptions([
+                    { text: "Yes", action: () => this.loginConnectedYes() },
+                    { text: "No", action: () => this.loginConnectedNo() }
+                ]);
+                this.navigationStack.push({ type: 'login_error_start' });
+            }
+
+            loginConnectedYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage("Have you checked if the log in credentials were typed in correctly?");
+                    this.showOptions([
+                        { text: "Yes", action: () => this.credentialsCorrectYes() },
+                        { text: "No", action: () => this.credentialsCorrectNo() }
+                    ]);
+                    this.navigationStack.push({ type: 'credentials_check' });
+                });
+            }
+
+            loginConnectedNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-wifi"></i>
+                                Connect to Internet
+                            </div>
+                            <p>Connect your device to mobile data or Wi-Fi</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            credentialsCorrectYes() {
+                this.addUserMessage("Yes");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-user-shield"></i>
+                                Contact Support
+                            </div>
+                            <p>Inform your FC so IPA team can check your log in credentials</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
+            }
+
+            credentialsCorrectNo() {
+                this.addUserMessage("No");
+                this.showTyping(() => {
+                    this.addBotMessage(`
+                        <div class="solution-box">
+                            <div class="solution-title">
+                                <i class="fas fa-keyboard"></i>
+                                Check Your Credentials
+                            </div>
+                            <p>Type the log in credentials carefully. It is case sensitive. Also check if there is a space at the end. No extra character should be added.</p>
+                        </div>
+                    `);
+                    this.showRestartOption();
+                });
             }
 
             showOptions(options) {
@@ -1174,43 +1586,25 @@
                         messages[messages.length - 1].remove();
                     }
                     
-                    switch (previousStep.type) {
-                        case 'topic_selection':
-                            this.showTopicSelection();
-                            break;
-                        case 'messenger_call_start':
-                            this.messengerCallFlow();
-                            break;
-                        case 'add_number_start':
-                            this.addNumberFlow();
-                            break;
-                        case 'verify_forms_start':
-                            this.verifyFormsFlow();
-                            break;
-                        case 'messenger_account_check':
-                            this.showOptions([
-                                { text: "Yes", action: () => this.messengerAccountYes() },
-                                { text: "No", action: () => this.messengerAccountNo() }
-                            ]);
-                            break;
-                        case 'answered_by_someone_check':
-                            this.showOptions([
-                                { text: "Yes", action: () => this.answeredBySomeoneYes() },
-                                { text: "No", action: () => this.answeredBySomeoneNo() }
-                            ]);
-                            break;
-                        case 'see_form_check':
-                            this.showOptions([
-                                { text: "Yes", action: () => this.seeFormYes() },
-                                { text: "No", action: () => this.seeFormNo() }
-                            ]);
-                            break;
-                        case 'red_text_form_check':
-                            this.showOptions([
-                                { text: "Yes", action: () => this.redTextFormYes() },
-                                { text: "No", action: () => this.redTextFormNo() }
-                            ]);
-                            break;
+                    // Handle back navigation with simple if-else statements  
+                    if (previousStep.type === 'topic_selection') {
+                        this.showTopicSelection();
+                    } else if (previousStep.type === 'messenger_call_start') {
+                        this.messengerCallFlow();
+                    } else if (previousStep.type === 'add_number_start') {
+                        this.addNumberFlow();
+                    } else if (previousStep.type === 'verify_forms_start') {
+                        this.verifyFormsFlow();
+                    } else if (previousStep.type === 'enlist_learners_start') {
+                        this.enlistLearnersFlow();
+                    } else if (previousStep.type === 'install_form_start') {
+                        this.installFormFlow();
+                    } else if (previousStep.type === 'tracker_issue_start') {
+                        this.trackerIssueFlow();
+                    } else if (previousStep.type === 'form_not_sending_start') {
+                        this.formNotSendingFlow();
+                    } else if (previousStep.type === 'login_error_start') {
+                        this.loginErrorFlow();
                     }
                 }
             }
