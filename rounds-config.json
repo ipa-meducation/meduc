@@ -22,7 +22,43 @@
       "id": "scaleup2",
       "name": "SCALING - ROUND 2",
       "color": "#2b4085",
-      "description": "Second scale-up implementation phase"
+      "description": "Second scale-up implementation phase 2"
+    },
+     {
+      "id": "scaling-summer-2025",
+      "name": "SCALING - SUMMER 2025",
+      "color": "#fdd0a2",
+      "description": "Summer 2025"
+    },
+    {
+      "id": "scaling-round-3",
+      "name": "SCALING - ROUND 3",
+      "color": "#fc8d59",
+      "description": "Scaling Round 3"
+    },
+    {
+      "id": "scaling-round-4",
+      "name": "SCALING - ROUND 4",
+      "color": "#e34a33",
+      "description": "Scaling Round 4"
+    },
+    {
+      "id": "als-pilot",
+      "name": "ALS Pilot",
+      "color": "#9ecae1",
+      "description": "ALS Pilot SY2526"
+    },
+    {
+      "id": "tarl-pilot",
+      "name": "TaRL Pilot",
+      "color": "#6baed6",
+      "description": "TaRL Pilot SY2526"
+    },
+    {
+      "id": "rct-pilot-1",
+      "name": "RCT Pilot 1",
+      "color": "#3182bd",
+      "description": "RCT Pilot 1 SY2526"
     }
   ],
   "multipleRoundsConfig": {
