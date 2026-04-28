@@ -14,13 +14,13 @@
     },
     {
       "id": "scaleup1",
-      "name": "Scale-Up Round 1",
+      "name": "SCALING - ROUND 1",
       "color": "#f26529", 
       "description": "First scale-up implementation phase"
     },
     {
       "id": "scaleup2",
-      "name": "Scale-Up Round 2",
+      "name": "SCALING - ROUND 2",
       "color": "#2b4085",
       "description": "Second scale-up implementation phase"
     }
