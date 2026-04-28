@@ -417,7 +417,7 @@ function hideError() {
     <div class="container">
         <header>
             <h1><i class="fas fa-exchange-alt"></i> Map File Converter</h1>
-            <p class="subtitle">Convert Excel files to schools.json format for the Implementation Map</p>
+            <p class="subtitle">Convert Excel files to schools.json format using your final rounds-config.json</p>
             <div class="header-buttons">
                 <a href="home.html" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
@@ -591,6 +591,8 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
         </div>
     </div>
 
+    
+    
     <script>
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -607,12 +609,89 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
         let currentFile = null;
         let convertedData = null;
 
-        // Upload area click handler
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+        // Final fallback config based on your uploaded rounds-config.json.
+        // The converter first tries to load rounds-config.json from the same GitHub folder.
+        // If it cannot load, it uses this embedded copy so conversion still follows your final round names.
+        let roundsConfig = {
+            "implementationRounds": [
+                        {
+                                    "id": "pilot-ipa",
+                                    "name": "Pilot - IPA Arm",
+                                    "color": "#84d0d4",
+                                    "description": "Initial pilot implementation with IPA partnership"
+                        },
+                        {
+                                    "id": "pilot-deped",
+                                    "name": "Pilot - DepEd Arm",
+                                    "color": "#49ac57",
+                                    "description": "Initial pilot implementation with DepEd partnership"
+                        },
+                        {
+                                    "id": "scaleup1",
+                                    "name": "SCALING - ROUND 1",
+                                    "color": "#f26529",
+                                    "description": "First scale-up implementation phase"
+                        },
+                        {
+                                    "id": "scaleup2",
+                                    "name": "SCALING - ROUND 2",
+                                    "color": "#2b4085",
+                                    "description": "Second scale-up implementation phase 2"
+                        },
+                        {
+                                    "id": "scaling-summer-2025",
+                                    "name": "SCALING - SUMMER 2025",
+                                    "color": "#fdd0a2",
+                                    "description": "Summer 2025"
+                        },
+                        {
+                                    "id": "scaling-round-3",
+                                    "name": "SCALING - ROUND 3",
+                                    "color": "#fc8d59",
+                                    "description": "Scaling Round 3"
+                        },
+                        {
+                                    "id": "scaling-round-4",
+                                    "name": "SCALING - ROUND 4",
+                                    "color": "#e34a33",
+                                    "description": "Scaling Round 4"
+                        },
+                        {
+                                    "id": "als-pilot",
+                                    "name": "ALS Pilot",
+                                    "color": "#9ecae1",
+                                    "description": "ALS Pilot SY2526"
+                        },
+                        {
+                                    "id": "tarl-pilot",
+                                    "name": "TaRL Pilot",
+                                    "color": "#6baed6",
+                                    "description": "TaRL Pilot SY2526"
+                        },
+                        {
+                                    "id": "rct-pilot-1",
+                                    "name": "RCT Pilot 1",
+                                    "color": "#3182bd",
+                                    "description": "RCT Pilot 1 SY2526"
+                        }
+            ],
+            "multipleRoundsConfig": {
+                        "color": "#155240",
+                        "name": "Multiple Rounds",
+                        "description": "Schools that participated in multiple implementation rounds"
+            },
+            "mapSettings": {
+                        "defaultCenter": [
+                                    12.8797,
+                                    121.774
+                        ],
+                        "defaultZoom": 6,
+                        "clusterZoom": 15
+            }
+};
 
-        // Drag and drop handlers
+        uploadArea.addEventListener('click', () => fileInput.click());
+
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('dragover');
@@ -626,79 +705,81 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            
             const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
+            if (files.length > 0) handleFile(files[0]);
         });
 
-        // File input change handler
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
         });
 
-        // Handle file selection
         function handleFile(file) {
             hideError();
-            
-            // Validate file type
+
             const validTypes = [
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.ms-excel'
             ];
-            
+
             if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
                 showError('Please select a valid Excel file (.xlsx or .xls)');
                 return;
             }
 
             currentFile = file;
-            
-            // Show file info
             fileName.textContent = file.name;
             fileDetails.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB | Type: ${file.type || 'Excel'}`;
             fileInfo.style.display = 'block';
-            
-            // Enable convert button
             convertBtn.disabled = false;
         }
 
-        // Load configuration first
-        let roundsConfig = null;
-        
+        function normalizeText(value) {
+            return String(value || '')
+                .toLowerCase()
+                .replace(/\u00a0/g, ' ')
+                .replace(/–|—/g, '-')
+                .replace(/\s*[-]\s*/g, '-')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function compactText(value) {
+            return normalizeText(value).replace(/[^a-z0-9]/g, '');
+        }
+
         async function loadRoundsConfig() {
             try {
-                const response = await fetch('rounds-config.json');
-                if (response.ok) {
-                    roundsConfig = await response.json();
-                    console.log('Loaded rounds configuration:', roundsConfig);
+                const response = await fetch('rounds-config.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    console.warn('rounds-config.json not found. Using embedded final config.');
                     updateInstructionsWithConfig();
-                } else {
-                    console.warn('rounds-config.json not found, using default configuration');
+                    return;
                 }
+
+                const loadedConfig = await response.json();
+
+                if (!loadedConfig.implementationRounds || !Array.isArray(loadedConfig.implementationRounds)) {
+                    throw new Error('rounds-config.json must contain an implementationRounds array.');
+                }
+
+                roundsConfig = loadedConfig;
+                console.log('Loaded rounds configuration from rounds-config.json:', roundsConfig);
+                updateInstructionsWithConfig();
             } catch (error) {
-                console.warn('Error loading rounds config:', error);
+                console.warn('Could not load rounds-config.json. Using embedded final config:', error);
+                updateInstructionsWithConfig();
             }
         }
 
-        // Update instructions based on loaded config
         function updateInstructionsWithConfig() {
-            if (!roundsConfig) return;
-            
-            // Update the format table
+            if (!roundsConfig || !roundsConfig.implementationRounds) return;
+
             const tbody = document.querySelector('.format-table tbody');
-            if (tbody && roundsConfig.implementationRounds) {
-                // Keep the first 3 rows (School Name, SDO, Coordinates)
+            if (tbody) {
                 const baseRows = Array.from(tbody.children).slice(0, 3);
                 tbody.innerHTML = '';
-                
-                // Add back base rows
                 baseRows.forEach(row => tbody.appendChild(row));
-                
-                // Add dynamic round rows
+
                 roundsConfig.implementationRounds.forEach(round => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -711,164 +792,109 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes
                 });
             }
 
-            // Update example data
             const example = document.querySelector('.format-example');
-            if (example && roundsConfig.implementationRounds) {
-                const headers = ['School Name', 'SDO', 'Coordinates', ...roundsConfig.implementationRounds.map(r => r.name)];
-                const exampleData = `${headers.join(' | ')}
-Bagong Barrio ES | Caloocan City | 14.6507,120.9634 | Yes | No | No | No
-Malinta ES | Valenzuela City | 14.6553,120.9467 | No | Yes | Yes | No
-Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
-                example.textContent = exampleData;
+            if (example) {
+                const headers = ['SDO', 'School Name', 'Coordinates', ...roundsConfig.implementationRounds.map(r => r.name)];
+                example.textContent = `${headers.join(' | ')}
+Agusan Del Norte | Jagupit Elementary School | 9.266148034546173,125.55939506079605 | No | No | Yes | Yes | No | No | No | No | No | No`;
             }
         }
 
-        // Load configuration on page load
         loadRoundsConfig();
 
-        // Convert button handler
         convertBtn.addEventListener('click', () => {
             if (!currentFile) return;
-            
+
             convertBtn.disabled = true;
             convertBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Converting...';
             progressBar.style.display = 'block';
+            progressFill.style.width = '20%';
             hideError();
-            
-            // Simulate progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 10;
-                progressFill.style.width = progress + '%';
-                
-                if (progress >= 90) {
-                    clearInterval(progressInterval);
-                }
-            }, 100);
 
             const reader = new FileReader();
-            
+
             reader.onload = function(e) {
                 try {
+                    progressFill.style.width = '60%';
+
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    // Get the first worksheet
                     const sheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[sheetName];
-                    
-                    // Convert to JSON with headers
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {
                         header: 1,
-                        defval: '' 
+                        defval: ''
                     });
-                    
+
                     if (jsonData.length < 2) {
-                        throw new Error('Excel file must contain at least a header row and one data row');
+                        throw new Error('Excel file must contain at least a header row and one data row.');
                     }
-                    
-                    // Process the data
+
                     const schools = processExcelData(jsonData);
-                    
-                    // Complete progress
+
                     progressFill.style.width = '100%';
-                    
+
                     setTimeout(() => {
                         displayResult(schools);
-                        
-                        // Reset UI
                         convertBtn.disabled = false;
                         convertBtn.innerHTML = '<i class="fas fa-cogs"></i> Convert to JSON';
                         progressBar.style.display = 'none';
                         progressFill.style.width = '0%';
-                        
-                        clearInterval(progressInterval);
-                    }, 500);
-                    
+                    }, 300);
+
                 } catch (error) {
                     console.error('Conversion error:', error);
                     showError('Error processing Excel file: ' + error.message);
-                    
-                    // Reset UI
                     convertBtn.disabled = false;
                     convertBtn.innerHTML = '<i class="fas fa-cogs"></i> Convert to JSON';
                     progressBar.style.display = 'none';
                     progressFill.style.width = '0%';
-                    
-                    clearInterval(progressInterval);
                 }
             };
-            
+
             reader.onerror = function() {
                 showError('Error reading file. Please try again.');
-                
-                // Reset UI
                 convertBtn.disabled = false;
                 convertBtn.innerHTML = '<i class="fas fa-cogs"></i> Convert to JSON';
                 progressBar.style.display = 'none';
                 progressFill.style.width = '0%';
-                
-                clearInterval(progressInterval);
             };
-            
+
             reader.readAsArrayBuffer(currentFile);
         });
 
-        // Process Excel data to schools format
         function processExcelData(jsonData) {
-            const headers = jsonData[0];
+            const headers = jsonData[0].map(h => String(h || '').trim());
             const rows = jsonData.slice(1);
-            
-            // Find column indices
+
             const nameIndex = findColumnIndex(headers, ['school name', 'name', 'school']);
             const sdoIndex = findColumnIndex(headers, ['sdo', 'school division office', 'division']);
-            const coordIndex = findColumnIndex(headers, ['coordinates', 'coord', 'lat,lng', 'latlng']);
-            
+            const coordIndex = findColumnIndex(headers, ['coordinates', 'coordinate', 'coords', 'coord', 'lat,lng', 'latlng']);
+
             if (nameIndex === -1 || sdoIndex === -1 || coordIndex === -1) {
-                throw new Error('Required columns not found. Please ensure your Excel file has "School Name", "SDO", and "Coordinates" columns.');
+                throw new Error('Required columns not found. Your Excel must include SDO, School Name, and Coordinates.');
             }
 
-            // Find implementation columns - use config if available, otherwise fallback
-            let implementationColumns = {};
-            
-            if (roundsConfig && roundsConfig.implementationRounds) {
-                // Use configuration to find columns
-                roundsConfig.implementationRounds.forEach(round => {
-                    const possibleNames = [
-                        round.name.toLowerCase(),
-                        round.name.toLowerCase().replace(/\s+/g, ''),
-                        round.name.toLowerCase().replace(/\s*-\s*/g, ' '),
-                        round.id
-                    ];
-                    implementationColumns[round.name] = findColumnIndex(headers, possibleNames);
-                });
-            } else {
-                // Fallback to default columns
-                implementationColumns = {
-                    'Pilot - IPA Arm': findColumnIndex(headers, ['pilot - ipa arm', 'pilot ipa', 'ipa arm']),
-                    'Pilot - DepEd Arm': findColumnIndex(headers, ['pilot - deped arm', 'pilot deped', 'deped arm']),
-                    'Scale-Up Round 1': findColumnIndex(headers, ['scale-up round 1', 'scaleup round 1', 'scale up round 1', 'round 1']),
-                    'Scale-Up Round 2': findColumnIndex(headers, ['scale-up round 2', 'scaleup round 2', 'scale up round 2', 'round 2'])
-                };
+            const implementationColumns = buildImplementationColumnMap(headers, coordIndex);
+
+            if (implementationColumns.length === 0) {
+                throw new Error('No implementation round columns found. Check that your Excel headers match rounds-config.json.');
             }
 
             const schools = [];
 
             rows.forEach((row, index) => {
                 try {
-                    const schoolName = row[nameIndex];
-                    const sdo = row[sdoIndex];
-                    const coordinates = row[coordIndex];
+                    const schoolName = String(row[nameIndex] || '').trim();
+                    const sdo = String(row[sdoIndex] || '').trim();
+                    const coordinates = String(row[coordIndex] || '').trim();
 
-                    // Skip empty rows
-                    if (!schoolName || !sdo || !coordinates) {
-                        return;
-                    }
+                    if (!schoolName || !sdo || !coordinates) return;
 
-                    // Parse coordinates
-                    const coordParts = coordinates.toString().split(',');
+                    const coordParts = coordinates.split(',');
                     if (coordParts.length !== 2) {
-                        throw new Error(`Invalid coordinates format in row ${index + 2}: "${coordinates}". Expected format: "lat,lng"`);
+                        throw new Error(`Invalid coordinates format in row ${index + 2}: "${coordinates}". Expected format: "lat,lng".`);
                     }
 
                     const lat = parseFloat(coordParts[0].trim());
@@ -878,28 +904,23 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
                         throw new Error(`Invalid coordinates in row ${index + 2}: "${coordinates}". Coordinates must be numbers.`);
                     }
 
-                    // Check implementation types
                     const implementationTypes = [];
-                    Object.entries(implementationColumns).forEach(([type, colIndex]) => {
-                        if (colIndex !== -1 && row[colIndex]) {
-                            const value = row[colIndex].toString().toLowerCase().trim();
-                            if (value === 'yes' || value === 'y' || value === '1' || value === 'true') {
-                                implementationTypes.push(type);
-                            }
+
+                    implementationColumns.forEach(item => {
+                        const value = row[item.index];
+                        if (isYes(value)) {
+                            implementationTypes.push(item.name);
                         }
                     });
 
-                    // Create school object
-                    const school = {
+                    schools.push({
                         name: schoolName,
                         sdo: sdo,
                         lat: lat,
                         lng: lng,
                         implementationTypes: implementationTypes,
                         multipleRounds: implementationTypes.length > 1
-                    };
-
-                    schools.push(school);
+                    });
 
                 } catch (error) {
                     throw new Error(`Error processing row ${index + 2}: ${error.message}`);
@@ -913,18 +934,90 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
             return schools;
         }
 
-        // Helper function to find column index by various possible names
-        function findColumnIndex(headers, possibleNames) {
-            for (let i = 0; i < headers.length; i++) {
-                const header = headers[i].toString().toLowerCase().trim();
-                if (possibleNames.some(name => header.includes(name))) {
-                    return i;
-                }
+        function buildImplementationColumnMap(headers, coordIndex) {
+            const result = [];
+
+            if (roundsConfig && roundsConfig.implementationRounds) {
+                roundsConfig.implementationRounds.forEach(round => {
+                    const idx = findRoundColumnIndex(headers, round);
+                    if (idx !== -1) {
+                        result.push({ name: round.name, index: idx });
+                    } else {
+                        console.warn(`Round not found in Excel headers: ${round.name}`);
+                    }
+                });
+
+                // Use config-matched rounds only. This prevents accidental old hardcoded or unwanted names.
+                if (result.length > 0) return result;
             }
+
+            // Last-resort fallback: use all columns after Coordinates exactly as written in Excel.
+            for (let i = coordIndex + 1; i < headers.length; i++) {
+                const header = String(headers[i] || '').trim();
+                if (header) result.push({ name: header, index: i });
+            }
+
+            return result;
+        }
+
+        function findRoundColumnIndex(headers, round) {
+            const candidates = new Set();
+
+            addCandidate(candidates, round.name);
+            addCandidate(candidates, round.id);
+
+            const aliasesById = {
+                'pilot-ipa': ['Pilot-IPA Arm', 'Pilot IPA Arm', 'Pilot - IPA Arm'],
+                'pilot-deped': ['Pilot-DepEd Arm', 'Pilot DepEd Arm', 'Pilot - DepEd Arm'],
+                'scaleup1': ['SCALING - ROUND 1', 'Scaling Round 1', 'Scale-Up Round 1', 'Scaleup Round 1'],
+                'scaleup2': ['SCALING - ROUND 2', 'Scaling Round 2', 'Scale-Up Round 2', 'Scaleup Round 2'],
+                'scaling-summer-2025': ['SCALING - SUMMER 2025', 'Scaling Summer 2025', 'Summer 2025'],
+                'scaling-round-3': ['SCALING - ROUND 3', 'Scaling Round 3', 'Scale-Up Round 3'],
+                'scaling-round-4': ['SCALING - ROUND 4', 'Scaling Round 4', 'Scale-Up Round 4'],
+                'als-pilot': ['ALS Pilot'],
+                'tarl-pilot': ['TaRL Pilot', 'TARL Pilot', 'Tarl Pilot'],
+                'rct-pilot-1': ['RCT Pilot 1', 'RCT Pilot']
+            };
+
+            const aliases = aliasesById[round.id] || [];
+            aliases.forEach(alias => addCandidate(candidates, alias));
+
+            for (let i = 0; i < headers.length; i++) {
+                const hNorm = normalizeText(headers[i]);
+                const hComp = compactText(headers[i]);
+
+                if (candidates.has(hNorm) || candidates.has(hComp)) return i;
+            }
+
             return -1;
         }
 
-        // Display conversion result
+        function addCandidate(set, value) {
+            if (!value) return;
+            set.add(normalizeText(value));
+            set.add(compactText(value));
+        }
+
+        function findColumnIndex(headers, possibleNames) {
+            const normalizedPossible = possibleNames.map(p => normalizeText(p));
+            const compactPossible = possibleNames.map(p => compactText(p));
+
+            for (let i = 0; i < headers.length; i++) {
+                const hNorm = normalizeText(headers[i]);
+                const hComp = compactText(headers[i]);
+
+                if (normalizedPossible.some(p => hNorm === p || hNorm.includes(p))) return i;
+                if (compactPossible.some(p => hComp === p || hComp.includes(p))) return i;
+            }
+
+            return -1;
+        }
+
+        function isYes(value) {
+            const v = normalizeText(value);
+            return ['yes', 'y', '1', 'true', '✓', 'check', 'checked'].includes(v);
+        }
+
         function displayResult(schools) {
             const jsonString = JSON.stringify(schools, null, 2);
             resultArea.textContent = jsonString;
@@ -932,24 +1025,22 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
             downloadBtn.disabled = false;
         }
 
-        // Download button handler
         downloadBtn.addEventListener('click', () => {
             if (!convertedData) return;
-            
+
             const blob = new Blob([convertedData], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = 'schools.json';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
+
             URL.revokeObjectURL(url);
         });
 
-        // Error handling
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.style.display = 'block';
@@ -959,5 +1050,6 @@ Tanza ES | Navotas City | 14.6764,120.9472 | Yes | No | Yes | Yes`;
             errorMessage.style.display = 'none';
         }
     </script>
+
 </body>
 </html>
