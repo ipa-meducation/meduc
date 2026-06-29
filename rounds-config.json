@@ -14,31 +14,31 @@
     },
     {
       "id": "scaleup1",
-      "name": "SCALING - ROUND 1",
+      "name": "Scaling - Round 1",
       "color": "#f26529", 
       "description": "First scale-up implementation phase"
     },
     {
       "id": "scaleup2",
-      "name": "SCALING - ROUND 2",
+      "name": "Scaling - Round 2",
       "color": "#2b4085",
       "description": "Second scale-up implementation phase 2"
     },
      {
       "id": "scaling-summer-2025",
-      "name": "SCALING - SUMMER 2025",
+      "name": "Scaling - Summer 2025",
       "color": "#fdd0a2",
       "description": "Summer 2025"
     },
     {
       "id": "scaling-round-3",
-      "name": "SCALING - ROUND 3",
+      "name": "Scaling - Round 3",
       "color": "#fc8d59",
       "description": "Scaling Round 3"
     },
     {
       "id": "scaling-round-4",
-      "name": "SCALING - ROUND 4",
+      "name": "Scaling - Round 4",
       "color": "#e34a33",
       "description": "Scaling Round 4"
     },
